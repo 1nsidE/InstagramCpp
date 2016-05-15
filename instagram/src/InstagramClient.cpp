@@ -1,5 +1,4 @@
 #include <json/json.h>
-#include <easylogging/easylogging++.h>
 
 #include "InstagramClient.h"
 #include "InstagramConstants.h"

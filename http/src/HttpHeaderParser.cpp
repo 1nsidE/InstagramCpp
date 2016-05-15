@@ -1,9 +1,7 @@
 #include <sstream>
 #include <cstring>
-#include <easylogging/easylogging++.h>
 
 #include "HttpHeaderParser.h"
-
 
 namespace Http{
 

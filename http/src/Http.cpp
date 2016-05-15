@@ -1,5 +1,4 @@
 #include <cstring>
-#include <easylogging/easylogging++.h>
 #include "Http.h"
 
 namespace Http{

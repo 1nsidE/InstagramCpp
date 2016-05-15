@@ -5,7 +5,6 @@
 #include <netdb.h>
 #include <cstring>
 #include <unistd.h>
-#include <easylogging/easylogging++.h>
 #include <fcntl.h>
 
 #include "ConnectionListener.h"
@@ -68,7 +67,6 @@ void ConnectionListener::init() {
     if(listen(server_sockfd, 256) == -1){
         std::string err_msg = "listen() failed :  ";
         err_msg += gai_strerror(errno);
-        LOG(ERROR) << err_msg;
         throw std::runtime_error(err_msg);
     }
 }
@@ -83,7 +81,7 @@ TCPSocket ConnectionListener::blocking_wait(){
     socklen_t client_sockaddr_size = sizeof(client_sockaddr);
     int client_sockfd = accept(server_sockfd, reinterpret_cast<sockaddr*>(&client_sockaddr), &client_sockaddr_size);
     if(client_sockfd == -1){
-        LOG(ERROR) << "Failed to accept client socket, accept() returned -1, errno : " << gai_strerror(errno);
+        //TODO : report about invalid client socket
     }
 
     return TCPSocket(client_sockfd);

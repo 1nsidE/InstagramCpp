@@ -25,6 +25,8 @@ int main(){
         return 1;
     }
 
+    std::cout << "User with name : " << auth_token.get_user_name() << " authenticated" << std::endl;
+
     inst_client.set_auth_token(auth_token.get_auth_token());
     Instagram::MediaEntries media_entries = inst_client.get_user_recent_media();
    
@@ -44,8 +46,6 @@ int main(){
 
 Dependencies:
 ----------------
-Easylogging++ - https://github.com/easylogging/easyloggingpp
-
 JsonCpp - https://github.com/open-source-parsers/jsoncpp
 
 OpenSSL - https://github.com/openssl/openssl

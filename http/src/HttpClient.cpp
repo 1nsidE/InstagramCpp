@@ -2,7 +2,6 @@
 // Created by inside on 4/23/16.
 //
 #include <netdb.h>
-#include <easylogging/easylogging++.h>
 #include <thread>
 
 #include "TCPSocket.h"
