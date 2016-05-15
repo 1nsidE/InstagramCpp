@@ -1,6 +1,6 @@
 InstagramCpp:
 ----------------
-Implementation of the Instagram REST API client in c++.
+Implementation of the Instagram REST API client in C++.
 
 Very early version, only few API's supported.
 
