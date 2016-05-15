@@ -32,7 +32,7 @@ int main(){
     Instagram::MediaEntries media_entries = inst_client.get_user_recent_media();
     if(!media_entries.is_succeed()){
     	std::cerr << "Failed to retrieve recent media" << std::endl;
-    	return 0;
+    	return 1;
     }
    
     for(auto& media : media_entries.get_media_entries()){
