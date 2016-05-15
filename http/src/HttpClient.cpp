@@ -50,6 +50,7 @@ void HttpClient::send(const HttpRequest& http_request) const{
         int count = socket->write(request + written, length - static_cast<size_t>(written));
         if(count < 0){
             if(errno == EINTR){
+                count = 0;
                 continue;
             }else{
                 std::string err_msg = "Failed to send data : ";
@@ -62,11 +63,18 @@ void HttpClient::send(const HttpRequest& http_request) const{
 }
 
 HttpResponse HttpClient::recieve(long timeout) const{
-    std::string response = read(timeout); 
+    std::string response = read(timeout); ;
     
     HttpResponse http_response = HttpHeaderParser::parse_response(response);
-
-    size_t content_len = http_response.get_content_len();
+    if(http_response.get_status() == Status::UNKNOWN){
+        int retry_count = 3;
+        while(retry_count && http_response.get_status() == Status::UNKNOWN){
+            response.append(read(timeout));
+            http_response = HttpHeaderParser::parse_response(response);
+            --retry_count;
+        }
+    } 
+    size_t content_len = http_response.content_len();
     
     if(content_len >= std::numeric_limits<unsigned int>::max()){
         throw std::runtime_error{"server response is too big!"};
@@ -78,7 +86,7 @@ HttpResponse HttpClient::recieve(long timeout) const{
         actual_content_len += data.length();
         http_response.append_data(data);
     }
-
+    
     return http_response;
 }
 
