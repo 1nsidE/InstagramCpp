@@ -131,7 +131,7 @@ bool HttpResponse::contain_header(Http::Header header) noexcept {
     return headers_map.count(header) > 0;
 }
 
-size_t HttpResponse::get_content_len() const {
+size_t HttpResponse::content_len() const {
     return (headers_map.count(Http::Header::CONTENT_LENGTH) ? static_cast<size_t>(std::stoi(headers_map.at(Http::Header::CONTENT_LENGTH))) : 0);
 }
 

@@ -27,7 +27,7 @@ public:
     void append_data(const char *_data, const size_t len);
 
     size_t data_len() const noexcept;
-    size_t get_content_len() const;
+    size_t content_len() const;
     bool contain_header(Http::Header header) noexcept;
 
     void set_status(Http::Status _status);
