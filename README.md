@@ -21,7 +21,7 @@ int main(){
     Instagram::AuthorizationToken auth_token = inst_client.exchange_code(code, client_id, client_secret, redirect_uri);
    
     if(!auth_token.is_succeed()){
-        std::cerr << "Failed to get autorization token" << std::endl;
+        std::cerr << "Failed to retrieve authorization token, reason : " << auth_token.get_error_message() << std::endl;
         return 1;
     }
     
@@ -31,7 +31,7 @@ int main(){
     
     Instagram::MediaEntries media_entries = inst_client.get_user_recent_media();
     if(!media_entries.is_succeed()){
-    	std::cerr << "Failed to retrieve recent media" << std::endl;
+    	std::cerr << "Failed to retrieve recent media, reason : " << media_entries.get_error_message() << std::endl;
     	return 1;
     }
    
