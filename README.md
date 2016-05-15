@@ -35,8 +35,8 @@ int main(){
     	return 1;
     }
    
-    for(auto& media : media_entries.get_media_entries()){
-        for(std::string& tag : media.get_tags()){
+    for(const auto& media : media_entries.get_media_entries()){
+        for(const std::string& tag : media.get_tags()){
             std::cout << tag << " ";
         }
         std::cout << std::endl;
