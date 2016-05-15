@@ -54,3 +54,10 @@ Dependencies:
 JsonCpp - https://github.com/open-source-parsers/jsoncpp
 
 OpenSSL - https://github.com/openssl/openssl
+
+Build:
+----------------
+Tested only on Linux with 4.5 kernel.
+
+	cmake .
+	make
