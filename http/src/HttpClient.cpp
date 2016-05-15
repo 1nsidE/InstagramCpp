@@ -63,7 +63,7 @@ void HttpClient::send(const HttpRequest& http_request) const{
 }
 
 HttpResponse HttpClient::recieve(long timeout) const{
-    std::string response = read(timeout); ;
+    std::string response = read(timeout);
     
     HttpResponse http_response = HttpHeaderParser::parse_response(response);
     if(http_response.get_status() == Status::UNKNOWN){
