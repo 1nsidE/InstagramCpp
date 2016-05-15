@@ -9,6 +9,7 @@
 #include <cstring>
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <poll.h>
 #include "TCPSocket.h"
 
 namespace Socket{
@@ -129,21 +130,13 @@ void TCPSocket::make_non_blocking(){
     }
 }
 bool TCPSocket::wait_for_read(long timeout) const{
-    fd_set rdfs;
-    FD_ZERO(&rdfs);
-    FD_SET(sockfd, &rdfs);
+    pollfd pfd;
    
-    timeval tv;
-    tv.tv_sec = timeout;
-    tv.tv_usec = 0;
+    pfd.fd = sockfd;
+    pfd.events = POLLIN;
+    int result = poll(&pfd, 1, 1000*timeout);
 
-    int result = select(sockfd + 1, &rdfs, nullptr, nullptr, &tv);
-
-    if(result == -1){
-        throw_error("select() failed with error : ", errno);
-    }
-
-    return result;
+    return result + 1;;
 }
 
 bool TCPSocket::wait_for_write(long timeout) const{
