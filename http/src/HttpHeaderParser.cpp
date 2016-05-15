@@ -7,7 +7,7 @@ namespace Http{
 
 HttpResponse HttpHeaderParser::parse_response(const std::string &header){
     if(header.empty()){
-        throw std::runtime_error("cannot parse empty header!");
+        return HttpResponse{};
     }
 
     std::istringstream string_stream(header);
@@ -36,7 +36,7 @@ HttpResponse HttpHeaderParser::parse_response(const std::string &header){
 
 HttpRequest HttpHeaderParser::parse_request(const std::string &header){
     if(header.empty()){
-        throw std::runtime_error("cannot parse empty header!");
+        return HttpRequest{};
     }
     
     std::istringstream string_stream(header);
