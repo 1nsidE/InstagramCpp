@@ -6,7 +6,7 @@
 #define HTTPSERVER_FORMDATA_H
 
 #include <string>
-#include <unordered_map>
+#include <map>
 
 namespace Http{
 
@@ -24,11 +24,11 @@ public:
     const std::string get_string() const;
     std::string get_content_type() const;
 private:
-    std::unordered_map<std::string, std::string> data;
+    std::map<std::string, std::string> data;
     std::string boundary;
     const char* CONTENT_DISP = "Content-Disposition: form-data; name=";
     const char* CONTENT_TYPE = "multipart/form-data; boundary=";
-    const std::string* tmp_name;
+    std::string tmp_name;
 };
 
 }

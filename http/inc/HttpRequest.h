@@ -48,7 +48,7 @@ private:
     std::string end_point;
     std::map<std::string, std::string> arguments;
 
-    std::string end_point_with_args() const;
+    std::string get_args() const;
 };
 
 }

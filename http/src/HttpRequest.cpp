@@ -71,7 +71,7 @@ std::string HttpRequest::get_string() const {
 
     std::string result = get_str(method);
     
-    result += " " + end_point_with_args() + " " + HTTP_1_1 + CRLF;
+    result += " " + (end_point.empty() ? "/" : end_point) + get_args() + " " + HTTP_1_1 + CRLF;
 
     for(const auto &pair : headers_map){
         result += get_str(pair.first) + pair.second + CRLF;
@@ -86,11 +86,11 @@ std::string HttpRequest::get_string() const {
     return result;
 }
 
-std::string HttpRequest::end_point_with_args() const{
+std::string HttpRequest::get_args() const{
     if(arguments.empty()){
-        return end_point;
+        return "";
     }else{
-        std::string result = end_point + ARG_START_DELIMETER;
+        std::string result{ARG_START_DELIMETER};
 
         for(auto it = arguments.begin(); it != arguments.end(); ++it){
             result += it->first + ARG_EQUAL + it->second;

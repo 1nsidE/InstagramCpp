@@ -25,15 +25,14 @@ Http::HttpRequest InstagramClient::get_standart_request(Http::Method method, con
     standart_request.add_header(Http::Header::CACHE_CONTROL, "no-cache");
     standart_request.add_header(Http::Header::CONNECTION, "keep-alive");
 
-    Http::HttpRequest request{standart_request};
-    request.set_method(method);
-    request.set_end_point(end_point);
+    standart_request.set_method(method);
+    standart_request.set_end_point(end_point);
     
     for(const Http::Argument& arg: args){
-        request.add_argument(arg);
+        standart_request.add_argument(arg);
     }
 
-    return request;
+    return standart_request;
 }
 
 Http::HttpResponse InstagramClient::GET(const std::string &end_point , const Http::Arguments& args) {

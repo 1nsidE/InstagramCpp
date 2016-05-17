@@ -21,8 +21,7 @@ HttpResponse HttpHeaderParser::parse_response(const std::string &header){
     }
     
     HttpResponse http_response{};
-    std::string &status = tokens.at(2);
-    http_response.set_status(from_str<Status>(status));
+    http_response.set_status(from_int(std::stoi(trim(tokens.at(1)))));
     
     parse_headers(string_stream, http_response);
 

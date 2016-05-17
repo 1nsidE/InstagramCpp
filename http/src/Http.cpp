@@ -46,6 +46,12 @@ namespace Http{
                 return "Accept-Language: ";
             case Header::CONTENT_LANGUAGE:
                 return "Content-Language: ";
+            case Header::COOKIE:
+                return "Cookie: ";
+            case Header::TRANSFER_ENCODING:
+                return "Transfer-Encoding: ";
+            case Header::LOCATION:
+                return "Location: ";
             default:
                 return "Unknown";
         }
@@ -74,6 +80,8 @@ namespace Http{
                 return "Internal Server Error";
             case Status::NOT_FOUND:
                 return "Not Found";
+            case Status::MOVED:
+                return "Moved";
             default:
                 return "Unknown";
         }
@@ -86,7 +94,6 @@ namespace Http{
             }
         }
 
-//        LOG(INFO) << "Unknown status received : " << _status;
         return Status::UNKNOWN;
     }
 
@@ -98,7 +105,6 @@ namespace Http{
             }
         } 
 
-//        LOG(INFO) << "Unknown header received : " << str;
         return Header::UNKNOWN;
     }
 
@@ -110,7 +116,6 @@ namespace Http{
             }
         }
 
-//        LOG(INFO) << "Unknown status received : " << str;
         return Status::UNKNOWN;
     }
 
@@ -122,7 +127,6 @@ namespace Http{
             }
         }
 
-//        LOG(INFO) << "Unknown method received : " << str;
         return Method::UNKNOWN;        
     }
 

@@ -23,7 +23,7 @@ public:
     virtual void close();
 private:
     void  throw_error(const char* err_msg, unsigned long code) const;
-
+    void connect();
     SSL* ssl = nullptr;
     SSL_CTX* ctx = nullptr;
 };

@@ -31,8 +31,8 @@ protected:
     int sockfd;
     bool is_blocking;
 private:
-    TCPSocket(int _sockfd);
     void connect(const std::string& host, const std::string& port);
+    TCPSocket(int _sockfd);
     void throw_error(const char* err_msg, int code) const;
 };
 

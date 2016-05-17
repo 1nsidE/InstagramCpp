@@ -8,8 +8,7 @@ set(INSTAGRAM_SOURCES
 )
 
 add_library(instagram SHARED ${INSTAGRAM_SOURCES}
-    $<TARGET_OBJECTS:http>
     $<TARGET_OBJECTS:sockets>
     $<TARGET_OBJECTS:results>
 )
-target_link_libraries(instagram jsoncpp ssl crypto)
+target_link_libraries(instagram http jsoncpp)
