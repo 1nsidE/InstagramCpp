@@ -31,7 +31,7 @@ public:
     bool contain_header(Http::Header header) noexcept;
 
     void set_status(Http::Status _status);
-	Http::Status get_status() const;
+    Http::Status get_status() const;
 private:
     std::string* data;
     Http::Status status;

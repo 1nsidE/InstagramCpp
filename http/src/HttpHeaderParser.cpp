@@ -21,7 +21,7 @@ HttpResponse HttpHeaderParser::parse_response(const std::string &header){
     }
     
     HttpResponse http_response{};
-    http_response.set_status(from_int(std::stoi(trim(tokens.at(1)))));
+    http_response.set_status(from_int(std::stoi(trim(tokens[1]))));
     
     parse_headers(string_stream, http_response);
 
@@ -48,7 +48,7 @@ HttpRequest HttpHeaderParser::parse_request(const std::string &header){
     }
     
     HttpRequest http_request{};   
-    http_request.set_method(from_str<Method>(tokens.at(0)));
+    http_request.set_method(from_str<Method>(tokens[0]));
     
     std::string arguments = tokens[1];
     parse_arguments(arguments, http_request);

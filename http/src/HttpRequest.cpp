@@ -78,7 +78,7 @@ std::string HttpRequest::get_string() const {
     }
 
     if(data != nullptr){
-        result += get_str(Header::CONTENT_LENGTH) + std::to_string(data->length()) + CRLF + CRLF;
+        result += get_str(Header::CONTENT_LENGTH) + std::to_string(data->size()) + CRLF + CRLF;
         result.append(*data); 
     }else{
         result += CRLF;

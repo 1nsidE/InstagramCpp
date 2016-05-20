@@ -9,8 +9,8 @@ HttpRequest.cpp
 HttpResponse.cpp
 )
 
-add_library(http SHARED ${HTTP_SOURCES}
+add_library(httpcpp SHARED ${HTTP_SOURCES}
     $<TARGET_OBJECTS:sockets>
 )
 
-target_link_libraries(http ssl crypto)
+target_link_libraries(httpcpp ssl crypto)

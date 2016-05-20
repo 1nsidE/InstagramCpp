@@ -7,8 +7,8 @@ set(INSTAGRAM_SOURCES
 	InstagramParser.cpp
 )
 
-add_library(instagram SHARED ${INSTAGRAM_SOURCES}
+add_library(instagramcpp SHARED ${INSTAGRAM_SOURCES}
     $<TARGET_OBJECTS:sockets>
     $<TARGET_OBJECTS:results>
 )
-target_link_libraries(instagram http jsoncpp)
+target_link_libraries(instagramcpp httpcpp jsoncpp)

@@ -45,7 +45,7 @@ std::string HttpResponse::get_string() const{
     
     if(data){
         if(!headers_map.count(Http::Header::CONTENT_LENGTH)){
-            result.append(Http::get_str(Http::Header::CONTENT_LENGTH)).append(std::to_string(data->length())).append(CRLF);
+            result.append(Http::get_str(Http::Header::CONTENT_LENGTH)).append(std::to_string(data->size())).append(CRLF);
         }
         result.append(CRLF);
         result.append(*data);
