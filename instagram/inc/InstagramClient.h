@@ -7,11 +7,14 @@
 #include "HttpResponse.h"
 #include "HttpRequest.h"
 #include "HttpClient.h"
+#include "HttpUrl.h"
 #include "AuthorizationToken.h"
 #include "MediaEntries.h"
 #include "InstagramParser.h"
 
 namespace Instagram{
+
+using Arguments = std::initializer_list<Http::Argument>;
 
 class InstagramClient{
 public:
@@ -20,7 +23,6 @@ public:
     InstagramClient(InstagramClient& inst_serv) = delete;
     InstagramClient(InstagramClient&& inst_serv) = delete;
     
-      
     void set_auth_token(const std::string& _auth_token);
     std::string get_auth_token() const;
 
@@ -35,11 +37,6 @@ private:
     InstagramParser parser;
     Http::HttpClient http_client;
     std::string auth_token;
-
-    Http::HttpRequest get_standart_request(Http::Method method, const std::string& end_point, const Http::Arguments& args = {}) const noexcept;
-    Http::HttpResponse GET(const std::string &end_point, const Http::Arguments& args = {});
-
-    Http::HttpResponse POST(const std::string &end_point, const std::string& data, const std::string& content_type);
 };
 
 }

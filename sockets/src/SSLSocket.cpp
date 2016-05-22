@@ -85,14 +85,14 @@ namespace Socket{
     void SSLSocket::close() {
         if(ctx != nullptr){
             SSL_CTX_free(ctx);
+            ctx = nullptr;
         }
 
         if(ssl != nullptr){
             SSL_shutdown(ssl);
             SSL_free(ssl);
+            ssl = nullptr;
         }
-
-        TCPSocket::close();
     }
 
     void SSLSocket::throw_error(const char* err_msg, unsigned long code) const {

@@ -111,7 +111,7 @@ namespace Http{
     template<>
     Status from_str<Status>(const char* str){
         for(Status status : statuses){
-            if(!std::strcmp(str, get_str(status))){
+            if(!std::strncmp(str, get_str(status), std::strlen(str))){
                 return status;
             }
         }
@@ -122,7 +122,7 @@ namespace Http{
     template<>
     Method from_str<Method>(const char* str){
         for(Method method : methods){
-            if(!std::strcmp(str, get_str(method))){
+            if(!std::strncmp(str, get_str(method), std::strlen(str))){
                 return method;
             }
         }

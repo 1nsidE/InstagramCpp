@@ -11,11 +11,11 @@ FormData::FormData(const std::string &_boundary) : boundary(_boundary), tmp_name
 
 FormData::FormData(const FormData& form_data) : data{form_data.data},
                                                 boundary{form_data.boundary},
-                                                tmp_name{form_data.tmp_name}{}
+                                                tmp_name{nullptr}{}
 
 FormData::FormData(FormData&& form_data) : data{std::move(form_data.data)},
                                            boundary{std::move(form_data.boundary)},
-                                           tmp_name{std::move(form_data.tmp_name)}{}
+                                           tmp_name{nullptr}{}
 
 void FormData::add_pair(const std::string &name, const std::string &value) {
     data[name] = value;
@@ -43,12 +43,15 @@ std::string FormData::get_content_type() const{
 }
 
 FormData& FormData::operator[](const std::string &name){
-    tmp_name = name;
+    tmp_name = &name;
     return *this;
 }
 
 FormData& FormData::operator=(const std::string& value){
-    add_pair(tmp_name, value);
+    if(tmp_name != nullptr){
+        add_pair(*tmp_name, value);
+        tmp_name = nullptr;
+    }
     return *this;
 }
 

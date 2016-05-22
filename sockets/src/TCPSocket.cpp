@@ -27,6 +27,12 @@ TCPSocket::TCPSocket(TCPSocket&& client_socket) : sockfd{client_socket.sockfd}, 
     client_socket.is_blocking = false;
 }
 
+TCPSocket::~TCPSocket(){
+    if(sockfd != -1){
+        ::close(sockfd);
+    }
+}
+
 TCPSocket &TCPSocket::operator=(TCPSocket &&tcp_socket) {
     if(this != &tcp_socket){
         sockfd = tcp_socket.sockfd;

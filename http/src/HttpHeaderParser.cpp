@@ -50,9 +50,10 @@ HttpRequest HttpHeaderParser::parse_request(const std::string &header){
     HttpRequest http_request{};   
     http_request.set_method(from_str<Method>(tokens[0]));
     
-    std::string arguments = tokens[1];
-    parse_arguments(arguments, http_request);
-    
+    std::string url_str = tokens[1];
+    HttpUrl url = parse_url(url_str);
+    http_request.set_url(std::move(url));
+
     parse_headers(string_stream, http_request);
     size_t pos;
     if((pos = static_cast<size_t>(string_stream.tellg())) < header.length()){
@@ -127,26 +128,28 @@ std::string HttpHeaderParser::trim(const std::string &str) {
     return str.substr(first, (last - first) + 1);
 }
 
-void HttpHeaderParser::parse_arguments(const std::string& str, HttpRequest& request){
+HttpUrl HttpHeaderParser::parse_url(const std::string& str){
+    HttpUrl url{};
     size_t delimeter_pos = str.find_first_of('?',0);
     if(delimeter_pos == std::string::npos){
-        request.set_end_point(str);
-        return;
+        url.set_end_point(str);
+        return url;
     }else{
         std::vector<std::string> tokens = tokenize(str, ARG_START_DELIMETER, true);
         if(tokens.size() != 2){
-            throw std::runtime_error("invalid arguments in request!");
+            throw std::runtime_error("invalid url in request!");
         }
-        request.set_end_point(tokens[0]);
+        url.set_end_point(tokens[0]);
 
-        std::vector<std::string> arguments = tokenize(tokens[1], ARG_DELIMETER);
-        for(std::string arg_pair : arguments){
-            std::vector<std::string> args = tokenize(arg_pair, ARG_EQUAL, true);
+        std::vector<std::string> url_str = tokenize(tokens[1], ARG_DELIMETER);
+        for(std::string arg_pair : url_str){
+            std::vector<std::string> args = tokenize(arg_pair, ARG_EQUAL);
             if(args.size() != 2){
-                throw std::runtime_error("invalid arguments format!");
+                throw std::runtime_error("invalid url format!");
             }
-            request.add_argument(args[0], args[1]);
+            url.add_argument(args[0], args[1]);
         }
+        return url;
     }
 }
 

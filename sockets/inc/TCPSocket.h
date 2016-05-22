@@ -15,7 +15,7 @@ public:
     TCPSocket(const std::string& host, const std::string& port);
     TCPSocket(const TCPSocket& tcp_socket) = delete;
     TCPSocket(TCPSocket&& tcp_socket);
-    virtual ~TCPSocket() = default;
+    virtual ~TCPSocket();
 
     virtual TCPSocket& operator=(TCPSocket&& tcp_socket);
 

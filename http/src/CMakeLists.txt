@@ -5,8 +5,10 @@ FormData.cpp
 Http.cpp
 HttpClient.cpp
 HttpHeaderParser.cpp
+HttpHeader.cpp
 HttpRequest.cpp
 HttpResponse.cpp
+HttpUrl.cpp
 )
 
 add_library(httpcpp SHARED ${HTTP_SOURCES}

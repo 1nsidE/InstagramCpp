@@ -11,12 +11,12 @@
 
 namespace Http{
 
-HttpClient::HttpClient(const std::string &_host, HttpProtocol _protocol) : socket{nullptr}, host{_host}, protocol{_protocol}{
-    connect();  
+HttpClient::HttpClient(const std::string &_host, HttpProtocol _protocol) : socket{nullptr}, host{_host}, protocol{_protocol}, connected{false}{
 }
 
-HttpClient::HttpClient(HttpClient &&http_socket) : socket{std::move(http_socket.socket)}, host{std::move(http_socket.host)}, protocol{http_socket.protocol} {
+HttpClient::HttpClient(HttpClient &&http_socket) : socket{std::move(http_socket.socket)}, host{std::move(http_socket.host)}, protocol{http_socket.protocol}, connected{http_socket.connected} {
     http_socket.socket = nullptr;
+    http_socket.connected = false;
 }
 
 HttpClient::~HttpClient(){
@@ -25,12 +25,54 @@ HttpClient::~HttpClient(){
     }
 }
 
-HttpResponse HttpClient::send_request(const HttpRequest& http_request){
+HttpResponse HttpClient::get(const HttpUrl& url){
+    HttpRequest http_request = get_standart_request();;
+    http_request.set_method(Method::GET);
+    http_request.set_url(url);
+
+    return send_request(http_request);
+}
+
+HttpResponse HttpClient::post(const HttpUrl& url, const std::string& data, const std::string& content_type){
+    HttpRequest http_request = get_standart_request();
+    http_request.set_method(Method::POST);
+    http_request.set_url(url);
+    http_request.set_data(data);
+    http_request[Header::CONTENT_TYPE] = content_type;
+
+    return send_request(http_request);
+}
+
+HttpResponse HttpClient::post(const HttpUrl& url, const std::pair<std::string, std::string>& type_and_data){
+    HttpRequest http_request  = get_standart_request();
+    http_request.set_method(Method::POST);
+    http_request.set_url(url);
+    http_request[Header::CONTENT_TYPE] = type_and_data.first;
+    http_request.set_data(type_and_data.second);
+
+    return send_request(http_request);
+}
+
+HttpRequest HttpClient::get_standart_request(){
+    HttpRequest http_request{};
+    http_request[Header::USER_AGENT] = STANDART_USER_AGENT;
+    http_request[Header::CONNECTION] = "keep-alive";
+    http_request[Header::ACCEPT_ENCODING] = "*/*";
+    http_request[Header::HOST] = host;
+    
+    return http_request;
+}
+
+HttpResponse HttpClient::send_request(const HttpRequest& http_request) {
+    if(!connected){
+        connect();
+    }
+    
     send(http_request); 
     HttpResponse http_response = recieve(20);
     
-    if(http_response[Header::CONNECTION] == "close"){
-        connect();
+    if(http_response.get_header(Header::CONNECTION) == "close"){
+        disconnect();
     }
 
     return http_response;
@@ -118,7 +160,9 @@ std::string HttpClient::read(long timeout) const {
 }
 
 void HttpClient::connect(){
-    disconnect();
+    if(connected){
+        disconnect();
+    }
     
     switch(protocol){
         case HttpProtocol::HTTPS:
@@ -129,6 +173,7 @@ void HttpClient::connect(){
             break;
     }
     socket->make_non_blocking();
+    connected = true;
 }
 
 void HttpClient::disconnect(){
@@ -136,7 +181,8 @@ void HttpClient::disconnect(){
         socket->close();
         delete socket;
         socket = nullptr;
-    } 
+    }
+    connected = false; 
 }
 
 }

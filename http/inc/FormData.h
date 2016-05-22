@@ -28,7 +28,7 @@ private:
     std::string boundary;
     const char* CONTENT_DISP = "Content-Disposition: form-data; name=";
     const char* CONTENT_TYPE = "multipart/form-data; boundary=";
-    std::string tmp_name;
+    const std::string* tmp_name;
 };
 
 }

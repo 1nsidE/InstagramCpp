@@ -10,6 +10,8 @@
 #include "HttpRequest.h"
 #include "TCPSocket.h"
 
+#define STANDART_USER_AGENT "http_cpp"
+
 namespace Http{
 
 class HttpClient {
@@ -18,10 +20,15 @@ public:
     HttpClient(HttpClient&) = delete;
     HttpClient(HttpClient&& http_socket);
     ~HttpClient();
+    
+    HttpResponse get(const HttpUrl& url);
+    HttpResponse post(const HttpUrl& url, const std::string& data, const std::string& content_type);
+    HttpResponse post(const HttpUrl& url, const std::pair<std::string, std::string>& type_and_data);
 
     HttpResponse send_request(const HttpRequest& http_request);
 	HttpResponse operator<<(const HttpRequest& http_request);
 private:
+    HttpRequest get_standart_request();
     void send(const HttpRequest& http_request) const;
     HttpResponse recieve(long timeout) const;
 
@@ -34,6 +41,7 @@ private:
     Socket::TCPSocket *socket;
     std::string host;
     HttpProtocol protocol;
+    bool connected;
 };
 
 }

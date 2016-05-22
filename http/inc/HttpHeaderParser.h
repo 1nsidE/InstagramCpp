@@ -16,7 +16,7 @@ public:
 private:
     static std::vector<std::string> tokenize(const std::string& str, const char delimeter, bool once = false);
     static void parse_headers(std::istringstream& string_stream, HttpHeader& header);
-    static void parse_arguments(const std::string& arguments, HttpRequest& request);
+    static HttpUrl parse_url(const std::string& url);
     static std::string trim(const std::string& str);
 };
 

@@ -7,11 +7,9 @@
 
 #include <map>
 #include "HttpHeader.h"
+#include "HttpUrl.h"
 
 namespace Http{
-
-using Argument = std::pair<std::string, std::string>;
-using Arguments = std::initializer_list<Argument>;
 
 class HttpRequest : public HttpHeader{
 public:
@@ -26,29 +24,12 @@ public:
 
     void set_method(Http::Method _method);
 	Http::Method get_method() const;
-    
-    void add_argument(const std::string& name, const std::string& value);
-    void add_argument(const Argument& argument);
-
-    std::string get_argument(const std::string& arg_name);
-    const std::string& get_argument(const std::string& arg_name) const;
-
-    void set_end_point(const std::string& _end_point);
-    std::string get_end_point();
-    const std::string& get_end_point() const;
-
-	virtual void set_data(const std::string& _data);
-    virtual std::string get_data();
-    virtual const std::string& get_data() const;
-
+    void set_url(const HttpUrl& url);
+    void set_url(HttpUrl&& url);
     virtual std::string get_string() const;
 private:
-	std::string* data;
 	Http::Method method;
-    std::string end_point;
-    std::map<std::string, std::string> arguments;
-
-    std::string get_args() const;
+    HttpUrl url;
 };
 
 }
