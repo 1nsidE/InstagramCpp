@@ -16,6 +16,7 @@ public:
     
 private:
     Json::Reader reader;
-};
+    void check_for_errors(const Json::Value& json) const;
+}; 
 
 }

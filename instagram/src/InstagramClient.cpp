@@ -1,4 +1,5 @@
 #include <json/json.h>
+#include <exception>
 
 #include "InstagramClient.h"
 #include "InstagramConstants.h"
@@ -35,9 +36,8 @@ AuthorizationToken InstagramClient::exchange_code(const std::string& code,
         if(http_response.get_status() != Http::Status::OK){
             "Failed to get auth_token, response was : " + http_response.get_string();
         }
-
-        return parser.parse_auth_token(http_response.get_data());
-    }catch(std::runtime_error err){
+        AuthorizationToken token = parser.parse_auth_token(http_response.get_data());
+    }catch(const std::exception& err){
         return err.what();
     }
 }
@@ -48,7 +48,7 @@ MediaEntries InstagramClient::get_user_recent_media() {
     }
 
     try{
-        Http::HttpUrl url{GET_RECENT_MEDIA};
+        Http::HttpUrl url{USERS_SELF_RECENT_MEDIA};
         url[AUTH_TOKEN_ARG] = auth_token;
         Http::HttpResponse http_response = http_client.get(url);
 
@@ -56,9 +56,8 @@ MediaEntries InstagramClient::get_user_recent_media() {
             return "failed to get users recent media, response was : " + http_response.get_string();
         }
         
-        return parser.parse_media_entries(http_response.get_data());    
-
-    }catch(std::runtime_error err){
+        return parser.parse_media_entries(http_response.get_data()); 
+    }catch(const std::exception& err){
         return err.what();
     }
 }

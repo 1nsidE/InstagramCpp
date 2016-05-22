@@ -26,6 +26,8 @@ public:
 	Http::Method get_method() const;
     void set_url(const HttpUrl& url);
     void set_url(HttpUrl&& url);
+    const HttpUrl& get_url() const;
+
     virtual std::string get_string() const;
 private:
 	Http::Method method;

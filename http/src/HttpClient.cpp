@@ -39,6 +39,7 @@ HttpResponse HttpClient::post(const HttpUrl& url, const std::string& data, const
     http_request.set_url(url);
     http_request.set_data(data);
     http_request[Header::CONTENT_TYPE] = content_type;
+    http_request[Header::CONTENT_LENGTH] = std::to_string(data.size());
 
     return send_request(http_request);
 }
@@ -49,6 +50,7 @@ HttpResponse HttpClient::post(const HttpUrl& url, const std::pair<std::string, s
     http_request.set_url(url);
     http_request[Header::CONTENT_TYPE] = type_and_data.first;
     http_request.set_data(type_and_data.second);
+    http_request[Header::CONTENT_LENGTH] = std::to_string(type_and_data.second.size());
 
     return send_request(http_request);
 }
@@ -115,7 +117,11 @@ HttpResponse HttpClient::recieve(long timeout) const{
             http_response = HttpHeaderParser::parse_response(response);
             --retry_count;
         }
-    } 
+    }
+    
+    if(http_response.get_status() == Status::UNKNOWN){
+        return http_response;
+    }
     size_t content_len = http_response.content_len();
     
     if(content_len >= std::numeric_limits<unsigned int>::max()){

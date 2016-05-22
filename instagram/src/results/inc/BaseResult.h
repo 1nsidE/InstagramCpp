@@ -16,7 +16,7 @@ public:
 
 	~BaseResult();
 
-	const std::string * get_error_message();
+	const std::string& get_error_message();
 	bool is_succeed();
 private:
 	std::string* err_msg;

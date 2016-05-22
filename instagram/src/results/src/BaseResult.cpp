@@ -16,6 +16,7 @@ BaseResult::BaseResult(BaseResult &&base_result) : err_msg(base_result.err_msg) 
 }
 
 BaseResult::BaseResult(const BaseResult &base_result) {
+    err_msg = nullptr;
     if(base_result.err_msg != nullptr){
         err_msg = new std::string{*base_result.err_msg};
     }
@@ -35,8 +36,9 @@ BaseResult::~BaseResult() {
     }
 }
 
-const std::string * BaseResult::get_error_message() {
-    return err_msg;
+const std::string& BaseResult::get_error_message() {
+    const static std::string empty_error{""};
+    return err_msg ? *err_msg : empty_error;
 }
 
 bool BaseResult::is_succeed() {

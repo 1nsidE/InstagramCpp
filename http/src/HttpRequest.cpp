@@ -62,4 +62,8 @@ void HttpRequest::set_url(HttpUrl&& _url){
     url = _url;
 }
 
+const HttpUrl& HttpRequest::get_url() const{
+    return url;
+}
+
 }
