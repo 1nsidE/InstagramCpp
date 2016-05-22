@@ -13,10 +13,10 @@ public:
 
     AuthorizationToken parse_auth_token(const std::string& json);
     MediaEntries parse_media_entries(const std::string& json);
-    
+    std::string get_error(const std::string& json);
+   
 private:
     Json::Reader reader;
-    void check_for_errors(const Json::Value& json) const;
 }; 
 
 }

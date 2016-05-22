@@ -12,12 +12,6 @@ AuthorizationToken InstagramParser::parse_auth_token(const std::string& json){
 
     }
 
-    try{
-        check_for_errors(root);
-    }catch(const std::runtime_error& err){
-        return err.what();
-    }
-
     token.set_auth_token(root["access_token"].asString());
     
     const Json::Value& user = root["user"];
@@ -36,12 +30,6 @@ MediaEntries InstagramParser::parse_media_entries(const std::string& json){
     if(!reader.parse(json, root, false)){
         return "Failed to parse response";
     };
-
-    try{
-        check_for_errors(root);
-    }catch(const std::runtime_error& err){
-        return err.what();
-    }
 
     Json::Value data = root["data"];
     MediaEntries result{};
@@ -102,22 +90,26 @@ MediaEntries InstagramParser::parse_media_entries(const std::string& json){
     return result;
 }
 
-void InstagramParser::check_for_errors(const Json::Value& root) const{
-    const static std::string empty_error = {""};
+std::string InstagramParser::get_error(const std::string& json){
+    Json::Value root;
+
+    if(!reader.parse(json, root, false)){
+        return "Failed to parse error";
+    }
 
     const Json::Value& meta = root["meta"];
     int code = meta["code"].asInt();
     if(code == 200){
-        return;
+        return "";
     }
 
     const Json::Value& err_msg = meta["error_message"];
     const Json::Value& err_type = meta["error_type"];
     
     if(!err_type.isNull() || !err_msg.isNull()){
-        throw std::runtime_error(err_type.asString() + err_msg.asString());
+        return err_type.asString() + " : " + err_msg.asString();
     }else{
-        throw("Unknown error with code = " + std::to_string(code));
+        return "Unknown error with code = " + std::to_string(code);
     }
 
 

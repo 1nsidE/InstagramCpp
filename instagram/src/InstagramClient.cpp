@@ -34,11 +34,10 @@ AuthorizationToken InstagramClient::exchange_code(const std::string& code,
         Http::HttpResponse http_response = http_client.post({GET_AUTH_CODE}, form_data.get_string(), form_data.get_content_type());
        
         if(http_response.get_status() != Http::Status::OK){
-            "Failed to get auth_token, response was : " + http_response.get_string();
+            parser.get_error(http_response.get_data());
         }
         
-        AuthorizationToken token = parser.parse_auth_token(http_response.get_data());
-        return token;
+        return parser.parse_auth_token(http_response.get_data());
     }catch(const std::exception& err){
         return err.what();
     }
@@ -55,7 +54,7 @@ MediaEntries InstagramClient::get_user_recent_media() {
         Http::HttpResponse http_response = http_client.get(url);
 
         if(http_response.get_status() != Http::Status::OK){
-            return "failed to get users recent media, response was : " + http_response.get_string();
+            return parser.get_error(http_response.get_data());
         }
         
         return parser.parse_media_entries(http_response.get_data()); 
