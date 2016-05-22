@@ -36,13 +36,9 @@ int main(){
     }
    
     for(const auto& media : media_entries.get_media_entries()){
-        for(const std::string& tag : media.get_tags()){
-            std::cout << tag << " ";
-        }
-        std::cout << std::endl;
-
-        std::cout << "likes count : "  << media.get_like_count() << std::endl;
-        std::cout << "comments count " << media.get_comments_count() << std::endl;
+        std::cout << media.get_caption() << "\n";
+        std::cout << "likes count : "  << media.get_like_count() << "\n";
+        std::cout << "comments count " << media.get_comments_count() << "\n"<< std::endl; 
     }
 
     return 0;
