@@ -36,7 +36,9 @@ AuthorizationToken InstagramClient::exchange_code(const std::string& code,
         if(http_response.get_status() != Http::Status::OK){
             "Failed to get auth_token, response was : " + http_response.get_string();
         }
+        
         AuthorizationToken token = parser.parse_auth_token(http_response.get_data());
+        return token;
     }catch(const std::exception& err){
         return err.what();
     }
