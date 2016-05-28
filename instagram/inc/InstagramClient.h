@@ -36,7 +36,11 @@ public:
 			const std::string& redirect_uri);
 
     UserInfo get_user_info();
-    MediaEntries get_user_recent_media();	
+    UserInfo get_user_info(const std::string& user_id);
+   
+    MediaEntries get_user_recent_media();
+    MediaEntries get_user_recent_media(const std::string& user_id);
+
 private:
     InstagramParser parser;
     Http::HttpClient http_client;

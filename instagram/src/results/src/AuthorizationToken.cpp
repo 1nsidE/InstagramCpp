@@ -6,6 +6,11 @@ AuthorizationToken::AuthorizationToken(){
 
 }
 
+AuthorizationToken::AuthorizationToken(const char* err_msg) : BaseResult(err_msg){}
+
+AuthorizationToken::AuthorizationToken(const std::string& err_msg) : BaseResult{err_msg}{}
+
+
 AuthorizationToken::AuthorizationToken(AuthorizationToken& token) : auth_token(token.auth_token), 
     id(token.id),
     user_name(token.user_name), 

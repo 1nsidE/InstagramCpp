@@ -2,7 +2,7 @@
 
 namespace Instagram{
 
-UserInfo::UserInfo() : BaseResult() {}
+UserInfo::UserInfo() : BaseResult{}, _followed_by{0}, _follows{0}, _media_count{0} {}
 
 UserInfo::UserInfo(const UserInfo& user_info) : BaseResult{user_info},
                                         id{user_info.id},
@@ -32,9 +32,9 @@ UserInfo::UserInfo(UserInfo&& user_info) : BaseResult{user_info},
 }
 
 
-UserInfo::UserInfo(const char* err_msg) : BaseResult{err_msg}{}
+UserInfo::UserInfo(const char* err_msg) : BaseResult{err_msg},  _followed_by{0}, _follows{0}, _media_count{0}{}
 
-UserInfo::UserInfo(const std::string& err_msg) : BaseResult{err_msg}{}
+UserInfo::UserInfo(const std::string& err_msg) : BaseResult{err_msg}, _followed_by{0}, _follows{0}, _media_count{0}{}
 
 UserInfo::~UserInfo(){}
 

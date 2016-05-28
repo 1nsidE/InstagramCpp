@@ -9,7 +9,8 @@ namespace Instagram{
 class AuthorizationToken : public BaseResult{
 public:
     AuthorizationToken();
-	AuthorizationToken(const char* err_msg) : BaseResult(err_msg){};
+	AuthorizationToken(const char* err_msg);
+    AuthorizationToken(const std::string& err_msg);
     ~AuthorizationToken();
 
     AuthorizationToken(AuthorizationToken& auth_token);

@@ -131,7 +131,11 @@ std::string HttpUrl::get_url() const {
     if(arguments_map == nullptr || arguments_map->empty()){
         return end_point;
     }else{
-        std::string result = end_point + ARG_START_DELIMETER + get_arguments();
+        std::string result{end_point};
+        if(result[result.length()] != '/'){
+            result += '/';
+        }
+        result += ARG_START_DELIMETER + get_arguments();
         return result;
     }
 }

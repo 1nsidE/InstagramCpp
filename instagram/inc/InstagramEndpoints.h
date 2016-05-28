@@ -7,13 +7,19 @@
 
 namespace Instagram{
     static const char* GET_AUTH_CODE = "/oauth/access_token";
+    static const char* self = "self";
     
-    static const char* USERS_SELF_RECENT_MEDIA = "/v1/users/self/media/recent";
-    static const char* USERS_SEARCH = "/v1/users/search";
-    static const char* USERS_SELF_LIKED = "/v1/users/self/media/like";
-    static const char* USERS_SELF_INFO = "/v1/users/self";
+    namespace Users{
+        static const char* users = "/v1/users/";
 
-    static const char* RELATIONSHIPS_FOLLOWS = "/v1/users/self/follows";
+        static const char* recent_media = "media/recent";
+        static const char* search = "search";
+        static const char* self_liked = "media/like";
+    }
+
+    namespace Relationships{
+        static const char* follows  = "/v1/users/self/follows";
+    }
 }
 
 #endif //HTTPSERVER_INSTAGRAMMETHODS_H
