@@ -4,6 +4,7 @@ set(RESULT_SOURCES
 BaseResult.cpp
 MediaEntries.cpp
 MediaEntry.cpp
+UserInfo.cpp
 AuthorizationToken.cpp
 )
 

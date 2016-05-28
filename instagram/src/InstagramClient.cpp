@@ -10,12 +10,18 @@ namespace Instagram{
 
 InstagramClient::InstagramClient() : parser{}, http_client{INSTAGRAM_HOST, Http::HttpProtocol::HTTPS}, auth_token{""}{}
 
-std::string InstagramClient::get_auth_token() const{
+const std::string& InstagramClient::get_auth_token() const{
     return auth_token;
 }
 
 void InstagramClient::set_auth_token(const std::string &_auth_token){
     auth_token = _auth_token;
+}
+
+void InstagramClient::check_auth(){
+    if(auth_token.empty()){
+        throw std::runtime_error("not authorized");
+    }
 }
 
 AuthorizationToken InstagramClient::exchange_code(const std::string& code, 
@@ -43,12 +49,27 @@ AuthorizationToken InstagramClient::exchange_code(const std::string& code,
     }
 }
 
-MediaEntries InstagramClient::get_user_recent_media() {
-    if(auth_token.empty()){
-        return "authorization token is not set";
-    }
+UserInfo InstagramClient::get_user_info(){
+   try{ 
+        check_auth();
 
+        Http::HttpUrl url{USERS_SELF_INFO};
+        url[AUTH_TOKEN_ARG] = auth_token;
+        Http::HttpResponse response = http_client.get(url);
+        
+        if(response.get_status() != Http::Status::OK){
+            return parser.get_error(response.get_data());
+        }
+        
+        return parser.parse_user_info(response.get_data());
+   }catch(std::exception& err){
+       return err.what();
+   }
+}
+
+MediaEntries InstagramClient::get_user_recent_media() {
     try{
+        check_auth();
         Http::HttpUrl url{USERS_SELF_RECENT_MEDIA};
         url[AUTH_TOKEN_ARG] = auth_token;
         Http::HttpResponse http_response = http_client.get(url);

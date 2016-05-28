@@ -8,8 +8,11 @@
 #include "HttpRequest.h"
 #include "HttpClient.h"
 #include "HttpUrl.h"
+
 #include "AuthorizationToken.h"
 #include "MediaEntries.h"
+#include "UserInfo.h"
+
 #include "InstagramParser.h"
 
 namespace Instagram{
@@ -24,7 +27,7 @@ public:
     InstagramClient(InstagramClient&& inst_serv) = delete;
     
     void set_auth_token(const std::string& _auth_token);
-    std::string get_auth_token() const;
+    const std::string& get_auth_token() const;
 
 //API's
      AuthorizationToken exchange_code(const std::string& code, 
@@ -32,11 +35,14 @@ public:
 			const std::string& client_secret,
 			const std::string& redirect_uri);
 
+    UserInfo get_user_info();
     MediaEntries get_user_recent_media();	
 private:
     InstagramParser parser;
     Http::HttpClient http_client;
     std::string auth_token;
+    
+    void check_auth();
 };
 
 }

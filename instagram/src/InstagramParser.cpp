@@ -28,7 +28,7 @@ AuthorizationToken InstagramParser::parse_auth_token(const std::string& json){
 MediaEntries InstagramParser::parse_media_entries(const std::string& json){
     Json::Value root;
     if(!reader.parse(json, root, false)){
-        return "Failed to parse response";
+        return "Failed to parse media entries";
     };
 
     Json::Value data = root["data"];
@@ -36,9 +36,14 @@ MediaEntries InstagramParser::parse_media_entries(const std::string& json){
     if(data.isArray()){
         for(const auto& media : data){
             MediaEntry entry{};
-            const Json::Value& id = media["id"];
-            if(!id.isNull()) entry.set_id(id.asString());
             
+            const Json::Value& tags = media["tags"];
+            if(tags.isArray()){
+                for(auto& tag : tags){
+                    entry.add_tag(tag.asString());
+                }
+            }
+                       
             const Json::Value& type = media["type"];
             if(!type.isNull()){
                 const std::string type_str = type.asString();
@@ -48,15 +53,13 @@ MediaEntries InstagramParser::parse_media_entries(const std::string& json){
                     entry.set_type(MediaType::VIDEO);
                 }
             }    
+             
+            const Json::Value& create_time = media["created_time"];
+            unsigned long created_time = create_time.isNull() ? 0 : std::stoul(create_time.asString());
+            entry.set_created_time(created_time);
             
-            {
-                const Json::Value& tags = media["tags"];
-                if(tags.isArray()){
-                    for(auto& tag : tags){
-                        entry.add_tag(tag.asString());
-                    }
-                }
-            }
+            const Json::Value& link = media["link"];
+            if(!link.isNull()) entry.set_url(link.asString());
 
             const Json::Value& caption = media["caption"];
             if(!caption.isNull()) entry.set_caption(caption["text"].asString());
@@ -79,15 +82,39 @@ MediaEntries InstagramParser::parse_media_entries(const std::string& json){
             const Json::Value& likes = media["likes"];
             unsigned int likes_count = likes.isNull() ? 0 : likes["count"].asUInt();
             entry.set_like_count(likes_count);
-            
-            const Json::Value& create_time = media["created_time"];
-            unsigned long created_time = create_time.isNull() ? 0 : std::stoul(create_time.asString());
-            entry.set_created_time(created_time);
-            
+           
+            const Json::Value& id = media["id"];
+            if(!id.isNull()) entry.set_id(id.asString());
+
             result.add_media_entry(entry);
         }
     }
     return result;
+}
+
+UserInfo InstagramParser::parse_user_info(const std::string& json){
+    Json::Value root;
+
+    if(!reader.parse(json, root, false)){
+        return "Failed to parse user info";
+    }
+    
+    const Json::Value& data = root["data"];
+    UserInfo user_info;
+
+    user_info.set_id(data["id"].asString());
+    user_info.set_nickname(data["username"].asString());
+    user_info.set_full_name(data["full_name"].asString());
+    user_info.set_prof_pic_url(data["profile_picture"].asString());
+    user_info.set_bio(data["bio"].asString());
+    user_info.set_website(data["website"].asString());
+
+    const Json::Value& counts = data["counts"];
+    user_info.set_followed_by(counts["followed_by"].asUInt());
+    user_info.set_follows(counts["follows"].asUInt());
+    user_info.set_media_count(counts["media"].asUInt());
+
+    return user_info;
 }
 
 std::string InstagramParser::get_error(const std::string& json){
@@ -111,9 +138,6 @@ std::string InstagramParser::get_error(const std::string& json){
     }else{
         return "Unknown error with code = " + std::to_string(code);
     }
-
-
-
 }
 
 }
