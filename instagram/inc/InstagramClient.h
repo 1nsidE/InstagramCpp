@@ -38,9 +38,9 @@ public:
     UserInfo get_user_info();
     UserInfo get_user_info(const std::string& user_id);
    
-    MediaEntries get_user_recent_media();
-    MediaEntries get_user_recent_media(const std::string& user_id);
-
+    MediaEntries get_recent_media();
+    MediaEntries get_recent_media(const std::string& user_id);
+    MediaEntries get_liked_media();
 private:
     InstagramParser parser;
     Http::HttpClient http_client;

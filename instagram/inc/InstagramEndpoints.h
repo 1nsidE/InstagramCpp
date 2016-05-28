@@ -14,7 +14,7 @@ namespace Instagram{
 
         static const char* recent_media = "media/recent";
         static const char* search = "search";
-        static const char* self_liked = "media/like";
+        static const char* self_liked = "self/media/liked";
     }
 
     namespace Relationships{

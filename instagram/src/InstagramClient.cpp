@@ -78,11 +78,11 @@ UserInfo InstagramClient::get_user_info(const std::string& user_id){
 
 }
 
-MediaEntries InstagramClient::get_user_recent_media(){
-    return get_user_recent_media(self);
+MediaEntries InstagramClient::get_recent_media(){
+    return get_recent_media(self);
 }
 
-MediaEntries InstagramClient::get_user_recent_media(const std::string& user_id) {
+MediaEntries InstagramClient::get_recent_media(const std::string& user_id) {
     try{
         check_auth();
         Http::HttpUrl url{Users::users + user_id + '/' + Users::recent_media};
@@ -97,6 +97,30 @@ MediaEntries InstagramClient::get_user_recent_media(const std::string& user_id) 
             default:
                 return Http::get_str(response.get_status());
         } 
+    }catch(const std::exception& err){
+        return err.what();
+    }
+
+}
+
+MediaEntries InstagramClient::get_liked_media(){
+    try{
+        check_auth();
+        std::string endpoint{Users::users};
+
+        Http::HttpUrl url{endpoint + Users::self_liked};
+        url[AUTH_TOKEN_ARG] = auth_token;
+        
+        Http::HttpResponse response = http_client.get(url);
+
+        switch(response.get_status()){
+            case Http::Status::OK:
+                return parser.parse_media_entries(response.get_data());
+            case Http::Status::BAD_REQUEST:
+                return parser.get_error(response.get_data());
+            default:
+                return Http::get_str(response.get_status());
+        }
     }catch(const std::exception& err){
         return err.what();
     }

@@ -29,7 +29,7 @@ int main(){
 
     inst_client.set_auth_token(auth_token.get_auth_token());
     
-    Instagram::MediaEntries media_entries = inst_client.get_user_recent_media();
+    Instagram::MediaEntries media_entries = inst_client.get_recent_media();
     if(!media_entries.is_succeed()){
     	std::cerr << "Failed to retrieve recent media, reason : " << media_entries.get_error_message() << std::endl;
     	return 1;
