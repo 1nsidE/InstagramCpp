@@ -126,4 +126,29 @@ MediaEntries InstagramClient::get_liked_media(){
     }
 }
 
+UsersInfo InstagramClient::search_users(const std::string& query){
+    try{
+        check_auth();
+
+        std::string end_point{Users::users};
+        Http::HttpUrl url{end_point + Users::search};
+        url[Users::query_arg] = query;
+        url[AUTH_TOKEN_ARG] = auth_token; 
+
+        Http::HttpResponse response = http_client.get(url);
+        
+        switch(response.get_status()){
+            case Http::Status::OK:
+                return parser.parse_users_info(response.get_data());
+            case Http::Status::BAD_REQUEST:
+                return parser.get_error(response.get_data());
+            default:
+                return Http::get_str(response.get_status());
+        }
+
+    }catch(std::exception& err){
+        return err.what();
+    }
+}
+
 }

@@ -29,31 +29,31 @@ AuthorizationToken::~AuthorizationToken(){
 
 }
 
-std::string AuthorizationToken::get_auth_token() const{
+const std::string& AuthorizationToken::get_auth_token() const{
     return auth_token;
 }
 
-std::string AuthorizationToken::get_id() const{
+const std::string& AuthorizationToken::get_id() const{
     return id;
 }
 
-std::string AuthorizationToken::get_user_name() const{
+const std::string& AuthorizationToken::get_user_name() const{
     return user_name;
 }
 
-std::string AuthorizationToken::get_user_bio() const{
+const std::string& AuthorizationToken::get_user_bio() const{
     return user_bio;
 }
 
-std::string AuthorizationToken::get_user_full_name() const{
+const std::string& AuthorizationToken::get_user_full_name() const{
     return user_full_name;
 }
 
-std::string AuthorizationToken::get_user_profpic_url() const{
+const std::string& AuthorizationToken::get_user_profpic_url() const{
     return profpic_url;
 }
 
-std::string AuthorizationToken::get_website() const{
+const std::string& AuthorizationToken::get_website() const{
     return website;
 }
 

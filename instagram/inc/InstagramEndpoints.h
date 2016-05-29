@@ -11,6 +11,8 @@ namespace Instagram{
     
     namespace Users{
         static const char* users = "/v1/users/";
+        
+        static const char* query_arg = "q";
 
         static const char* recent_media = "media/recent";
         static const char* search = "search";

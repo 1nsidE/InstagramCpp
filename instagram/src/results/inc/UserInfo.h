@@ -20,7 +20,7 @@ public:
     UserInfo& operator=(UserInfo&& user_info);
     
     const std::string& get_id() const;
-    const std::string& get_nickname() const;
+    const std::string& get_username() const;
     const std::string& get_full_name() const;
     const std::string& get_bio() const;
     const std::string& get_prof_pic_url() const;
@@ -31,7 +31,7 @@ public:
     unsigned int media_count() const;
     
     void set_id(const std::string& _id);
-    void set_nickname(const std::string& _nickname);
+    void set_username(const std::string& _username);
     void set_full_name(const std::string& _full_name);
     void set_bio(const std::string& _bio);
     void set_prof_pic_url(const std::string& _prof_pic_url);
@@ -42,7 +42,7 @@ public:
     void set_media_count(unsigned int count);
 private:
     std::string id;
-    std::string nickname;
+    std::string username;
     std::string full_name;
     std::string bio;
     std::string prof_pic_url;

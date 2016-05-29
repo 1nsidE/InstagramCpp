@@ -12,6 +12,7 @@
 #include "AuthorizationToken.h"
 #include "MediaEntries.h"
 #include "UserInfo.h"
+#include "UsersInfo.h"
 
 #include "InstagramParser.h"
 
@@ -34,13 +35,14 @@ public:
 			const std::string& client_id, 
 			const std::string& client_secret,
 			const std::string& redirect_uri);
-
+//Users
     UserInfo get_user_info();
     UserInfo get_user_info(const std::string& user_id);
-   
     MediaEntries get_recent_media();
     MediaEntries get_recent_media(const std::string& user_id);
     MediaEntries get_liked_media();
+    UsersInfo search_users(const std::string& query);
+//Relationships
 private:
     InstagramParser parser;
     Http::HttpClient http_client;

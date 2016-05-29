@@ -24,7 +24,7 @@ public:
     const std::string& get_url() const;
     const std::string& get_id() const;
     const std::string& get_caption() const;
-    std::vector<std::string> get_tags() const;
+    const std::vector<std::string>& get_tags() const;
     unsigned int get_comments_count() const;
     unsigned int get_like_count() const;
     unsigned long get_created_time() const;

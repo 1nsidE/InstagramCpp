@@ -6,7 +6,7 @@ UserInfo::UserInfo() : BaseResult{}, _followed_by{0}, _follows{0}, _media_count{
 
 UserInfo::UserInfo(const UserInfo& user_info) : BaseResult{user_info},
                                         id{user_info.id},
-                                        nickname{user_info.nickname},
+                                        username{user_info.username},
                                         full_name{user_info.full_name},
                                         bio{user_info.bio},
                                         prof_pic_url{user_info.prof_pic_url},
@@ -17,7 +17,7 @@ UserInfo::UserInfo(const UserInfo& user_info) : BaseResult{user_info},
 
 UserInfo::UserInfo(UserInfo&& user_info) : BaseResult{user_info},
                                         id{std::move(user_info.id)},
-                                        nickname{std::move(user_info.nickname)},
+                                        username{std::move(user_info.username)},
                                         full_name{std::move(user_info.full_name)},
                                         bio{std::move(user_info.bio)},
                                         prof_pic_url{std::move(user_info.prof_pic_url)},
@@ -44,7 +44,7 @@ UserInfo& UserInfo::operator=(const UserInfo& user_info){
     }
 
     id = user_info.id;
-    nickname = user_info.nickname;
+    username = user_info.username;
     full_name = user_info.full_name;
     bio = user_info.bio;
     prof_pic_url = user_info.prof_pic_url;
@@ -63,7 +63,7 @@ UserInfo& UserInfo::operator=(UserInfo&& user_info){
     }
     
     id = std::move(user_info.id);
-    nickname = std::move(user_info.nickname);
+    username = std::move(user_info.username);
     full_name = std::move(user_info.full_name);
     bio = std::move(user_info.bio);
     prof_pic_url = std::move(user_info.prof_pic_url);
@@ -83,8 +83,8 @@ const std::string& UserInfo::get_id() const{
     return id;
 }
 
-const std::string& UserInfo::get_nickname() const{
-    return nickname;
+const std::string& UserInfo::get_username() const{
+    return username;
 }
 
 const std::string& UserInfo::get_full_name() const{
@@ -119,8 +119,8 @@ void UserInfo::set_id(const std::string& _id){
     id = _id;
 }
 
-void UserInfo::set_nickname(const std::string& _nickname){
-    nickname = _nickname;
+void UserInfo::set_username(const std::string& _username){
+    username = _username;
 }
 
 void UserInfo::set_full_name(const std::string& _full_name){

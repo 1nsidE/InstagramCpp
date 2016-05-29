@@ -5,6 +5,7 @@ BaseResult.cpp
 MediaEntries.cpp
 MediaEntry.cpp
 UserInfo.cpp
+UsersInfo.cpp
 AuthorizationToken.cpp
 )
 

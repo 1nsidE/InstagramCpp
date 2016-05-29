@@ -88,7 +88,7 @@ const std::string& MediaEntry::get_caption() const{
     return caption;
 }
 
-std::vector<std::string> MediaEntry::get_tags() const {
+const std::vector<std::string>& MediaEntry::get_tags() const {
     return tags;
 }
 
