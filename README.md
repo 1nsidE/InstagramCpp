@@ -8,18 +8,18 @@ Supported API's:
 ----------------
 
 Users:
-    /users/self
-    /users/{user-id}
-    /users/self/media
-    /users/{user-id}/media/recent
-    /users/self/media/liked
-    /users/search
+	/users/self
+	/users/{user-id}
+	/users/self/media
+	/users/{user-id}/media/recent
+	/users/self/media/liked
+	/users/search
 
 Relationships:
-    /users/self/follows
-    /users/self/followed-by
-    /users/self/requested-by
-
+	/users/self/follows
+	/users/self/followed-by
+	/users/self/requested-by
+	
 
 Usage Example:
 ----------------
