@@ -7,7 +7,7 @@ Project is under active development.
 Supported API's:
 ----------------
 
-Users
+From 'Users' Group :
 
 	/users/self
 	/users/{user-id}
@@ -16,7 +16,7 @@ Users
 	/users/self/media/liked
 	/users/search
 
-Relationships
+From Relationships Group:
 
 	/users/self/follows
 	/users/self/followed-by
