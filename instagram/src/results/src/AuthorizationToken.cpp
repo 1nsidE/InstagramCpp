@@ -11,14 +11,16 @@ AuthorizationToken::AuthorizationToken(const char* err_msg) : BaseResult(err_msg
 AuthorizationToken::AuthorizationToken(const std::string& err_msg) : BaseResult{err_msg}{}
 
 
-AuthorizationToken::AuthorizationToken(AuthorizationToken& token) : auth_token(token.auth_token), 
+AuthorizationToken::AuthorizationToken(AuthorizationToken& token) : BaseResult{token}, 
+    auth_token(token.auth_token), 
     id(token.id),
     user_name(token.user_name), 
     user_bio(token.user_bio),
     user_full_name(token.user_full_name),
     profpic_url(token.profpic_url){}
 
-AuthorizationToken::AuthorizationToken(AuthorizationToken&& token) : auth_token(std::move(token.auth_token)),
+AuthorizationToken::AuthorizationToken(AuthorizationToken&& token) : BaseResult{std::forward<BaseResult>(token)},
+    auth_token(std::move(token.auth_token)),
     id(std::move(token.id)),
     user_name(std::move(token.user_name)),
     user_bio(std::move(token.user_bio)),

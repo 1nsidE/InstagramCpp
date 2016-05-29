@@ -7,20 +7,7 @@
 
 namespace Instagram{
 
-BaseResult::BaseResult(const std::string &_err_msg) {
-    err_msg = new std::string{_err_msg};
-}
-
-BaseResult::BaseResult(BaseResult &&base_result) : err_msg(base_result.err_msg) {
-    base_result.err_msg = nullptr;
-}
-
-BaseResult::BaseResult(const BaseResult &base_result) {
-    err_msg = nullptr;
-    if(base_result.err_msg != nullptr){
-        err_msg = new std::string{*base_result.err_msg};
-    }
-}
+BaseResult::BaseResult() : err_msg(nullptr){}
 
 BaseResult::BaseResult(const char *_err_msg) {
     if(_err_msg == nullptr){
@@ -30,10 +17,58 @@ BaseResult::BaseResult(const char *_err_msg) {
     err_msg = new std::string{_err_msg};
 }
 
+BaseResult::BaseResult(const std::string &_err_msg) {
+    err_msg = new std::string{_err_msg};
+}
+
+BaseResult::BaseResult(BaseResult&& base_result) : err_msg{base_result.err_msg} {
+    base_result.err_msg = nullptr;
+}
+
+BaseResult::BaseResult(const BaseResult& base_result) {
+    err_msg = nullptr;
+    if(base_result.err_msg != nullptr){
+        err_msg = new std::string{*base_result.err_msg};
+    }
+}
+
 BaseResult::~BaseResult() {
     if(err_msg != nullptr){
         delete err_msg;
+        err_msg = nullptr;
     }
+}
+
+BaseResult& BaseResult::operator=(const BaseResult& base_result){
+    if(this == &base_result){
+        return *this;
+    }
+
+    if(err_msg != nullptr){
+        delete err_msg;
+    }
+
+    err_msg = nullptr;
+    if(base_result.err_msg != nullptr){
+        err_msg = new std::string{*base_result.err_msg};
+    }
+
+    return *this;
+}
+
+BaseResult& BaseResult::operator=(BaseResult&& base_result){
+    if(this == &base_result){
+        return *this;
+    }
+
+    if(err_msg != nullptr){
+        delete err_msg;
+    }
+
+    err_msg = base_result.err_msg;
+    base_result.err_msg = nullptr;
+
+    return *this;
 }
 
 const std::string& BaseResult::get_error_message() {

@@ -38,6 +38,8 @@ namespace Socket{
 
     SSLSocket &SSLSocket::operator=(SSLSocket &&ssl_socket) {
         if(this != &ssl_socket){
+            TCPSocket::operator=(std::forward<TCPSocket>(ssl_socket));
+            
             ssl = ssl_socket.ssl;
             ssl_socket.ssl = nullptr;
 

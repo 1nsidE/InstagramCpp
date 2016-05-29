@@ -6,9 +6,9 @@
 
 namespace Http{
 
-HttpRequest::HttpRequest() : method(Http::Method::UNKNOWN){}
+HttpRequest::HttpRequest() : HttpHeader{}, method(Http::Method::UNKNOWN){}
 HttpRequest::HttpRequest(const HttpRequest& request) : HttpHeader{request}, method{request.method}, url{request.url}{}
-HttpRequest::HttpRequest(HttpRequest&& request) : HttpHeader{request}, method{request.method}, url{std::move(request.url)}{}
+HttpRequest::HttpRequest(HttpRequest&& request) : HttpHeader{std::forward<HttpHeader>(request)}, method{request.method}, url{std::move(request.url)}{}
 
 HttpRequest::~HttpRequest() {}
 
@@ -27,7 +27,7 @@ HttpRequest& HttpRequest::operator=(HttpRequest&& http_request){
     if(this == &http_request){
         return *this;
     }
-    HttpHeader::operator=(http_request);
+    HttpHeader::operator=(std::forward<HttpHeader>(http_request));
 
     http_request.method = Http::Method::UNKNOWN;
     url = std::move(http_request.url);

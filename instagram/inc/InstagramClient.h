@@ -43,11 +43,17 @@ public:
     MediaEntries get_liked_media();
     UsersInfo search_users(const std::string& query);
 //Relationships
+    UsersInfo get_follows();
+    UsersInfo get_followed_by();
+    UsersInfo get_requested_by();
 private:
     InstagramParser parser;
     Http::HttpClient http_client;
     std::string auth_token;
-    
+   
+    UsersInfo get_users_info(const Http::HttpUrl& url);    
+    MediaEntries get_media(const Http::HttpUrl& url);
+
     void check_auth();
 };
 

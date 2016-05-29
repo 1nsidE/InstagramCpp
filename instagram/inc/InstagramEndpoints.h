@@ -21,6 +21,8 @@ namespace Instagram{
 
     namespace Relationships{
         static const char* follows  = "/v1/users/self/follows";
+        static const char* followed_by = "/v1/users/self/followed-by";
+        static const char* requested_by = "/v1/users/self/requested-by";
     }
 }
 

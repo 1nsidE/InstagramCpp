@@ -128,7 +128,13 @@ UsersInfo InstagramParser::parse_users_info(const std::string& json){
     for(const Json::Value& user_info : data){
         UsersInfo::SimpleUserInfo simple_info{};
         simple_info.username = user_info["username"].asString();
-        simple_info.first_name = user_info["first_name"].asString();
+
+        const Json::Value& name = user_info["first_name"];
+        if(name.isNull()){
+            simple_info.name = user_info["full_name"].asString();
+        }else{
+            simple_info.name = name.asString();
+        }
         simple_info.last_name = user_info["last_name"].asString();
         simple_info.prof_pic = user_info["profile_picture"].asString();
         simple_info.id = user_info["id"].asString();

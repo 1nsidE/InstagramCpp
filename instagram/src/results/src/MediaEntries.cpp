@@ -2,7 +2,7 @@
 
 namespace Instagram{
 
-MediaEntries::MediaEntries(){}
+MediaEntries::MediaEntries() : BaseResult{} {}
 
 MediaEntries::MediaEntries(const char* err_msg) : BaseResult(err_msg){
 
@@ -12,21 +12,25 @@ MediaEntries::MediaEntries(const std::string& err_msg) : BaseResult(err_msg){
 
 }
 
-MediaEntries::MediaEntries(const MediaEntries& media_entries) : medias{media_entries.medias}{}
+MediaEntries::MediaEntries(const MediaEntries& media_entries) : BaseResult{media_entries}, medias{media_entries.medias}{}
 
-MediaEntries::MediaEntries(MediaEntries&& media_entries) : medias{std::move(media_entries.medias)}{}
+MediaEntries::MediaEntries(MediaEntries&& media_entries) : BaseResult{std::forward<BaseResult>(media_entries)}, medias{std::move(media_entries.medias)}{}
 
 MediaEntries::~MediaEntries(){}
 
 MediaEntries& MediaEntries::operator=(const MediaEntries& media_entries){
     if(this == &media_entries) return *this;
     
+    BaseResult::operator=(media_entries);
+
     medias = media_entries.medias;
     return *this;
 }
 
 MediaEntries& MediaEntries::operator=(MediaEntries&& media_entries){
     if(this == &media_entries) return *this;
+    
+    BaseResult::operator=(std::forward<BaseResult>(media_entries));
 
     medias = std::move(media_entries.medias);
     return *this;

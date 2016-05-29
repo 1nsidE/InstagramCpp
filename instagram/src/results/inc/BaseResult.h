@@ -7,14 +7,17 @@ namespace Instagram{
 
 class BaseResult{
 public:
-	BaseResult() : err_msg(nullptr){}
-	BaseResult(const char* _err_msg);
+	BaseResult();
+    BaseResult(const char* _err_msg);
 	BaseResult(const std::string& _err_msg);
 	
 	BaseResult(const BaseResult& base_result);
 	BaseResult(BaseResult&& base_result);
 
 	~BaseResult();
+    
+    BaseResult& operator=(const BaseResult& base_result);
+    BaseResult& operator=(BaseResult&& base_result);
 
 	const std::string& get_error_message();
 	bool is_succeed();

@@ -88,15 +88,7 @@ MediaEntries InstagramClient::get_recent_media(const std::string& user_id) {
         Http::HttpUrl url{Users::users + user_id + '/' + Users::recent_media};
         url[AUTH_TOKEN_ARG] = auth_token;
         
-        Http::HttpResponse response = http_client.get(url);
-        switch(response.get_status()){
-            case Http::Status::OK:
-                return parser.parse_media_entries(response.get_data());
-            case Http::Status::BAD_REQUEST:
-                return parser.get_error(response.get_data());
-            default:
-                return Http::get_str(response.get_status());
-        } 
+        return get_media(url); 
     }catch(const std::exception& err){
         return err.what();
     }
@@ -112,18 +104,25 @@ MediaEntries InstagramClient::get_liked_media(){
         url[AUTH_TOKEN_ARG] = auth_token;
         
         Http::HttpResponse response = http_client.get(url);
-
-        switch(response.get_status()){
-            case Http::Status::OK:
-                return parser.parse_media_entries(response.get_data());
-            case Http::Status::BAD_REQUEST:
-                return parser.get_error(response.get_data());
-            default:
-                return Http::get_str(response.get_status());
-        }
+        
+        return get_media(url);
     }catch(const std::exception& err){
         return err.what();
     }
+}
+
+MediaEntries InstagramClient::get_media(const Http::HttpUrl& url){
+    Http::HttpResponse response = http_client.get(url);
+
+    switch(response.get_status()){
+        case Http::Status::OK:
+            return parser.parse_media_entries(response.get_data());
+        case Http::Status::BAD_REQUEST:
+            return parser.get_error(response.get_data());
+        default:
+            return Http::get_str(response.get_status());
+    }
+
 }
 
 UsersInfo InstagramClient::search_users(const std::string& query){
@@ -134,21 +133,58 @@ UsersInfo InstagramClient::search_users(const std::string& query){
         Http::HttpUrl url{end_point + Users::search};
         url[Users::query_arg] = query;
         url[AUTH_TOKEN_ARG] = auth_token; 
-
-        Http::HttpResponse response = http_client.get(url);
         
-        switch(response.get_status()){
-            case Http::Status::OK:
-                return parser.parse_users_info(response.get_data());
-            case Http::Status::BAD_REQUEST:
-                return parser.get_error(response.get_data());
-            default:
-                return Http::get_str(response.get_status());
-        }
-
-    }catch(std::exception& err){
+        return get_users_info(url);
+    }catch(const std::exception& err){
         return err.what();
     }
+}
+
+UsersInfo InstagramClient::get_follows(){
+    try{
+        check_auth();
+        Http::HttpUrl url{Relationships::follows};
+        url[AUTH_TOKEN_ARG] = auth_token;
+        return get_users_info(url);
+    }catch(const std::exception& err){
+        return err.what();
+    }
+}
+
+UsersInfo InstagramClient::get_followed_by(){
+    try{
+        check_auth();
+        Http::HttpUrl url{Relationships::followed_by};
+        url[AUTH_TOKEN_ARG] = auth_token;
+        return get_users_info(url);
+    }catch(const std::exception& err){
+        return err.what();
+    }
+}
+
+UsersInfo InstagramClient::get_requested_by(){
+    try{
+        check_auth();
+        Http::HttpUrl url{Relationships::requested_by};
+        url[AUTH_TOKEN_ARG] = auth_token;
+        return get_users_info(url);
+    }catch(const std::exception& err){
+        return err.what();
+    }
+}
+
+UsersInfo InstagramClient::get_users_info(const Http::HttpUrl& url){
+    Http::HttpResponse response = http_client.get(url);
+
+    switch(response.get_status()){
+        case Http::Status::OK:
+            return parser.parse_users_info(response.get_data());
+        case Http::Status::BAD_REQUEST:
+            return parser.get_error(response.get_data());
+        default:
+            return Http::get_str(response.get_status());
+    }
+
 }
 
 }

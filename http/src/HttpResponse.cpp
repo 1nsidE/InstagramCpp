@@ -2,10 +2,10 @@
 
 namespace Http{
 
-HttpResponse::HttpResponse() : status(Http::Status::UNKNOWN){}
+HttpResponse::HttpResponse() : HttpHeader{}, status(Http::Status::UNKNOWN){}
 
-HttpResponse::HttpResponse(HttpResponse& response) : HttpHeader(response), status(response.status){}
-HttpResponse::HttpResponse(HttpResponse&& response) : HttpHeader(response), status(response.status){
+HttpResponse::HttpResponse(HttpResponse& response) : HttpHeader{response}, status{response.status}{}
+HttpResponse::HttpResponse(HttpResponse&& response) : HttpHeader{std::forward<HttpHeader>(response)}, status{response.status}{
     response.status = Http::Status::UNKNOWN;
 }
 
@@ -29,19 +29,17 @@ Http::Status HttpResponse::get_status() const {
 
 HttpResponse &HttpResponse::operator=(HttpResponse &&http_response) {
     if(this != &http_response){
-        HttpHeader::operator=(http_response);
+        HttpHeader::operator=(std::forward<HttpHeader>(http_response));
         status = http_response.status;
         http_response.status = Http::Status::UNKNOWN;
     }
     return *this;
 }
 
-
 HttpResponse &HttpResponse::operator=(const HttpResponse& http_response) {
     if(this != &http_response){
         HttpHeader::operator=(http_response);
         status = http_response.status;
-
     }
     return *this;
 }

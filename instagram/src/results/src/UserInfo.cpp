@@ -15,7 +15,7 @@ UserInfo::UserInfo(const UserInfo& user_info) : BaseResult{user_info},
                                         _follows{user_info._follows},
                                         _media_count{user_info._media_count}{}
 
-UserInfo::UserInfo(UserInfo&& user_info) : BaseResult{user_info},
+UserInfo::UserInfo(UserInfo&& user_info) : BaseResult{std::forward<BaseResult>(user_info)},
                                         id{std::move(user_info.id)},
                                         username{std::move(user_info.username)},
                                         full_name{std::move(user_info.full_name)},
@@ -42,6 +42,8 @@ UserInfo& UserInfo::operator=(const UserInfo& user_info){
     if(this == &user_info){
         return *this;
     }
+    
+    BaseResult::operator=(user_info);
 
     id = user_info.id;
     username = user_info.username;
@@ -62,6 +64,8 @@ UserInfo& UserInfo::operator=(UserInfo&& user_info){
         return *this;
     }
     
+    BaseResult::operator=(std::forward<BaseResult>(user_info)); 
+
     id = std::move(user_info.id);
     username = std::move(user_info.username);
     full_name = std::move(user_info.full_name);
