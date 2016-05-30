@@ -7,7 +7,6 @@
 #include "TCPSocket.h"
 
 namespace Socket{
-    void init();
     
 class SSLSocket : public TCPSocket{
 public:
@@ -22,8 +21,10 @@ public:
     virtual int read(void *buf, size_t len) const;
     virtual void close();
 private:
-    void  throw_error(const char* err_msg, unsigned long code) const;
-    void connect();
+    void init();
+    [[noreturn]] void  throw_error(const char* err_msg, unsigned long code) const;
+    void connect(const std::string& hostname);
+    void verify_hostname(const std::string& hostname);
     SSL* ssl = nullptr;
     SSL_CTX* ctx = nullptr;
 };

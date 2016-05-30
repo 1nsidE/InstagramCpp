@@ -55,7 +55,7 @@ void TCPSocket::connect(const std::string& host, const std::string& port) {
     if(getaddrinfo(host.c_str(), port.c_str(), &hints, &res) == -1){
         throw_error("getaddrinfo() failed: ", errno);
     }
-
+    
     sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
     if(sockfd == -1){
         throw_error("failed to create socket: ", errno);

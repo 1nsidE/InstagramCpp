@@ -1,9 +1,6 @@
 #ifndef INSTAGRAM_SERVICE
 #define INSTAGRAM_SERVICE
 
-#include <json/json.h>
-#include <memory>
-
 #include "HttpResponse.h"
 #include "HttpRequest.h"
 #include "HttpClient.h"
@@ -17,8 +14,6 @@
 #include "InstagramParser.h"
 
 namespace Instagram{
-
-using Arguments = std::initializer_list<Http::Argument>;
 
 class InstagramClient{
 public:

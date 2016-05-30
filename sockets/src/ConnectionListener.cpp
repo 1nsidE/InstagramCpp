@@ -62,9 +62,13 @@ void ConnectionListener::init() {
 
         break;
     }
+
+    if(server_sockfd == -1){
+        throw std::runtime_error("failed to create socket");
+    }
     freeaddrinfo(res);
 
-    if(listen(server_sockfd, 256) == -1){
+    if(listen(server_sockfd, 256) == -1){ //TODO : make configurable
         std::string err_msg = "listen() failed :  ";
         err_msg += gai_strerror(errno);
         throw std::runtime_error(err_msg);
