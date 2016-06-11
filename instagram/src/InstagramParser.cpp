@@ -153,7 +153,8 @@ std::string InstagramParser::get_error(const std::string& json){
         return "Failed to parse error";
     }
 
-    const Json::Value& meta = root["meta"];
+    const Json::Value& meta = root["meta"].isNull() ? root : root["meta"];
+
     int code = meta["code"].asInt();
     if(code == 200){
         return "";

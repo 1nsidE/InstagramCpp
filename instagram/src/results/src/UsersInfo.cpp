@@ -8,6 +8,10 @@ UsersInfo::UsersInfo(const UsersInfo& info) : BaseResult{info}, users{info.users
 
 UsersInfo::UsersInfo(UsersInfo&& info) : BaseResult{std::forward<BaseResult>(info)}, users{std::move(info.users)} {}
 
+UsersInfo::UsersInfo(const char* err_msg) : BaseResult{err_msg}, users(0) {}
+
+UsersInfo::UsersInfo(const std::string& err_msg) : BaseResult{err_msg}, users(0) {}
+
 UsersInfo::~UsersInfo() {}
 
 UsersInfo& UsersInfo::operator=(const UsersInfo& info){
