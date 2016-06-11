@@ -104,7 +104,7 @@ UserInfo InstagramParser::parse_user_info(const std::string& json){
 
     user_info.set_id(data["id"].asString());
     user_info.set_username(data["username"].asString());
-    user_info.set_full_name(data["full_name"].asString());
+    user_info.set_name(data["full_name"].asString());
     user_info.set_prof_pic_url(data["profile_picture"].asString());
     user_info.set_bio(data["bio"].asString());
     user_info.set_website(data["website"].asString());
@@ -125,20 +125,21 @@ UsersInfo InstagramParser::parse_users_info(const std::string& json){
     
     const Json::Value& data = root["data"];
     UsersInfo users_info{};
-    for(const Json::Value& user_info : data){
-        UsersInfo::SimpleUserInfo simple_info{};
-        simple_info.username = user_info["username"].asString();
+    for(const Json::Value& user_info_json : data){
+        UserInfo user_info{};
+        user_info.set_username(user_info_json["username"].asString());
 
-        const Json::Value& name = user_info["first_name"];
+        const Json::Value& name = user_info_json["first_name"];
         if(name.isNull()){
-            simple_info.name = user_info["full_name"].asString();
+            user_info.set_name(user_info_json["full_name"].asString());
         }else{
-            simple_info.name = name.asString();
+            user_info.set_name(name.asString());
         }
-        simple_info.last_name = user_info["last_name"].asString();
-        simple_info.prof_pic = user_info["profile_picture"].asString();
-        simple_info.id = user_info["id"].asString();
-        users_info.add_info(simple_info);
+        user_info.set_last_name(user_info_json["last_name"].asString());
+        user_info.set_prof_pic_url(user_info_json["profile_picture"].asString());
+        user_info.set_id(user_info_json["id"].asString());
+
+        users_info << user_info;
     }
 
     return users_info;

@@ -7,7 +7,8 @@ UserInfo::UserInfo() : BaseResult{}, _followed_by{0}, _follows{0}, _media_count{
 UserInfo::UserInfo(const UserInfo& user_info) : BaseResult{user_info},
                                         id{user_info.id},
                                         username{user_info.username},
-                                        full_name{user_info.full_name},
+                                        name{user_info.name},
+                                        last_name{user_info.name},
                                         bio{user_info.bio},
                                         prof_pic_url{user_info.prof_pic_url},
                                         website{user_info.website},
@@ -18,7 +19,8 @@ UserInfo::UserInfo(const UserInfo& user_info) : BaseResult{user_info},
 UserInfo::UserInfo(UserInfo&& user_info) : BaseResult{std::forward<BaseResult>(user_info)},
                                         id{std::move(user_info.id)},
                                         username{std::move(user_info.username)},
-                                        full_name{std::move(user_info.full_name)},
+                                        name{std::move(user_info.name)},
+                                        last_name{std::move(user_info.last_name)},
                                         bio{std::move(user_info.bio)},
                                         prof_pic_url{std::move(user_info.prof_pic_url)},
                                         website{std::move(user_info.website)},
@@ -47,7 +49,8 @@ UserInfo& UserInfo::operator=(const UserInfo& user_info){
 
     id = user_info.id;
     username = user_info.username;
-    full_name = user_info.full_name;
+    name = user_info.name;
+    last_name = user_info.last_name;
     bio = user_info.bio;
     prof_pic_url = user_info.prof_pic_url;
     website = user_info.website;
@@ -68,7 +71,8 @@ UserInfo& UserInfo::operator=(UserInfo&& user_info){
 
     id = std::move(user_info.id);
     username = std::move(user_info.username);
-    full_name = std::move(user_info.full_name);
+    name = std::move(user_info.name);
+    last_name = std::move(user_info.last_name);
     bio = std::move(user_info.bio);
     prof_pic_url = std::move(user_info.prof_pic_url);
     website = std::move(user_info.website);
@@ -91,8 +95,12 @@ const std::string& UserInfo::get_username() const{
     return username;
 }
 
-const std::string& UserInfo::get_full_name() const{
-    return full_name;
+const std::string& UserInfo::get_last_name() const{
+    return last_name;
+}
+
+const std::string& UserInfo::get_name() const{
+    return name;
 }
 
 const std::string& UserInfo::get_bio() const{
@@ -127,8 +135,12 @@ void UserInfo::set_username(const std::string& _username){
     username = _username;
 }
 
-void UserInfo::set_full_name(const std::string& _full_name){
-    full_name = _full_name;
+void UserInfo::set_name(const std::string& _name){
+    name = _name;
+}
+
+void UserInfo::set_last_name(const std::string& _last_name){
+    last_name = _last_name;
 }
 
 void UserInfo::set_bio(const std::string& _bio){

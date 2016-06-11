@@ -1,8 +1,8 @@
 //
 // Created by inside on 4/23/16.
 //
+#include <limits>
 #include <netdb.h>
-#include <thread>
 
 #include "TCPSocket.h"
 #include "SSLSocket.h"
