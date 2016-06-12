@@ -21,6 +21,7 @@ From Relationships Group:
 	/users/self/follows
 	/users/self/followed-by
 	/users/self/requested-by
+    /users/{user-id}/relationship
 	
 
 Usage Example:
