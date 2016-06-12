@@ -27,9 +27,9 @@ public:
     const std::string& get_prof_pic_url() const;
     const std::string& get_website() const;
 
-    unsigned int followed_by() const;
-    unsigned int follows() const;
-    unsigned int media_count() const;
+    int followed_by() const;
+    int follows() const;
+    int media_count() const;
     
     void set_id(const std::string& _id);
     void set_username(const std::string& _username);
@@ -39,9 +39,9 @@ public:
     void set_prof_pic_url(const std::string& _prof_pic_url);
     void set_website(const std::string& _website);
 
-    void set_followed_by(unsigned int count);
-    void set_follows(unsigned int count);
-    void set_media_count(unsigned int count);
+    void set_followed_by(int count);
+    void set_follows(int count);
+    void set_media_count(int count);
 private:
     std::string id;
     std::string username;
@@ -51,9 +51,9 @@ private:
     std::string prof_pic_url;
     std::string website;
 
-    unsigned int _followed_by;
-    unsigned int _follows;
-    unsigned int _media_count;
+    int _followed_by;
+    int _follows;
+    int _media_count;
 };
 
 }

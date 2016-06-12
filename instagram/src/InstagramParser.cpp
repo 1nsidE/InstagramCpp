@@ -39,8 +39,15 @@ MediaEntries InstagramParser::parse_media_entries(const std::string& json){
             
             const Json::Value& tags = media["tags"];
             if(tags.isArray()){
-                for(auto& tag : tags){
+                for(const auto& tag : tags){
                     entry.add_tag(tag.asString());
+                }
+            }
+
+            const Json::Value& users_in_photo = media["users_in_photo"];
+            if(users_in_photo.isArray()){
+                for(const auto& user : users_in_photo){
+                    entry.add_user_in_photo(user.asString());
                 }
             }
                        
@@ -55,7 +62,7 @@ MediaEntries InstagramParser::parse_media_entries(const std::string& json){
             }    
              
             const Json::Value& create_time = media["created_time"];
-            unsigned long created_time = create_time.isNull() ? 0 : std::stoul(create_time.asString());
+            long created_time = create_time.isNull() ? -1 : std::stol(create_time.asString());
             entry.set_created_time(created_time);
             
             const Json::Value& link = media["link"];
@@ -76,11 +83,14 @@ MediaEntries InstagramParser::parse_media_entries(const std::string& json){
             if(!standart_resolution.isNull()) entry.set_standart_resolution(standart_resolution["url"].asString());
 
             const Json::Value& comments = media["comments"];
-            unsigned int comments_count = comments.isNull() ? 0 : comments["count"].asUInt();
+            int comments_count = comments.isNull() ? -1 : comments["count"].asInt();
             entry.set_comments_count(comments_count);
+            
+            const Json::Value& filter = media["filter"];
+            entry.set_filter(filter.asString());
 
             const Json::Value& likes = media["likes"];
-            unsigned int likes_count = likes.isNull() ? 0 : likes["count"].asUInt();
+            int likes_count = likes.isNull() ? -1 : likes["count"].asInt();
             entry.set_like_count(likes_count);
            
             const Json::Value& id = media["id"];
@@ -110,9 +120,15 @@ UserInfo InstagramParser::parse_user_info(const std::string& json){
     user_info.set_website(data["website"].asString());
 
     const Json::Value& counts = data["counts"];
-    user_info.set_followed_by(counts["followed_by"].asUInt());
-    user_info.set_follows(counts["follows"].asUInt());
-    user_info.set_media_count(counts["media"].asUInt());
+
+    const Json::Value& followed_by = counts["followed_by"];
+    user_info.set_followed_by(followed_by.isNull() ? -1 : followed_by.asInt());
+
+    const Json::Value& follows = counts["follows"];
+    user_info.set_follows(follows.isNull() ? -1 : follows.asInt());
+
+    const Json::Value& media_count = counts["media"];
+    user_info.set_media_count(counts.isNull() ? -1 : media_count.asInt());
 
     return user_info;
 }

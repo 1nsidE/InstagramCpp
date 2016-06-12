@@ -24,27 +24,33 @@ public:
     const std::string& get_url() const;
     const std::string& get_id() const;
     const std::string& get_caption() const;
-    const std::vector<std::string>& get_tags() const;
-    unsigned int get_comments_count() const;
-    unsigned int get_like_count() const;
-    unsigned long get_created_time() const;
-
     const std::string& get_standart_resolution() const;
     const std::string& get_thumbnail() const;
     const std::string& get_low_resolution() const;
+    const std::string& get_filter() const;
+
+    const std::vector<std::string>& get_tags() const;
+    const std::vector<std::string>& get_users_in_photo() const;
+
+    int get_comments_count() const;
+    int get_like_count() const;
+    long get_created_time() const;
 
     void set_type(MediaType type);
     void set_url(const std::string& url);
     void set_id(const std::string& id);
     void set_caption(const std::string& caption);
-    void add_tag(const std::string& tag);
-    void set_comments_count(unsigned int count);
-    void set_like_count(unsigned int count);
-    void set_created_time(unsigned long time);
-
     void set_standart_resolution(const std::string& url);
     void set_thumbnail(const std::string& url);
     void set_low_resolution(const std::string& url);
+    void set_filter(const std::string& _filter);
+
+    void set_comments_count(int count);
+    void set_like_count(int count);
+    void set_created_time(long time);
+
+    void add_tag(const std::string& tag);
+    void add_user_in_photo(const std::string& user_id);
 private:
     std::string url;
     std::string id;
@@ -52,11 +58,13 @@ private:
     std::string low_resolution;
     std::string thumbnail;
     std::string standart_resolution;
-    
+    std::string filter;
+
     std::vector<std::string> tags;
-    unsigned int comments_count = 0;
-    unsigned int likes_count = 0;
-    unsigned long created_time = 0;
+    std::vector<std::string> users_in_photo;
+    int comments_count = 0;
+    int likes_count = 0;
+    long created_time = 0;
     MediaType media_type;
 };
 

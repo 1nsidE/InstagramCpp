@@ -2,7 +2,7 @@
 
 namespace Instagram{
 
-UserInfo::UserInfo() : BaseResult{}, _followed_by{0}, _follows{0}, _media_count{0} {}
+UserInfo::UserInfo() : BaseResult{}, _followed_by{-1}, _follows{-1}, _media_count{-1} {}
 
 UserInfo::UserInfo(const UserInfo& user_info) : BaseResult{user_info},
                                         id{user_info.id},
@@ -28,9 +28,9 @@ UserInfo::UserInfo(UserInfo&& user_info) : BaseResult{std::forward<BaseResult>(u
                                         _follows{user_info._follows},
                                         _media_count{user_info._media_count}{
 
-    user_info._follows = 0;
-    user_info._followed_by = 0;
-    user_info._media_count = 0;
+    user_info._follows = -1;
+    user_info._followed_by = -1;
+    user_info._media_count = -1;
 }
 
 
@@ -115,15 +115,15 @@ const std::string& UserInfo::get_website() const{
     return website;
 }
 
-unsigned int UserInfo::followed_by() const{
+int UserInfo::followed_by() const{
     return _followed_by;
 }
 
-unsigned int UserInfo::follows() const{
+int UserInfo::follows() const{
     return _follows;
 }
 
-unsigned int UserInfo::media_count() const{
+int UserInfo::media_count() const{
     return _media_count;
 }
 
@@ -155,15 +155,15 @@ void UserInfo::set_website(const std::string& _website){
     website = _website;
 }
 
-void UserInfo::set_followed_by(unsigned int count){
+void UserInfo::set_followed_by(int count){
     _followed_by = count;
 }
 
-void UserInfo::set_follows(unsigned int count){
+void UserInfo::set_follows(int count){
     _follows = count;
 }
 
-void UserInfo::set_media_count(unsigned int count){
+void UserInfo::set_media_count(int count){
     _media_count = count;
 }
 
