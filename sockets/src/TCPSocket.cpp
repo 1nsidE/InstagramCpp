@@ -121,15 +121,17 @@ std::string TCPSocket::get_ip() const {
 }
 
 void TCPSocket::make_non_blocking(){
-    if(sockfd != -1){
+    if(sockfd != -1 && !is_blocking){
         int flags = fcntl(sockfd, F_GETFL, 0);
         if(flags < 0){
             throw_error("failed to get socket flags : ", errno);
         }
+        
         flags |= O_NONBLOCK;
         if(fcntl(sockfd, F_SETFL, flags) < 0){
             throw_error("failed to change socket to non-blocking mode : ", errno);
         }
+
         is_blocking = true;
     }else{
         throw std::runtime_error("not connected!");
@@ -146,13 +148,35 @@ bool TCPSocket::wait_for_read(long timeout) const{
 }
 
 bool TCPSocket::wait_for_write(long timeout) const{
-    throw std::runtime_error{"Not Implemented"};
+    pollfd pfd;
+
+    pfd.fd = sockfd;
+    pfd.events = POLLOUT;
+
+    int result = poll(&pfd, 1, 1000*timeout);
+    return result + 1;
 }
 
 void TCPSocket::throw_error(const char* err_msg, int code) const{
     std::string msg{err_msg};
     msg += gai_strerror(code);
     throw std::runtime_error(err_msg);
+}
+
+Error TCPSocket::get_last_err() const{
+    switch(errno){
+        case EWOULDBLOCK:
+            return Error::WOULDBLOCK;
+        case EINTR:
+            return Error::INTERRUPTED;
+        default:
+            return Error::UNKNOWN;
+
+    }
+}
+
+std::string TCPSocket::get_last_err_str() const {
+    return gai_strerror(errno);
 }
 
 }

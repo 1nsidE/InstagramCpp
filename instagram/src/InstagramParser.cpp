@@ -86,7 +86,7 @@ MediaEntries InstagramParser::parse_media_entries(const std::string& json){
             const Json::Value& id = media["id"];
             if(!id.isNull()) entry.set_id(id.asString());
 
-            result.add_media_entry(entry);
+            result << std::move(entry);
         }
     }
     return result;
@@ -139,7 +139,7 @@ UsersInfo InstagramParser::parse_users_info(const std::string& json){
         user_info.set_prof_pic_url(user_info_json["profile_picture"].asString());
         user_info.set_id(user_info_json["id"].asString());
 
-        users_info << user_info;
+        users_info << std::move(user_info);
     }
 
     return users_info;

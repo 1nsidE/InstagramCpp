@@ -40,8 +40,22 @@ const std::vector<MediaEntry>& MediaEntries::get_media_entries() const{
     return medias;
 }
 
+MediaEntries& MediaEntries::operator<<(const MediaEntry& media_entry){
+    add_media_entry(media_entry);
+    return *this;
+}
+
+MediaEntries& MediaEntries::operator<<(MediaEntry&& media_entry){
+    add_media_entry(std::forward<MediaEntry>(media_entry));
+    return *this;
+}
+
 void MediaEntries::add_media_entry(const MediaEntry& media_entry){
     medias.push_back(media_entry);
+}
+
+void MediaEntries::add_media_entry(MediaEntry&& media_entry){
+    medias.push_back(std::forward<MediaEntry>(media_entry));
 }
 
 }

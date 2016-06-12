@@ -2,7 +2,6 @@
 // Created by inside on 4/23/16.
 //
 #include <limits>
-#include <netdb.h>
 
 #include "TCPSocket.h"
 #include "SSLSocket.h"
@@ -85,24 +84,24 @@ HttpResponse HttpClient::operator<<(const HttpRequest &http_request){
 }
 
 void HttpClient::send(const HttpRequest& http_request) const{
-    int written = 0;
-
     const std::string& str = http_request.get_string();
     const char* request = str.c_str();
     const size_t length = str.length();
-    while(static_cast<size_t>(written) < length){
+    
+    size_t written = 0;
+    while(written < length){
         int count = socket->write(request + written, length - static_cast<size_t>(written));
         if(count < 0){
-            if(errno == EINTR){
-                count = 0;
-                continue;
-            }else{
-                std::string err_msg = "Failed to send data : ";
-                err_msg += gai_strerror(errno);
-                throw std::runtime_error(err_msg);
+            switch(socket->get_last_err()){
+                case Socket::Error::INTERRUPTED:
+                    continue;
+                default:
+                    std::string err_msg = "Failed to send data : ";
+                    err_msg += socket->get_last_err_str();
+                    throw std::runtime_error(err_msg);
             }
         }
-        written += count;
+        written += static_cast<size_t>(count);
     }
 }
 
@@ -144,21 +143,24 @@ std::string HttpClient::read(long timeout) const {
     if(socket->wait_for_read(timeout)){
         const static unsigned int buff_size = 1024;
         char buff[buff_size] = {};
-       
         while(int count = socket->read(buff, buff_size)){
-           if(count < 0){
-                if(errno == EINTR){
-                    continue;
-                }else if(errno == EAGAIN || errno == EWOULDBLOCK){
-                    break;
-                }else{
-                   std::string err_msg = "Failed to recieve data : ";
-                   err_msg += gai_strerror(errno);
-                   throw std::runtime_error(err_msg);
-                }
+           
+            if(count < 0){
+               switch(socket->get_last_err()){
+                    case Socket::Error::WOULDBLOCK:
+                        return result;
+                    case Socket::Error::INTERRUPTED:
+                        continue;
+                    default:
+                        std::string err_msg = "Failed to recieve data : ";
+                        err_msg += socket->get_last_err_str();
+                        throw std::runtime_error(err_msg);
+               } 
             }
-            result.append(buff, static_cast<size_t>(count));
-            std::memset(buff, 0, buff_size);
+
+        result.append(buff, static_cast<size_t>(count));
+        std::memset(buff, 0, buff_size);
+        
         }
     }
 

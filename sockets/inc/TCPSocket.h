@@ -9,6 +9,8 @@
 
 namespace Socket{
 
+enum class Error{WOULDBLOCK, INTERRUPTED, UNKNOWN};
+
 class TCPSocket{
 friend class ConnectionListener;
 public:
@@ -27,13 +29,16 @@ public:
     virtual void make_non_blocking();
     virtual bool wait_for_read(long timeout) const;
     virtual bool wait_for_write(long timeout) const;
+
+    virtual Error get_last_err() const;
+    virtual std::string get_last_err_str() const;
 protected:
     int sockfd;
     bool is_blocking;
 private:
     void connect(const std::string& host, const std::string& port);
     TCPSocket(int _sockfd);
-    void throw_error(const char* err_msg, int code) const;
+    [[noreturn]] void throw_error(const char* err_msg, int code) const;
 };
 
 }

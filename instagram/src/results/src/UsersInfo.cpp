@@ -37,12 +37,21 @@ UsersInfo& UsersInfo::operator=(UsersInfo&& info){
 }
 
 UsersInfo& UsersInfo::operator<<(const UserInfo& info){
-    users.push_back(info);
+    add_info(info);
+    return *this;
+}
+
+UsersInfo& UsersInfo::operator<<(UserInfo&& info){
+    add_info(std::forward<UserInfo>(info));
     return *this;
 }
 
 void UsersInfo::add_info(const UserInfo& info){
     users.push_back(info);
+}
+
+void UsersInfo::add_info(UserInfo&& info){
+    users.push_back(std::forward<UserInfo>(info));
 }
 
 const std::vector<UserInfo>& UsersInfo::get_users() const{

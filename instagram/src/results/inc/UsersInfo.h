@@ -23,8 +23,10 @@ public:
     UsersInfo& operator=(UsersInfo&& info);
     
     UsersInfo& operator<<(const UserInfo& info);
+    UsersInfo& operator<<(UserInfo&& info);
 
     void add_info(const UserInfo& info);
+    void add_info(UserInfo&& user_info);
 
     const std::vector<UserInfo>& get_users() const;
 private:

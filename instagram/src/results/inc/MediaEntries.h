@@ -22,7 +22,12 @@ public:
     MediaEntries& operator=(MediaEntries&& media_entries);
     
     const std::vector<MediaEntry>& get_media_entries() const;
+    
+    MediaEntries& operator<<(const MediaEntry& media_entry);
+    MediaEntries& operator<<(MediaEntry&& media_entry);
+
     void add_media_entry(const MediaEntry& media_entry);
+    void add_media_entry(MediaEntry&& media_entry);
 
 private:
     std::vector<MediaEntry> medias;
