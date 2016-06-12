@@ -2,11 +2,12 @@ cmake_minimum_required(VERSION 2.8)
 
 set(RESULT_SOURCES
 BaseResult.cpp
+AuthorizationToken.cpp
 MediaEntries.cpp
 MediaEntry.cpp
 UserInfo.cpp
 UsersInfo.cpp
-AuthorizationToken.cpp
+RelationshipInfo.cpp
 )
 
 add_library(results OBJECT ${RESULT_SOURCES})

@@ -23,7 +23,13 @@ namespace Instagram{
         static const char* follows  = "/v1/users/self/follows";
         static const char* followed_by = "/v1/users/self/followed-by";
         static const char* requested_by = "/v1/users/self/requested-by";
+
+        namespace Relationship{
+            static const char* first_part = "/v1/users/";
+            static const char* second_part = "/relationship";
+        }
     }
 }
+
 
 #endif //HTTPSERVER_INSTAGRAMMETHODS_H

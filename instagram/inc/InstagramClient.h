@@ -10,6 +10,7 @@
 #include "MediaEntries.h"
 #include "UserInfo.h"
 #include "UsersInfo.h"
+#include "RelationshipInfo.h"
 
 #include "InstagramParser.h"
 
@@ -41,6 +42,7 @@ public:
     UsersInfo get_follows();
     UsersInfo get_followed_by();
     UsersInfo get_requested_by();
+    RelationshipInfo get_relationship_info(const std::string& user_id);
 private:
     InstagramParser parser;
     Http::HttpClient http_client;

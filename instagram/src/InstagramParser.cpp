@@ -145,6 +145,18 @@ UsersInfo InstagramParser::parse_users_info(const std::string& json){
     return users_info;
 }
 
+RelationshipInfo InstagramParser::parse_relationship_info(const std::string& json){
+    Json::Value root{};
+    if(!reader.parse(json, root, false)){
+        return "Failed to parse relationship info";
+    }
+
+    const Json::Value& data = root["data"];
+    RelationshipInfo rel_info{data["incoming_status"].asString(), data["outgoing_status"].asString()};
+
+    return rel_info;
+}
+
 
 std::string InstagramParser::get_error(const std::string& json){
     Json::Value root;

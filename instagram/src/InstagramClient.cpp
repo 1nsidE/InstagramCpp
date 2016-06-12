@@ -187,4 +187,25 @@ UsersInfo InstagramClient::get_users_info(const Http::HttpUrl& url){
 
 }
 
+RelationshipInfo InstagramClient::get_relationship_info(const std::string& user_id){
+    std::string url = Relationships::Relationship::first_part;
+    url += user_id;
+    url += Relationships::Relationship::second_part;
+
+    Http::HttpUrl http_url{url};
+    http_url[AUTH_TOKEN_ARG] = auth_token;
+    
+    Http::HttpResponse response = http_client.get(http_url);
+
+    switch(response.get_status()){
+        case Http::Status::OK:
+            return parser.parse_relationship_info(response.get_data());
+        case Http::Status::BAD_REQUEST:
+            return parser.get_error(response.get_data());
+        default:
+            return Http::get_str(response.get_status());
+    }
+
+}
+
 }
