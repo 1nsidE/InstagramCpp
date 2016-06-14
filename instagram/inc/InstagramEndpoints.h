@@ -26,9 +26,23 @@ namespace Instagram{
 
         namespace Relationship{
             static const char* first_part = "/v1/users/";
-            static const char* second_part = "/relationship";
+            static const char* second_part = "/relationship/";
         }
     }
+
+    namespace Media{
+        static const char* get_media = "/v1/media/";
+        static const char* get_media_shortcode = "/v1/media/shortcode/";
+        static const char* media_search = "/media/search/";
+        static const char* comments = "comments/";
+        static const char* likes = "likes/";
+    }
+
+    namespace Tags{
+        static const char* tags = "/tags/";
+        static const char* tags_search = "/tags/search/";
+    }
+
 }
 
 
