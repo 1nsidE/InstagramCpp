@@ -33,8 +33,6 @@ namespace Http{
         UNKNOWN = 0, OK = 200, MOVED = 302, BAD_REQUEST = 400, UNAUTHORIZED = 401, FORBIDDEN = 403, NOT_FOUND = 404, INTERNAL_SERVER_ERROR = 500
     };
 
-    const static Status statuses[] = {Status::UNKNOWN, Status::OK, Status::MOVED, Status::BAD_REQUEST, Status::UNAUTHORIZED, Status::FORBIDDEN, Status::NOT_FOUND, Status::INTERNAL_SERVER_ERROR};
-
     const char* get_str(Method method);
     const char* get_str(Header header);
     const char* get_str(Content_Type content_type);

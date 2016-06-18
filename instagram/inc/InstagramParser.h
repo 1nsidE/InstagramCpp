@@ -1,6 +1,5 @@
 #include <string>
 #include <json/json.h>
-
 #include "MediaEntries.h"
 #include "AuthorizationToken.h"
 #include "UserInfo.h"

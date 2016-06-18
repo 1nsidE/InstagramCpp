@@ -11,9 +11,13 @@ using Argument = std::pair<std::string, std::string>;
 class HttpUrl{
 public:
     HttpUrl();
-    HttpUrl(const std::string& _end_point);
+    HttpUrl(const std::string& endpoint);
+    HttpUrl(std::initializer_list<std::string> endpoints);
+    HttpUrl(std::initializer_list<const char*> endpoints);
     HttpUrl(const HttpUrl& url);
     HttpUrl(HttpUrl&& url);
+
+    ~HttpUrl();
 
     HttpUrl& operator=(const HttpUrl& url);
     HttpUrl& operator=(HttpUrl&& url);
@@ -27,7 +31,6 @@ public:
     std::string get_end_point();
     const std::string& get_end_point() const;
 
-    std::string get_argument(const std::string& key);
     const std::string& get_argument(const std::string& key) const;
 
     void add_argument(const std::string& key, const std::string& value);

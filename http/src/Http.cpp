@@ -68,17 +68,8 @@ namespace Http{
             case Header::LOCATION:
                 return "Location: ";
             default:
-                return "Unknown";
+                return "Unknown: ";
         }
-    }
-
-    const char* get_str(Content_Type content_type){
-        switch(content_type){
-        case Content_Type::FORM_DATA:
-            return "multipart/form-data";
-        }
-
-        return "Unknown";
     }
 
     const char* get_str(Status status){
@@ -102,14 +93,20 @@ namespace Http{
         }
     }
     
-    Status from_int(int _status){   
-        for(Status status : statuses){
-            if(static_cast<int>(status) == _status){
+    Status from_int(int _status){
+        Status status = static_cast<Status>(_status);
+        switch (status){
+            case Status::BAD_REQUEST:
+            case Status::FORBIDDEN:
+            case Status::INTERNAL_SERVER_ERROR:
+            case Status::MOVED:
+            case Status::NOT_FOUND:
+            case Status::OK:
+            case Status::UNAUTHORIZED:
                 return status;
-            }
+            default:
+                return Status::UNKNOWN;
         }
-
-        return Status::UNKNOWN;
     }
    
     template<>
@@ -136,7 +133,7 @@ namespace Http{
 
         if(map.count(header)){
             return map.at(header);
-        } else { 
+        } else {
             return Header::UNKNOWN;   
         }
     }

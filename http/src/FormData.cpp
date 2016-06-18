@@ -21,6 +21,24 @@ void FormData::add_pair(const std::string &name, const std::string &value) {
     data[name] = value;
 }
 
+FormData& FormData::operator[](const std::string &name){
+    tmp_name = &name;
+    return *this;
+}
+
+FormData& FormData::operator=(const std::string& value){
+    if(tmp_name != nullptr){
+        add_pair(*tmp_name, value);
+        tmp_name = nullptr;
+    }
+    return *this;
+}
+
+const std::string& FormData::operator[](const std::string& name) const{
+    const static std::string empty_name = "";
+    return data.count(name) ? data.at(name) : empty_name;
+}
+
 const std::string FormData::get_string() const {
     if(data.size() == 0){
         return "";
@@ -40,24 +58,6 @@ std::string FormData::get_content_type() const{
     std::string content_type{CONTENT_TYPE};
     content_type.append(boundary);
     return content_type;
-}
-
-FormData& FormData::operator[](const std::string &name){
-    tmp_name = &name;
-    return *this;
-}
-
-FormData& FormData::operator=(const std::string& value){
-    if(tmp_name != nullptr){
-        add_pair(*tmp_name, value);
-        tmp_name = nullptr;
-    }
-    return *this;
-}
-
-const std::string& FormData::operator[](const std::string& name) const{
-    const static std::string empty_name = "";
-    return data.count(name) ? data.at(name) : empty_name;
 }
 
 }

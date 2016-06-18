@@ -1,22 +1,45 @@
-#include <HttpUrl.h>
-
+#include "HttpUrl.h"
 #include "Http.h"
 
 namespace Http{
 
 HttpUrl::HttpUrl() : arguments_map{nullptr}, end_point{"/"}, tmp_key{nullptr}{}
-HttpUrl::HttpUrl(const std::string& _end_point) : arguments_map{nullptr}, end_point{_end_point}{}
+
+HttpUrl::HttpUrl(const std::string& endpoint) : arguments_map{nullptr}, end_point{endpoint}{}
+
+HttpUrl::HttpUrl(std::initializer_list<std::string> endpoints) : arguments_map{nullptr}{
+    for(std::string str : endpoints){
+        end_point += str;
+    }
+}
+
+HttpUrl::HttpUrl(std::initializer_list<const char*> endpoints) : arguments_map{nullptr}{
+    for(const char* str : endpoints){
+        if(str == nullptr){
+            throw std::invalid_argument("endpoint part cannot be nullptr");
+        }
+        end_point += str;
+    }
+}
 
 HttpUrl::HttpUrl(const HttpUrl& url) : arguments_map{ url.arguments_map ? new std::map<std::string, std::string>(*url.arguments_map) : nullptr},
-    end_point{url.end_point}, 
+    end_point{url.end_point},
     tmp_key{nullptr}{}
 
 HttpUrl::HttpUrl(HttpUrl&& url) : arguments_map{url.arguments_map}, 
-    end_point{std::move(url.end_point)}, 
+    end_point{std::move(url.end_point)},
     tmp_key{nullptr}{
         url.arguments_map = nullptr;
         url.tmp_key = nullptr;
+}
+
+HttpUrl::~HttpUrl(){
+    if(arguments_map){
+        delete arguments_map;
+        arguments_map = nullptr;
     }
+    tmp_key = nullptr;
+}
 
 HttpUrl& HttpUrl::operator=(const HttpUrl& url){
     if(this == &url){
@@ -63,7 +86,7 @@ const std::string& HttpUrl::get_end_point() const{
 }
 
 HttpUrl& HttpUrl::operator[](const std::string& key){
-    tmp_key = & key;
+    tmp_key = &key;
     return *this;
 }
 
@@ -71,15 +94,12 @@ HttpUrl& HttpUrl::operator=(const std::string& value){
     if(!arguments_map){
         arguments_map = new std::map<std::string, std::string>{};
     }
+
     if(tmp_key){
-        arguments_map->insert({*tmp_key, value});
+        arguments_map->insert(std::make_pair(*tmp_key, value));
         tmp_key = nullptr;
     }
     return *this;
-}
-
-std::string HttpUrl::get_argument(const std::string& key){
-    return (arguments_map && arguments_map->count(key) ? arguments_map->at(key) : "");
 }
 
 const std::string& HttpUrl::get_argument(const std::string& key) const{
@@ -132,7 +152,7 @@ std::string HttpUrl::get_url() const {
         return end_point;
     }else{
         std::string result{end_point};
-        if(result[result.length()] != '/'){
+        if(result[result.length() - 1] != '/'){
             result += '/';
         }
         result += ARG_START_DELIMETER + get_arguments();

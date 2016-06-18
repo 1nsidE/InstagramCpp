@@ -15,7 +15,7 @@ add_subdirectory(sockets)
 add_subdirectory(http)
 add_subdirectory(instagram)
 
-file(GLOB HTTP_HEADERS ${PROJECT_SOURCE_DIR}/http/inc/*.h ${PROJECT_SOURCE_DIR}/sockets/inc/*.h)
+file(GLOB HTTP_HEADERS ${PROJECT_SOURCE_DIR}/http/inc/*.h ${PROJECT_SOURCE_DIR}/http/src/exceptions/*.h ${PROJECT_SOURCE_DIR}/sockets/inc/*.h )
 file(GLOB INSTAGRAM_HEADERS ${PROJECT_SOURCE_DIR}/instagram/inc/*.h ${PROJECT_SOURCE_DIR}/instagram/src/results/inc/*.h)
 
 file(COPY ${HTTP_HEADERS} DESTINATION ${PROJECT_SOURCE_DIR}/lib/http)

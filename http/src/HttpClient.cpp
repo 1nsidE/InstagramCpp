@@ -8,6 +8,10 @@
 #include "HttpHeaderParser.h"
 #include "HttpClient.h"
 
+#include "exceptions/HttpFailedToRecieve.h"
+#include "exceptions/HttpFailedToSend.h"
+#include "exceptions/HttpTooBigResponse.h"
+
 namespace Http{
 
 HttpClient::HttpClient(const std::string &_host, HttpProtocol _protocol) : socket{nullptr}, host{_host}, protocol{_protocol}, connected{false}{
@@ -83,7 +87,7 @@ HttpResponse HttpClient::operator<<(const HttpRequest &http_request){
     return send_request(http_request);
 }
 
-void HttpClient::send(const HttpRequest& http_request) const{
+void HttpClient::send(const HttpRequest& http_request) {
     const std::string& str = http_request.get_string();
     const char* request = str.c_str();
     const size_t length = str.length();
@@ -98,14 +102,14 @@ void HttpClient::send(const HttpRequest& http_request) const{
                 default:
                     std::string err_msg = "Failed to send data : ";
                     err_msg += socket->get_last_err_str();
-                    throw std::runtime_error(err_msg);
+                    throw HttpFailedToSend(err_msg);
             }
         }
         written += static_cast<size_t>(count);
     }
 }
 
-HttpResponse HttpClient::recieve(long timeout) const{
+HttpResponse HttpClient::recieve(long timeout) {
     std::string response = read(timeout);
     
     HttpResponse http_response = HttpHeaderParser::parse_response(response);
@@ -124,7 +128,7 @@ HttpResponse HttpClient::recieve(long timeout) const{
     size_t content_len = http_response.content_len();
     
     if(content_len >= std::numeric_limits<unsigned int>::max()){
-        throw std::runtime_error{"server response is too big!"};
+        throw HttpTooBigResponse{"server response is too big!"};
     }
     
     size_t actual_content_len = http_response.data_len();
@@ -137,14 +141,13 @@ HttpResponse HttpClient::recieve(long timeout) const{
     return http_response;
 }
 
-std::string HttpClient::read(long timeout) const {
+std::string HttpClient::read(long timeout) {
     std::string result{};
 
     if(socket->wait_for_read(timeout)){
         const static unsigned int buff_size = 1024;
         char buff[buff_size] = {};
         while(int count = socket->read(buff, buff_size)){
-           
             if(count < 0){
                switch(socket->get_last_err()){
                     case Socket::Error::WOULDBLOCK:
@@ -154,16 +157,16 @@ std::string HttpClient::read(long timeout) const {
                     default:
                         std::string err_msg = "Failed to recieve data : ";
                         err_msg += socket->get_last_err_str();
-                        throw std::runtime_error(err_msg);
+                        throw HttpFailedToRecieve(err_msg);
                } 
             }
 
         result.append(buff, static_cast<size_t>(count));
         std::memset(buff, 0, buff_size);
-        
         }
     }
 
+    disconnect();
     return result;
 }
 

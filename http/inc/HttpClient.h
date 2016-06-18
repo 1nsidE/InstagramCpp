@@ -29,11 +29,11 @@ public:
 	HttpResponse operator<<(const HttpRequest& http_request);
 private:
     HttpRequest get_standart_request();
-    void send(const HttpRequest& http_request) const;
-    HttpResponse recieve(long timeout) const;
+    void send(const HttpRequest& http_request);
+    HttpResponse recieve(long timeout);
 
-    std::string read(long timeout) const;
-    std::string read_until(size_t len, long timeout) const;
+    std::string read(long timeout);
+    std::string read_until(size_t len, long timeout);
 
     void connect();
     void disconnect();

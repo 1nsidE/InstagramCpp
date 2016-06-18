@@ -1,6 +1,3 @@
-#include <json/json.h>
-#include <exception>
-
 #include "InstagramClient.h"
 #include "InstagramConstants.h"
 #include "InstagramEndpoints.h"
@@ -19,7 +16,7 @@ void InstagramClient::set_auth_token(const std::string &_auth_token){
 }
 
 void InstagramClient::check_auth(){
-    if(auth_token.empty()){
+    if(auth_token.empty()) {
         throw std::runtime_error("not authorized");
     }
 }
@@ -35,7 +32,7 @@ AuthorizationToken InstagramClient::exchange_code(const std::string& code,
     form_data["client_secret"] = client_secret;
     form_data["redirect_uri"] = redirect_uri;
     form_data["grant_type"] = AUTH_CODE_GRANT_TYPE;
-
+    
     try{
         Http::HttpResponse response = http_client.post({GET_AUTH_CODE}, form_data.get_string(), form_data.get_content_type());
         switch(response.get_status()){
@@ -87,7 +84,7 @@ MediaEntries InstagramClient::get_recent_media(const std::string& user_id) {
         check_auth();
         Http::HttpUrl url{Users::users + user_id + '/' + Users::recent_media};
         url[AUTH_TOKEN_ARG] = auth_token;
-        
+
         return get_media(url); 
     }catch(const std::exception& err){
         return err.what();
@@ -98,9 +95,8 @@ MediaEntries InstagramClient::get_recent_media(const std::string& user_id) {
 MediaEntries InstagramClient::get_liked_media(){
     try{
         check_auth();
-        std::string endpoint{Users::users};
-
-        Http::HttpUrl url{endpoint + Users::self_liked};
+        
+        Http::HttpUrl url{Users::users, Users::self_liked};
         url[AUTH_TOKEN_ARG] = auth_token;
         
         Http::HttpResponse response = http_client.get(url);
@@ -113,7 +109,6 @@ MediaEntries InstagramClient::get_liked_media(){
 
 MediaEntries InstagramClient::get_media(const Http::HttpUrl& url){
     Http::HttpResponse response = http_client.get(url);
-
     switch(response.get_status()){
         case Http::Status::OK:
             return parser.parse_media_entries(response.get_data());
@@ -129,10 +124,9 @@ UsersInfo InstagramClient::search_users(const std::string& query){
     try{
         check_auth();
 
-        std::string end_point{Users::users};
-        Http::HttpUrl url{end_point + Users::search};
+        Http::HttpUrl url{Users::users, Users::search};
+        url[AUTH_TOKEN_ARG] = auth_token;
         url[Users::query_arg] = query;
-        url[AUTH_TOKEN_ARG] = auth_token; 
         
         return get_users_info(url);
     }catch(const std::exception& err){
@@ -188,11 +182,7 @@ UsersInfo InstagramClient::get_users_info(const Http::HttpUrl& url){
 }
 
 RelationshipInfo InstagramClient::get_relationship_info(const std::string& user_id){
-    std::string url = Relationships::Relationship::first_part;
-    url += user_id;
-    url += Relationships::Relationship::second_part;
-
-    Http::HttpUrl http_url{url};
+    Http::HttpUrl http_url{Relationships::Relationship::first_part, user_id, Relationships::Relationship::second_part};
     http_url[AUTH_TOKEN_ARG] = auth_token;
     
     Http::HttpResponse response = http_client.get(http_url);

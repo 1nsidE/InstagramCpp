@@ -14,7 +14,7 @@ public:
 	BaseResult(const BaseResult& base_result);
 	BaseResult(BaseResult&& base_result);
 
-	~BaseResult();
+	virtual ~BaseResult();
     
     BaseResult& operator=(const BaseResult& base_result);
     BaseResult& operator=(BaseResult&& base_result);

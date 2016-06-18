@@ -34,6 +34,7 @@ namespace Instagram{
         static const char* get_media = "/v1/media/";
         static const char* get_media_shortcode = "/v1/media/shortcode/";
         static const char* media_search = "/media/search/";
+        
         static const char* comments = "comments/";
         static const char* likes = "likes/";
     }

@@ -2,15 +2,11 @@
 
 namespace Instagram{
 
-MediaEntries::MediaEntries() : BaseResult{} {}
+MediaEntries::MediaEntries() : BaseResult{}, medias(0) {}
 
-MediaEntries::MediaEntries(const char* err_msg) : BaseResult(err_msg){
+MediaEntries::MediaEntries(const char* err_msg) : BaseResult{err_msg}, medias(0){}
 
-}
-
-MediaEntries::MediaEntries(const std::string& err_msg) : BaseResult(err_msg){
-
-}
+MediaEntries::MediaEntries(const std::string& err_msg) : BaseResult{err_msg}, medias(0){}
 
 MediaEntries::MediaEntries(const MediaEntries& media_entries) : BaseResult{media_entries}, medias{media_entries.medias}{}
 
