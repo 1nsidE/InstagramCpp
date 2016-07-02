@@ -2,7 +2,17 @@
 
 namespace Instagram{
 
-UserInfo::UserInfo() : BaseResult{}, _followed_by{-1}, _follows{-1}, _media_count{-1} {}
+UserInfo::UserInfo() : BaseResult{}, 
+                    id{""},
+                    username{""},
+                    name{""},
+                    last_name{""},
+                    bio{""},
+                    prof_pic_url{""},
+                    website{""},
+                    _followed_by{-1}, 
+                    _follows{-1}, 
+                    _media_count{-1} {}
 
 UserInfo::UserInfo(const UserInfo& user_info) : BaseResult{user_info},
                                         id{user_info.id},
@@ -34,9 +44,9 @@ UserInfo::UserInfo(UserInfo&& user_info) : BaseResult{std::forward<BaseResult>(u
 }
 
 
-UserInfo::UserInfo(const char* err_msg) : BaseResult{err_msg},  _followed_by{0}, _follows{0}, _media_count{0}{}
+UserInfo::UserInfo(const char* err_msg) : BaseResult{err_msg},  _followed_by{-1}, _follows{-1}, _media_count{-1}{}
 
-UserInfo::UserInfo(const std::string& err_msg) : BaseResult{err_msg}, _followed_by{0}, _follows{0}, _media_count{0}{}
+UserInfo::UserInfo(const std::string& err_msg) : BaseResult{err_msg}, _followed_by{-1}, _follows{-1}, _media_count{-1}{}
 
 UserInfo::~UserInfo(){}
 
@@ -78,11 +88,11 @@ UserInfo& UserInfo::operator=(UserInfo&& user_info){
     website = std::move(user_info.website);
 
     _followed_by = user_info._followed_by;
-    user_info._followed_by = 0;
+    user_info._followed_by = -1;
     _follows = user_info._follows;
-    user_info._follows = 0;
+    user_info._follows = -1;
     _media_count = user_info._media_count;
-    user_info._media_count = 0;
+    user_info._media_count = -1;
     
     return *this;
 }

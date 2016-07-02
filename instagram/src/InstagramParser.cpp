@@ -173,6 +173,36 @@ RelationshipInfo InstagramParser::parse_relationship_info(const std::string& jso
     return rel_info;
 }
 
+TagInfo InstagramParser::parse_tag_info(const std::string& json){
+    Json::Value root{};
+
+    if(!reader.parse(json, root, false)){
+        return "Failed to parse tag info";
+    }
+
+    const Json::Value& data = root["data"];
+    TagInfo tag_info(data["name"].asString(), data["media_count"].asInt());
+
+    return tag_info;
+}
+
+TagsInfo InstagramParser::parse_tags_info(const std::string& json){
+    Json::Value root{};
+
+    if(!reader.parse(json, root, false)){
+        return "Failed to parse tags info";
+    }
+
+    TagsInfo tags_info;
+    const Json::Value& data = root["data"];
+    if(data.isArray()){
+        for(const auto& tag : data){
+            tags_info << std::move(TagInfo{tag["name"].asString(), tag["media_count"].asInt()});
+        }
+    }
+
+    return tags_info;
+}
 
 std::string InstagramParser::get_error(const std::string& json){
     Json::Value root;

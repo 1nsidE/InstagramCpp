@@ -8,6 +8,8 @@ MediaEntry.cpp
 UserInfo.cpp
 UsersInfo.cpp
 RelationshipInfo.cpp
+TagInfo.cpp
+TagsInfo.cpp
 )
 
 add_library(results OBJECT ${RESULT_SOURCES})

@@ -50,7 +50,7 @@ AuthorizationToken InstagramClient::exchange_code(const std::string& code,
 }
 
 UserInfo InstagramClient::get_user_info(){
-    return get_user_info(self);
+    return get_user_info(SELF);
 }
 
 UserInfo InstagramClient::get_user_info(const std::string& user_id){
@@ -76,7 +76,7 @@ UserInfo InstagramClient::get_user_info(const std::string& user_id){
 }
 
 MediaEntries InstagramClient::get_recent_media(){
-    return get_recent_media(self);
+    return get_recent_media(SELF);
 }
 
 MediaEntries InstagramClient::get_recent_media(const std::string& user_id) {
@@ -126,7 +126,7 @@ UsersInfo InstagramClient::search_users(const std::string& query){
 
         Http::HttpUrl url{Users::users, Users::search};
         url[AUTH_TOKEN_ARG] = auth_token;
-        url[Users::query_arg] = query;
+        url[QUERY_ARG] = query;
         
         return get_users_info(url);
     }catch(const std::exception& err){
@@ -137,7 +137,7 @@ UsersInfo InstagramClient::search_users(const std::string& query){
 UsersInfo InstagramClient::get_follows(){
     try{
         check_auth();
-        Http::HttpUrl url{Relationships::follows};
+        Http::HttpUrl url{Relationships::users, Relationships::follows};
         url[AUTH_TOKEN_ARG] = auth_token;
         return get_users_info(url);
     }catch(const std::exception& err){
@@ -148,7 +148,7 @@ UsersInfo InstagramClient::get_follows(){
 UsersInfo InstagramClient::get_followed_by(){
     try{
         check_auth();
-        Http::HttpUrl url{Relationships::followed_by};
+        Http::HttpUrl url{Relationships::users, Relationships::followed_by};
         url[AUTH_TOKEN_ARG] = auth_token;
         return get_users_info(url);
     }catch(const std::exception& err){
@@ -159,7 +159,7 @@ UsersInfo InstagramClient::get_followed_by(){
 UsersInfo InstagramClient::get_requested_by(){
     try{
         check_auth();
-        Http::HttpUrl url{Relationships::requested_by};
+        Http::HttpUrl url{Relationships::users, Relationships::requested_by};
         url[AUTH_TOKEN_ARG] = auth_token;
         return get_users_info(url);
     }catch(const std::exception& err){
@@ -182,7 +182,7 @@ UsersInfo InstagramClient::get_users_info(const Http::HttpUrl& url){
 }
 
 RelationshipInfo InstagramClient::get_relationship_info(const std::string& user_id){
-    Http::HttpUrl http_url{Relationships::Relationship::first_part, user_id, Relationships::Relationship::second_part};
+    Http::HttpUrl http_url{Relationships::users, user_id, Relationships::relationship};
     http_url[AUTH_TOKEN_ARG] = auth_token;
     
     Http::HttpResponse response = http_client.get(http_url);
@@ -195,7 +195,38 @@ RelationshipInfo InstagramClient::get_relationship_info(const std::string& user_
         default:
             return Http::get_str(response.get_status());
     }
+}
 
+TagInfo InstagramClient::get_tag_info(const std::string& tag_name){
+    Http::HttpUrl url{Tags::tags, tag_name};
+    url[AUTH_TOKEN_ARG] = auth_token;
+
+    Http::HttpResponse response = http_client.get(url);
+    switch(response.get_status()){
+        case Http::Status::OK:
+            return parser.parse_tag_info(response.get_data());
+        case Http::Status::BAD_REQUEST:
+            return parser.get_error(response.get_data());
+        default:
+            return Http::get_str(response.get_status());
+    } 
+}
+
+TagsInfo InstagramClient::search_tags(const std::string& query){
+    Http::HttpUrl url{Tags::tags, Tags::tags_search};
+    url[QUERY_ARG] = query;
+    url[AUTH_TOKEN_ARG] = auth_token;
+
+    Http::HttpResponse response = http_client.get(url);
+    switch(response.get_status()){
+        case Http::Status::OK:
+            return parser.parse_tags_info(response.get_data());
+        case Http::Status::BAD_REQUEST:
+            return parser.get_error(response.get_data());
+        default:
+            return Http::get_str(response.get_status());
+    } 
+   
 }
 
 }
