@@ -16,13 +16,17 @@ From 'Users' Group :
 	/users/self/media/liked
 	/users/search
 
-From Relationships Group:
+From 'Relationships' Group:
 
 	/users/self/follows
 	/users/self/followed-by
 	/users/self/requested-by
     /users/{user-id}/relationship
-	
+
+From 'Tags' Group:
+
+    /tags/{tag_name}
+    /tags/search
 
 Usage Example:
 ----------------
