@@ -26,8 +26,8 @@ From 'Relationships' Group:
 From 'Comments' Group:
 
     /media/{media-id}/comments
-    POST /media/media-id/comments
-    DELETE /media/media-id/comments/comment-id
+    /media/{media-id}/comments //POST
+    /media/media-id/comments/comment-id //DELETE
 
 From 'Tags' Group:
 
