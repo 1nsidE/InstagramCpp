@@ -35,71 +35,75 @@ MediaEntries InstagramParser::parse_media_entries(const std::string& json){
     MediaEntries result{};
     if(data.isArray()){
         for(const auto& media : data){
-            MediaEntry entry{};
-            
-            const Json::Value& tags = media["tags"];
-            if(tags.isArray()){
-                for(const auto& tag : tags){
-                    entry.add_tag(tag.asString());
-                }
-            }
-
-            const Json::Value& users_in_photo = media["users_in_photo"];
-            if(users_in_photo.isArray()){
-                for(const auto& user : users_in_photo){
-                    entry.add_user_in_photo(user.asString());
-                }
-            }
-                       
-            const Json::Value& type = media["type"];
-            if(!type.isNull()){
-                const std::string type_str = type.asString();
-                if(type_str == "image"){
-                    entry.set_type(MediaType::IMAGE);
-                }else{
-                    entry.set_type(MediaType::VIDEO);
-                }
-            }    
-             
-            const Json::Value& create_time = media["created_time"];
-            long created_time = create_time.isNull() ? -1 : std::stol(create_time.asString());
-            entry.set_created_time(created_time);
-            
-            const Json::Value& link = media["link"];
-            if(!link.isNull()) entry.set_url(link.asString());
-
-            const Json::Value& caption = media["caption"];
-            if(!caption.isNull()) entry.set_caption(caption["text"].asString());
-
-            const Json::Value& images = media["images"];
-            
-            const Json::Value& low_resolution = images["low_resolution"];
-            if(!low_resolution.isNull()) entry.set_low_resolution(low_resolution["url"].asString());
-            
-            const Json::Value& thumbnail = images["thumbnail"];
-            if(!thumbnail.isNull()) entry.set_thumbnail(thumbnail["url"].asString());
-
-            const Json::Value& standart_resolution = images["standard_resolution"];
-            if(!standart_resolution.isNull()) entry.set_standart_resolution(standart_resolution["url"].asString());
-
-            const Json::Value& comments = media["comments"];
-            int comments_count = comments.isNull() ? -1 : comments["count"].asInt();
-            entry.set_comments_count(comments_count);
-            
-            const Json::Value& filter = media["filter"];
-            entry.set_filter(filter.asString());
-
-            const Json::Value& likes = media["likes"];
-            int likes_count = likes.isNull() ? -1 : likes["count"].asInt();
-            entry.set_like_count(likes_count);
-           
-            const Json::Value& id = media["id"];
-            if(!id.isNull()) entry.set_id(id.asString());
-
-            result << std::move(entry);
+            result << get_media_entry(media);
         }
     }
     return result;
+}
+
+MediaEntry InstagramParser::get_media_entry(const Json::Value& media){
+    MediaEntry entry{};
+    
+    const Json::Value& tags = media["tags"];
+    if(tags.isArray()){
+        for(const auto& tag : tags){
+            entry.add_tag(tag.asString());
+        }
+    }
+
+    const Json::Value& users_in_photo = media["users_in_photo"];
+    if(users_in_photo.isArray()){
+        for(const auto& user : users_in_photo){
+            entry.add_user_in_photo(user.asString());
+        }
+    }
+               
+    const Json::Value& type = media["type"];
+    if(!type.isNull()){
+        const std::string type_str = type.asString();
+        if(type_str == "image"){
+            entry.set_type(MediaType::IMAGE);
+        }else{
+            entry.set_type(MediaType::VIDEO);
+        }
+    }    
+     
+    const Json::Value& create_time = media["created_time"];
+    long created_time = create_time.isNull() ? -1 : std::stol(create_time.asString());
+    entry.set_created_time(created_time);
+    
+    const Json::Value& link = media["link"];
+    if(!link.isNull()) entry.set_url(link.asString());
+
+    const Json::Value& caption = media["caption"];
+    if(!caption.isNull()) entry.set_caption(caption["text"].asString());
+
+    const Json::Value& images = media["images"];
+    
+    const Json::Value& low_resolution = images["low_resolution"];
+    if(!low_resolution.isNull()) entry.set_low_resolution(low_resolution["url"].asString());
+    
+    const Json::Value& thumbnail = images["thumbnail"];
+    if(!thumbnail.isNull()) entry.set_thumbnail(thumbnail["url"].asString());
+
+    const Json::Value& standart_resolution = images["standard_resolution"];
+    if(!standart_resolution.isNull()) entry.set_standart_resolution(standart_resolution["url"].asString());
+
+    const Json::Value& comments = media["comments"];
+    int comments_count = comments.isNull() ? -1 : comments["count"].asInt();
+    entry.set_comments_count(comments_count);
+    
+    const Json::Value& filter = media["filter"];
+    entry.set_filter(filter.asString());
+
+    const Json::Value& likes = media["likes"];
+    int likes_count = likes.isNull() ? -1 : likes["count"].asInt();
+    entry.set_like_count(likes_count);
+   
+    const Json::Value& id = media["id"];
+    if(!id.isNull()) entry.set_id(id.asString());
+
+    return entry;
 }
 
 UserInfo InstagramParser::parse_user_info(const std::string& json){

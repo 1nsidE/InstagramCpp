@@ -52,7 +52,7 @@ void TCPSocket::connect(const std::string& host, const std::string& port) {
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_family = AF_UNSPEC;
 
-    if(getaddrinfo(host.c_str(), port.c_str(), &hints, &res) == -1){
+    if(getaddrinfo(host.c_str(), port.c_str(), &hints, &res) != 0){
         throw_error("getaddrinfo() failed: ", errno);
     }
     

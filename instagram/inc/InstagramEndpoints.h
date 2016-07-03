@@ -37,7 +37,7 @@ namespace Instagram{
     namespace Tags{
         static const char* tags = "/v1/tags/";
         static const char* tags_search = "search/";
-        static const char* recent_media = "media/recent/";
+        static const char* recent_media = "/media/recent/";
     }
 
 }

@@ -9,6 +9,7 @@
 #include "HttpResponse.h"
 #include "HttpRequest.h"
 #include "TCPSocket.h"
+#include "FormData.h"
 
 #define STANDART_USER_AGENT "http_cpp"
 
@@ -24,9 +25,11 @@ public:
     HttpResponse get(const HttpUrl& url);
     HttpResponse post(const HttpUrl& url, const std::string& data, const std::string& content_type);
     HttpResponse post(const HttpUrl& url, const std::pair<std::string, std::string>& type_and_data);
+    HttpResponse post(const HttpUrl& url, const FormData& form_data);
 
     HttpResponse send_request(const HttpRequest& http_request);
 	HttpResponse operator<<(const HttpRequest& http_request);
+    HttpResponse operator<<(const HttpUrl& url);
 private:
     HttpRequest get_standart_request();
     void send(const HttpRequest& http_request);

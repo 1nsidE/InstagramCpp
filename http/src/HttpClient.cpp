@@ -47,6 +47,10 @@ HttpResponse HttpClient::post(const HttpUrl& url, const std::string& data, const
     return send_request(http_request);
 }
 
+HttpResponse HttpClient::post(const HttpUrl& url, const FormData& form_data){
+    return post(url, form_data.get_string(), form_data.get_content_type());
+}
+
 HttpResponse HttpClient::post(const HttpUrl& url, const std::pair<std::string, std::string>& type_and_data){
     HttpRequest http_request  = get_standart_request();
     http_request.set_method(Method::POST);
@@ -85,6 +89,10 @@ HttpResponse HttpClient::send_request(const HttpRequest& http_request) {
 
 HttpResponse HttpClient::operator<<(const HttpRequest &http_request){
     return send_request(http_request);
+}
+
+HttpResponse HttpClient::operator<<(const HttpUrl& url){
+    return get(url);
 }
 
 void HttpClient::send(const HttpRequest& http_request) {

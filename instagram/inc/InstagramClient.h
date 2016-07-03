@@ -48,6 +48,7 @@ public:
 //Tags
     TagInfo get_tag_info(const std::string& tag_name);
     TagsInfo search_tags(const std::string& query);
+    MediaEntries get_recent_media_tag(const std::string& tag_name);
 private:
     InstagramParser parser;
     Http::HttpClient http_client;
