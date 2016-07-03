@@ -27,6 +27,7 @@ From 'Tags' Group:
 
     /tags/{tag_name}
     /tags/search
+    /tags/{tag_name}/media/recent
 
 Usage Example:
 ----------------
