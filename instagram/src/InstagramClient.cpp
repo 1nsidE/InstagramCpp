@@ -268,4 +268,79 @@ MediaEntries InstagramClient::get_recent_media_tag(const std::string& tag_name){
     }
 }
 
+CommentsInfo InstagramClient::get_comments(const std::string& media_id){
+    try{
+        check_auth();
+
+        Http::HttpUrl url{Comments::media, media_id, Comments::comments};
+        url[AUTH_TOKEN_ARG] = auth_token;
+
+        Http::HttpResponse response = http_client << url;
+        
+        switch(response.get_status()){
+            case Http::Status::OK:
+                return parser.parse_comments(response.get_data());
+            case Http::Status::BAD_REQUEST:
+                return parser.get_error(response.get_data());
+            default:
+                return Http::get_str(response.get_status());
+
+        }
+    }catch(const std::exception& err){
+        return err.what();
+    }
+}
+
+BaseResult InstagramClient::post_comment(const std::string& media_id, const std::string& text){
+    try{
+        check_auth();
+
+        Http::HttpUrl url{Comments::media, media_id, Comments::comments};
+        Http::FormData form_data{};
+        form_data[AUTH_TOKEN_ARG] = auth_token;
+        form_data[Comments::TEXT_ARG] = text;
+        
+        Http::HttpResponse response = http_client.post(url, form_data);
+        
+        switch(response.get_status()){
+            case Http::Status::OK:
+                {
+                std::string err = parser.get_error(response.get_data());
+                return err.empty() ? BaseResult{} : BaseResult{err};
+                }
+            case Http::Status::BAD_REQUEST:
+                return parser.get_error(response.get_data());
+            default:
+                return Http::get_str(response.get_status());
+
+        }
+    }catch(const std::exception& err){
+        return err.what();
+    }
+}
+
+BaseResult InstagramClient::delete_comment(const std::string& media_id, const std::string& comment_id){
+    try{
+        check_auth();
+
+        Http::HttpUrl url{Comments::media, media_id, Comments::comments, comment_id};
+        url[AUTH_TOKEN_ARG] = auth_token;
+        Http::HttpResponse response = http_client.del(url);
+
+         switch(response.get_status()){
+            case Http::Status::OK:{
+                std::string err = parser.get_error(response.get_data());
+                return err.empty() ? BaseResult{} : BaseResult{err};
+                }
+            case Http::Status::BAD_REQUEST:
+                return parser.get_error(response.get_data());
+            default:
+                return Http::get_str(response.get_status());
+
+        }
+    }catch(const std::exception& err){
+        return err.what();
+    }
+}
+
 }

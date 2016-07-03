@@ -7,6 +7,7 @@
 #include "RelationshipInfo.h"
 #include "TagInfo.h"
 #include "TagsInfo.h"
+#include "CommentsInfo.h"
 
 namespace Instagram{
 
@@ -23,9 +24,13 @@ public:
     RelationshipInfo parse_relationship_info(const std::string& json);
     TagInfo parse_tag_info(const std::string& json);
     TagsInfo parse_tags_info(const std::string& json);
+    CommentsInfo parse_comments(const std::string& json);
+
     std::string get_error(const std::string& json); 
 private:
     MediaEntry get_media_entry(const Json::Value& media);
+    UserInfo get_user_info(const Json::Value& info);
+    CommentInfo get_comment_info(const Json::Value& comment);
     Json::Reader reader;
 }; 
 

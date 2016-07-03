@@ -91,6 +91,7 @@ MediaEntry InstagramParser::get_media_entry(const Json::Value& media){
 
     const Json::Value& comments = media["comments"];
     int comments_count = comments.isNull() ? -1 : comments["count"].asInt();
+    
     entry.set_comments_count(comments_count);
     
     const Json::Value& filter = media["filter"];
@@ -114,27 +115,7 @@ UserInfo InstagramParser::parse_user_info(const std::string& json){
     }
     
     const Json::Value& data = root["data"];
-    UserInfo user_info;
-
-    user_info.set_id(data["id"].asString());
-    user_info.set_username(data["username"].asString());
-    user_info.set_name(data["full_name"].asString());
-    user_info.set_prof_pic_url(data["profile_picture"].asString());
-    user_info.set_bio(data["bio"].asString());
-    user_info.set_website(data["website"].asString());
-
-    const Json::Value& counts = data["counts"];
-
-    const Json::Value& followed_by = counts["followed_by"];
-    user_info.set_followed_by(followed_by.isNull() ? -1 : followed_by.asInt());
-
-    const Json::Value& follows = counts["follows"];
-    user_info.set_follows(follows.isNull() ? -1 : follows.asInt());
-
-    const Json::Value& media_count = counts["media"];
-    user_info.set_media_count(counts.isNull() ? -1 : media_count.asInt());
-
-    return user_info;
+    return get_user_info(data);
 }
 
 UsersInfo InstagramParser::parse_users_info(const std::string& json){
@@ -145,24 +126,44 @@ UsersInfo InstagramParser::parse_users_info(const std::string& json){
     
     const Json::Value& data = root["data"];
     UsersInfo users_info{};
-    for(const Json::Value& user_info_json : data){
-        UserInfo user_info{};
-        user_info.set_username(user_info_json["username"].asString());
-
-        const Json::Value& name = user_info_json["first_name"];
-        if(name.isNull()){
-            user_info.set_name(user_info_json["full_name"].asString());
-        }else{
-            user_info.set_name(name.asString());
-        }
-        user_info.set_last_name(user_info_json["last_name"].asString());
-        user_info.set_prof_pic_url(user_info_json["profile_picture"].asString());
-        user_info.set_id(user_info_json["id"].asString());
-
-        users_info << std::move(user_info);
+    for(const Json::Value& user_info : data){
+        users_info << get_user_info(user_info);
     }
 
     return users_info;
+}
+
+UserInfo InstagramParser::get_user_info(const Json::Value &info) {
+    UserInfo user_info{};
+
+    user_info.set_id(info["id"].asString());
+    user_info.set_username(info["username"].asString());
+    user_info.set_prof_pic_url(info["profile_picture"].asString());
+
+    const Json::Value& fullname = info["full_name"];
+    if(fullname.isNull()){
+        user_info.set_name(info["first_name"].asString());
+    }else{
+        user_info.set_name(fullname.asString());
+    }
+
+    user_info.set_bio(info["bio"].asString());
+
+    user_info.set_website(info["website"].asString());
+
+    const Json::Value& counts = info["counts"];
+    if(!counts.isNull()) {
+        const Json::Value &followed_by = counts["followed_by"];
+        user_info.set_followed_by(followed_by.isNull() ? -1 : followed_by.asInt());
+
+        const Json::Value &follows = counts["follows"];
+        user_info.set_follows(follows.isNull() ? -1 : follows.asInt());
+
+        const Json::Value &media_count = counts["media"];
+        user_info.set_media_count(counts.isNull() ? -1 : media_count.asInt());
+    }
+
+    return user_info;
 }
 
 RelationshipInfo InstagramParser::parse_relationship_info(const std::string& json){
@@ -201,11 +202,41 @@ TagsInfo InstagramParser::parse_tags_info(const std::string& json){
     const Json::Value& data = root["data"];
     if(data.isArray()){
         for(const auto& tag : data){
-            tags_info << std::move(TagInfo{tag["name"].asString(), tag["media_count"].asInt()});
+            tags_info << TagInfo{tag["name"].asString(), tag["media_count"].asInt()};
         }
     }
 
     return tags_info;
+}
+
+CommentsInfo InstagramParser::parse_comments(const std::string& json){
+    Json::Value root{};
+    if(!reader.parse(json, root, false)){
+        return "Failed to parse comments";
+    } 
+    
+    CommentsInfo comments_info{};
+    const Json::Value& data = root["data"];
+    if(data.isArray()){
+        for(const Json::Value& comment : data){
+            comments_info << get_comment_info(comment);
+        }
+    }
+
+    return comments_info;
+}
+
+CommentInfo InstagramParser::get_comment_info(const Json::Value& comment){
+    CommentInfo comment_info{};
+
+    comment_info.set_text(comment["text"].asString());
+    comment_info.set_id(comment["id"].asString());
+    comment_info.set_created_time(std::stol(comment["created_time"].asString()));
+    
+    const Json::Value& from = comment["from"];
+    comment_info.set_user_info(get_user_info(from));
+
+    return comment_info;
 }
 
 std::string InstagramParser::get_error(const std::string& json){

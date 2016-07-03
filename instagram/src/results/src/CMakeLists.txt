@@ -10,6 +10,8 @@ UsersInfo.cpp
 RelationshipInfo.cpp
 TagInfo.cpp
 TagsInfo.cpp
+CommentInfo.cpp
+CommentsInfo.cpp
 )
 
 add_library(results OBJECT ${RESULT_SOURCES})

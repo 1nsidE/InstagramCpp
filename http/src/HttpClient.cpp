@@ -62,6 +62,14 @@ HttpResponse HttpClient::post(const HttpUrl& url, const std::pair<std::string, s
     return send_request(http_request);
 }
 
+HttpResponse HttpClient::del(const HttpUrl& url){
+    HttpRequest request = get_standart_request();
+    request.set_method(Method::DELETE);
+    request.set_url(url);
+    
+    return send_request(request);    
+}
+
 HttpRequest HttpClient::get_standart_request(){
     HttpRequest http_request{};
     http_request[Header::USER_AGENT] = STANDART_USER_AGENT;

@@ -30,6 +30,8 @@ namespace Http{
                 return "UPDATE";
             case Method::HEAD:
                 return "HEAD";
+            case Method::DELETE:
+                return "DELETE";
             default:
                 return "UNKNOWN";
         }

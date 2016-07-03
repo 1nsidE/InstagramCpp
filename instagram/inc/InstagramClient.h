@@ -13,6 +13,7 @@
 #include "RelationshipInfo.h"
 #include "TagInfo.h"
 #include "TagsInfo.h"
+#include "CommentsInfo.h"
 
 #include "InstagramParser.h"
 
@@ -45,6 +46,10 @@ public:
     UsersInfo get_followed_by();
     UsersInfo get_requested_by();
     RelationshipInfo get_relationship_info(const std::string& user_id);
+//Comments
+    CommentsInfo get_comments(const std::string& media_id);    
+    BaseResult post_comment(const std::string& media_id, const std::string& text);
+    BaseResult delete_comment(const std::string& media_id, const std::string& comment_id);
 //Tags
     TagInfo get_tag_info(const std::string& tag_name);
     TagsInfo search_tags(const std::string& query);

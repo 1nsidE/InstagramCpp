@@ -17,7 +17,7 @@ namespace Http{
     };
 
     enum class Method {
-        UNKNOWN = -1, POST = 0, GET = 2, HEAD = 3, PUSH = 4, UPDATE = 5
+        UNKNOWN = -1, POST = 0, GET = 2, HEAD = 3, PUSH = 4, UPDATE = 5, DELETE = 6
     };
 
     enum class Header {

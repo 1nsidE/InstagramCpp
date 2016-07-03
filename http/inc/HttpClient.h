@@ -26,6 +26,7 @@ public:
     HttpResponse post(const HttpUrl& url, const std::string& data, const std::string& content_type);
     HttpResponse post(const HttpUrl& url, const std::pair<std::string, std::string>& type_and_data);
     HttpResponse post(const HttpUrl& url, const FormData& form_data);
+    HttpResponse del(const HttpUrl& url);
 
     HttpResponse send_request(const HttpRequest& http_request);
 	HttpResponse operator<<(const HttpRequest& http_request);
