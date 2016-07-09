@@ -28,7 +28,7 @@ public:
     void add_info(const UserInfo& info);
     void add_info(UserInfo&& user_info);
 
-    const std::vector<UserInfo>& get_users() const;
+    const std::vector<UserInfo>& get_users() const noexcept;
 private:
     std::vector<UserInfo> users;
 };

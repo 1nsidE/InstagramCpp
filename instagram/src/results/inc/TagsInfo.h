@@ -19,7 +19,7 @@ public:
     const TagsInfo& operator=(const TagsInfo& tags_info);
     const TagsInfo& operator=(TagsInfo&& tags_info);
 
-    const std::vector<TagInfo>& get_tags() const;
+    const std::vector<TagInfo>& get_tags() const noexcept;
     
     void add_tag(const TagInfo& tag_info);
     void add_tag(TagInfo&& tag_info);

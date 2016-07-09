@@ -28,7 +28,11 @@ namespace Instagram{
     namespace Media{
         static const char* get_media = "/v1/media/";
         static const char* get_media_shortcode = "/v1/media/shortcode/";
-        static const char* media_search = "/media/search/";
+        static const char* media_search = "/v1/media/search/";
+
+        const char* LAT_ARG = "lat";
+        const char* LNG_ARG = "lng";
+        const char* DST_ARG = "distance";
     }
 
     namespace Comments{
@@ -43,7 +47,6 @@ namespace Instagram{
         static const char* tags_search = "search/";
         static const char* recent_media = "/media/recent/";
     }
-
 }
 
 

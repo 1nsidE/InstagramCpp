@@ -32,7 +32,7 @@ AuthorizationToken InstagramClient::exchange_code(const std::string& code,
     form_data["client_secret"] = client_secret;
     form_data["redirect_uri"] = redirect_uri;
     form_data["grant_type"] = AUTH_CODE_GRANT_TYPE;
-    
+ 
     try{
         Http::HttpResponse response = http_client.post({GET_AUTH_CODE}, form_data);
         switch(response.get_status()){
@@ -72,7 +72,6 @@ UserInfo InstagramClient::get_user_info(const std::string& user_id){
     }catch(const std::exception& err){
         return err.what();
     }
-
 }
 
 MediaEntries InstagramClient::get_recent_media(){
@@ -201,6 +200,74 @@ RelationshipInfo InstagramClient::get_relationship_info(const std::string& user_
                 return Http::get_str(response.get_status());
         }
     }catch(const std::exception& err){
+        return err.what();
+    }
+}
+
+MediaEntry InstagramClient::get_media(const std::string& media_id){
+    try{
+        check_auth();
+        Http::HttpUrl url{Media::get_media, media_id};
+        url[AUTH_TOKEN_ARG] = auth_token;
+
+        Http::HttpResponse response = http_client << url;
+        
+        switch(response.get_status()){
+            case Http::Status::OK:
+                return parser.parse_media_entry(response.get_data());
+            case Http::Status::BAD_REQUEST:
+                return parser.get_error(response.get_data());
+            default:
+                return Http::get_str(response.get_status());
+        }
+
+
+    }catch(const std::exception& err){
+        return err.what();
+    }
+}
+
+MediaEntry InstagramClient::get_media_short(const std::string& shortcode){
+    try{
+        check_auth();
+
+        Http::HttpUrl url{Media::get_media_shortcode, shortcode};
+        url[AUTH_TOKEN_ARG] = auth_token;
+
+        Http::HttpResponse response = http_client << url;
+        switch(response.get_status()){
+            case Http::Status::OK:
+                return parser.parse_media_entry(response.get_data());
+            case Http::Status::BAD_REQUEST:
+                return parser.get_error(response.get_data());
+            default:
+                return Http::get_str(response.get_status());
+        }
+    }catch(const std::exception& err){
+        return err.what();
+    }   
+}
+
+MediaEntries InstagramClient::search_media(double lat, double lng, int distance){
+    try{
+        check_auth();
+
+        Http::HttpUrl url{Media::media_search};
+        url[Media::LAT_ARG] = std::to_string(lat);
+        url[Media::LNG_ARG] = std::to_string(lng);
+        url[Media::DST_ARG] = std::to_string(distance);
+        url[AUTH_TOKEN_ARG] = auth_token;
+
+        Http::HttpResponse response = http_client << url;
+        switch(response.get_status()){
+            case Http::Status::OK:
+                return parser.parse_media_entries(response.get_data());
+            case Http::Status::BAD_REQUEST:
+                return parser.get_error(response.get_data());
+            default:
+                return Http::get_str(response.get_status());
+        }
+    }catch(std::exception& err){
         return err.what();
     }
 }

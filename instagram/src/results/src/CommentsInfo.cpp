@@ -36,7 +36,7 @@ CommentsInfo& CommentsInfo::operator=(CommentsInfo&& comments_info){
     return *this;
 }
 
-const std::vector<CommentInfo>& CommentsInfo::get_comments() const{
+const std::vector<CommentInfo>& CommentsInfo::get_comments() const noexcept{
     return comments;
 }
 

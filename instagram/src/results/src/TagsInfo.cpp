@@ -56,7 +56,7 @@ const TagsInfo& TagsInfo::operator<<(TagInfo&& tag_info){
     return *this;
 }
 
-const std::vector<TagInfo>& TagsInfo::get_tags() const{
+const std::vector<TagInfo>& TagsInfo::get_tags() const noexcept{
     return tags;
 }
 

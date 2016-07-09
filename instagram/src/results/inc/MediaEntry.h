@@ -3,16 +3,18 @@
 
 #include <vector>
 #include <string>
-
+#include "BaseResult.h"
 //TODO: make this class iterable
 
 namespace Instagram{
 
 enum class MediaType{ UNKNOWN, IMAGE, VIDEO };
 
-class MediaEntry{
+class MediaEntry : public BaseResult{
 public:
     MediaEntry();
+    MediaEntry(const std::string& err);
+    MediaEntry(const char* err);
     MediaEntry(const MediaEntry& media_entry);
     MediaEntry(MediaEntry&& media_entry);
     ~MediaEntry();
@@ -62,10 +64,10 @@ private:
 
     std::vector<std::string> tags;
     std::vector<std::string> users_in_photo;
-    int comments_count = 0;
-    int likes_count = 0;
-    long created_time = 0;
-    MediaType media_type;
+    int comments_count = -1;
+    int likes_count = -1;
+    long created_time = -1;
+    MediaType media_type = MediaType::UNKNOWN;
 };
 
 }

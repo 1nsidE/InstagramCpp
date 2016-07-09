@@ -31,7 +31,7 @@ MediaEntries InstagramParser::parse_media_entries(const std::string& json){
         return "Failed to parse media entries";
     };
 
-    Json::Value data = root["data"];
+    const Json::Value& data = root["data"];
     MediaEntries result{};
     if(data.isArray()){
         for(const auto& media : data){
@@ -39,6 +39,16 @@ MediaEntries InstagramParser::parse_media_entries(const std::string& json){
         }
     }
     return result;
+}
+
+MediaEntry InstagramParser::parse_media_entry(const std::string& json){
+    Json::Value root;
+    if(!reader.parse(json, root, false)){
+        return "Failed to parse media entry";
+    }
+
+    const Json::Value& data = root["data"];
+    return get_media_entry(data);
 }
 
 MediaEntry InstagramParser::get_media_entry(const Json::Value& media){

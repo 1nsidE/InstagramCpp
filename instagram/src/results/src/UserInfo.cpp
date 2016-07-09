@@ -97,43 +97,43 @@ UserInfo& UserInfo::operator=(UserInfo&& user_info){
     return *this;
 }
 
-const std::string& UserInfo::get_id() const{
+const std::string& UserInfo::get_id() const noexcept{
     return id;
 }
 
-const std::string& UserInfo::get_username() const{
+const std::string& UserInfo::get_username() const noexcept{
     return username;
 }
 
-const std::string& UserInfo::get_last_name() const{
+const std::string& UserInfo::get_last_name() const noexcept{
     return last_name;
 }
 
-const std::string& UserInfo::get_name() const{
+const std::string& UserInfo::get_name() const noexcept{
     return name;
 }
 
-const std::string& UserInfo::get_bio() const{
+const std::string& UserInfo::get_bio() const noexcept{
     return bio;
 }
 
-const std::string& UserInfo::get_prof_pic_url() const{
+const std::string& UserInfo::get_prof_pic_url() const noexcept{
     return prof_pic_url;
 }
 
-const std::string& UserInfo::get_website() const{
+const std::string& UserInfo::get_website() const noexcept{
     return website;
 }
 
-int UserInfo::followed_by() const{
+int UserInfo::followed_by() const noexcept{
     return _followed_by;
 }
 
-int UserInfo::follows() const{
+int UserInfo::follows() const noexcept{
     return _follows;
 }
 
-int UserInfo::media_count() const{
+int UserInfo::media_count() const noexcept{
     return _media_count;
 }
 

@@ -20,7 +20,7 @@ public:
     CommentsInfo& operator=(const CommentsInfo& comments_info);
     CommentsInfo& operator=(CommentsInfo&& comments_info);
 
-    const std::vector<CommentInfo>& get_comments() const;
+    const std::vector<CommentInfo>& get_comments() const noexcept;
     void add_comment(const CommentInfo& comment_info);
     void add_comment(CommentInfo&& comment_info);
 

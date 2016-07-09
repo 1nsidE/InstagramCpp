@@ -54,7 +54,7 @@ void UsersInfo::add_info(UserInfo&& info){
     users.push_back(std::forward<UserInfo>(info));
 }
 
-const std::vector<UserInfo>& UsersInfo::get_users() const{
+const std::vector<UserInfo>& UsersInfo::get_users() const noexcept{
     return users;
 }
 

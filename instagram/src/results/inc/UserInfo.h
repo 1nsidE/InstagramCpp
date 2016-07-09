@@ -19,17 +19,17 @@ public:
     UserInfo& operator=(const UserInfo& user_info);
     UserInfo& operator=(UserInfo&& user_info);
     
-    const std::string& get_id() const;
-    const std::string& get_username() const;
-    const std::string& get_name() const;
-    const std::string& get_last_name() const;
-    const std::string& get_bio() const;
-    const std::string& get_prof_pic_url() const;
-    const std::string& get_website() const;
+    const std::string& get_id() const noexcept;
+    const std::string& get_username() const noexcept;
+    const std::string& get_name() const noexcept;
+    const std::string& get_last_name() const noexcept;
+    const std::string& get_bio() const noexcept;
+    const std::string& get_prof_pic_url() const noexcept;
+    const std::string& get_website() const noexcept;
 
-    int followed_by() const;
-    int follows() const;
-    int media_count() const;
+    int followed_by() const noexcept;
+    int follows() const noexcept;
+    int media_count() const noexcept;
     
     void set_id(const std::string& _id);
     void set_username(const std::string& _username);

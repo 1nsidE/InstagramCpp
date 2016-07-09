@@ -46,6 +46,10 @@ public:
     UsersInfo get_followed_by();
     UsersInfo get_requested_by();
     RelationshipInfo get_relationship_info(const std::string& user_id);
+//Media
+    MediaEntry get_media(const std::string& media_id);
+    MediaEntry get_media_short(const std::string& shortcode);
+    MediaEntries search_media(double lat, double lng, int distance);
 //Comments
     CommentsInfo get_comments(const std::string& media_id);    
     BaseResult post_comment(const std::string& media_id, const std::string& text);

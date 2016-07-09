@@ -6,10 +6,14 @@
 
 namespace Instagram{
 
-MediaEntry::MediaEntry() : url{""}, id{""}, caption{""}, low_resolution{""}, thumbnail{""}, standart_resolution{""}, filter{""},
-                         tags(0), users_in_photo(0), comments_count{-1}, likes_count{-1}, created_time{-1}, media_type{MediaType::UNKNOWN} {}
+MediaEntry::MediaEntry() :  tags(0), users_in_photo(0), comments_count{-1}, likes_count{-1}, created_time{-1} {}
 
-MediaEntry::MediaEntry(const MediaEntry &media_entry) : url{media_entry.url}, 
+MediaEntry::MediaEntry(const std::string& err) : BaseResult{err}{}
+
+MediaEntry::MediaEntry(const char* err) : BaseResult{err} {}
+
+MediaEntry::MediaEntry(const MediaEntry &media_entry) : BaseResult{media_entry},
+                                                    url{media_entry.url}, 
                                                     id{media_entry.id}, 
                                                     caption{media_entry.caption},
                                                     low_resolution{media_entry.low_resolution},
@@ -23,7 +27,8 @@ MediaEntry::MediaEntry(const MediaEntry &media_entry) : url{media_entry.url},
                                                     created_time{media_entry.created_time},
                                                     media_type{media_entry.media_type}{}
 
-MediaEntry::MediaEntry(MediaEntry &&media_entry) :  url{std::move(media_entry.url)},
+MediaEntry::MediaEntry(MediaEntry &&media_entry) :  BaseResult{std::move(media_entry)},
+                                                    url{std::move(media_entry.url)},
                                                     id{std::move(media_entry.id)},
                                                     caption{std::move(media_entry.caption)},
                                                     low_resolution{std::move(media_entry.low_resolution)},
@@ -47,6 +52,8 @@ MediaEntry::~MediaEntry() {}
 MediaEntry& MediaEntry::operator=(const MediaEntry& media_entry){
     if(this == &media_entry) return *this;
     
+    BaseResult::operator=(media_entry);
+
     url = media_entry.url;
     id = media_entry.id;
     caption = media_entry.caption;
@@ -68,6 +75,8 @@ MediaEntry& MediaEntry::operator=(const MediaEntry& media_entry){
 
 MediaEntry& MediaEntry::operator=(MediaEntry&& media_entry){
     if(this == & media_entry) return *this;
+    
+    BaseResult::operator=(std::move(media_entry));
 
     url = std::move(media_entry.url);
     id = std::move(media_entry.id);

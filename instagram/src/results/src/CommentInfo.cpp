@@ -60,19 +60,19 @@ CommentInfo& CommentInfo::operator=(CommentInfo&& comment_info){
     return *this;
 }
 
-const std::string& CommentInfo::get_text() const{
+const std::string& CommentInfo::get_text() const noexcept{
     return text;
 }
 
-const std::string& CommentInfo::get_id() const{
+const std::string& CommentInfo::get_id() const noexcept{
     return id;
 }
 
-long CommentInfo::get_created_time() const{
+long CommentInfo::get_created_time() const noexcept{
     return created_time;
 }
 
-const UserInfo& CommentInfo::get_user_info() const{
+const UserInfo& CommentInfo::get_user_info() const noexcept{
     return user_info;
 }
 

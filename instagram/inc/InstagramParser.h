@@ -19,6 +19,7 @@ public:
 
     AuthorizationToken parse_auth_token(const std::string& json);
     MediaEntries parse_media_entries(const std::string& json);
+    MediaEntry parse_media_entry(const std::string& json);
     UserInfo parse_user_info(const std::string& json);
     UsersInfo parse_users_info(const std::string& json);
     RelationshipInfo parse_relationship_info(const std::string& json);

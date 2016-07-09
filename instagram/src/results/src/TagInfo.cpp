@@ -45,11 +45,11 @@ const TagInfo& TagInfo::operator=(TagInfo&& tag_info){
     return *this;
 }
 
-const std::string& TagInfo::get_name() const{
+const std::string& TagInfo::get_name() const noexcept{
     return name;
 }
 
-int TagInfo::get_count() const{
+int TagInfo::get_count() const noexcept{
     return count;
 }
 
