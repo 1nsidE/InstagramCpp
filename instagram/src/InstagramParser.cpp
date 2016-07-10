@@ -157,8 +157,8 @@ UserInfo InstagramParser::get_user_info(const Json::Value &info) {
         user_info.set_name(fullname.asString());
     }
 
+    user_info.set_last_name(info["last_name"].asString());
     user_info.set_bio(info["bio"].asString());
-
     user_info.set_website(info["website"].asString());
 
     const Json::Value& counts = info["counts"];

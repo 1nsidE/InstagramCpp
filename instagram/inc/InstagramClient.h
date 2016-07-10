@@ -46,14 +46,18 @@ public:
     UsersInfo get_followed_by();
     UsersInfo get_requested_by();
     RelationshipInfo get_relationship_info(const std::string& user_id);
-//Media
+//Medi
     MediaEntry get_media(const std::string& media_id);
     MediaEntry get_media_short(const std::string& shortcode);
     MediaEntries search_media(double lat, double lng, int distance);
 //Comments
     CommentsInfo get_comments(const std::string& media_id);    
-    BaseResult post_comment(const std::string& media_id, const std::string& text);
+    BaseResult comment(const std::string& media_id, const std::string& text);
     BaseResult delete_comment(const std::string& media_id, const std::string& comment_id);
+//Likes
+    UsersInfo get_likes(const std::string& media_id);
+    BaseResult like(const std::string& media_id);
+    BaseResult unlike(const std::string& media_id);
 //Tags
     TagInfo get_tag_info(const std::string& tag_name);
     TagsInfo search_tags(const std::string& query);
@@ -65,8 +69,9 @@ private:
    
     UsersInfo get_users_info(const Http::HttpUrl& url);    
     MediaEntries get_media(const Http::HttpUrl& url);
-
+    
     void check_auth();
+    std::string get_result(const Http::HttpResponse& response);
 };
 
 }

@@ -27,7 +27,7 @@ public:
     TagsInfo parse_tags_info(const std::string& json);
     CommentsInfo parse_comments(const std::string& json);
 
-    std::string get_error(const std::string& json); 
+    std::string get_error(const std::string& json);
 private:
     MediaEntry get_media_entry(const Json::Value& media);
     UserInfo get_user_info(const Json::Value& info);

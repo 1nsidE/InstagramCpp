@@ -42,6 +42,11 @@ namespace Instagram{
         static const char* comments = "/comments/";
     }
 
+    namespace Likes{
+        static const char* media = "/v1/media/";
+        static const char* likes = "/likes";
+    }
+
     namespace Tags{
         static const char* tags = "/v1/tags/";
         static const char* tags_search = "search/";

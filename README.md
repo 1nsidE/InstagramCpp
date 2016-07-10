@@ -23,11 +23,23 @@ From 'Relationships' Group:
 	/users/self/requested-by
     /users/{user-id}/relationship
 
+From 'Media' Group:
+
+    /media/{media-id}
+    /media/shortcode/{media-id}
+    /media/search
+
 From 'Comments' Group:
 
     /media/{media-id}/comments
     /media/{media-id}/comments //POST
     /media/media-id/comments/comment-id //DELETE
+
+From 'Likes' Group:
+    
+    /media/{media-id}/likes 
+    /media/{media-id}/likes //POST
+    /media/{media-id}/likes //DELETE
 
 From 'Tags' Group:
 
