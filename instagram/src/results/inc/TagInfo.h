@@ -16,8 +16,8 @@ public:
 
     ~TagInfo();    
     
-    const TagInfo& operator=(const TagInfo& tag_info);
-    const TagInfo& operator=(TagInfo&& tag_info);
+    TagInfo& operator=(const TagInfo& tag_info);
+    TagInfo& operator=(TagInfo&& tag_info);
 
     const std::string& get_name() const noexcept;
     int get_count() const noexcept;

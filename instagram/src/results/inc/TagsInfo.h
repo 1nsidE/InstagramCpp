@@ -16,8 +16,8 @@ public:
     TagsInfo(TagsInfo&& tags_info);
     ~TagsInfo();
     
-    const TagsInfo& operator=(const TagsInfo& tags_info);
-    const TagsInfo& operator=(TagsInfo&& tags_info);
+    TagsInfo& operator=(const TagsInfo& tags_info);
+    TagsInfo& operator=(TagsInfo&& tags_info);
 
     const std::vector<TagInfo>& get_tags() const noexcept;
     

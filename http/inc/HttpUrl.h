@@ -23,10 +23,8 @@ public:
     HttpUrl& operator=(HttpUrl&& url);
 
     const std::string& operator[](const std::string& key) const;
-    
-    HttpUrl& operator[](const std::string& key);
-    HttpUrl& operator=(const std::string& value);
-    
+    std::string& operator[](const std::string& key);
+
     void set_end_point(const std::string& _end_point);
     std::string get_end_point();
     const std::string& get_end_point() const;
@@ -42,7 +40,6 @@ public:
 private:
     std::map<std::string, std::string>* arguments_map;
     std::string end_point;
-    const std::string* tmp_key;
 };
 
 }

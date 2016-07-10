@@ -3,7 +3,7 @@
 
 namespace Http{
 
-HttpUrl::HttpUrl() : arguments_map{nullptr}, end_point{"/"}, tmp_key{nullptr}{}
+HttpUrl::HttpUrl() : arguments_map{nullptr}, end_point{"/"}{}
 
 HttpUrl::HttpUrl(const std::string& endpoint) : arguments_map{nullptr}, end_point{endpoint}{}
 
@@ -22,23 +22,17 @@ HttpUrl::HttpUrl(std::initializer_list<const char*> endpoints) : arguments_map{n
     }
 }
 
-HttpUrl::HttpUrl(const HttpUrl& url) : arguments_map{ url.arguments_map ? new std::map<std::string, std::string>(*url.arguments_map) : nullptr},
-    end_point{url.end_point},
-    tmp_key{nullptr}{}
+HttpUrl::HttpUrl(const HttpUrl& url) : arguments_map{ url.arguments_map ? new std::map<std::string, std::string>(*url.arguments_map) : nullptr}, end_point{url.end_point}{}
 
-HttpUrl::HttpUrl(HttpUrl&& url) : arguments_map{url.arguments_map}, 
-    end_point{std::move(url.end_point)},
-    tmp_key{nullptr}{
+HttpUrl::HttpUrl(HttpUrl&& url) : arguments_map{url.arguments_map}, end_point{std::move(url.end_point)}{
         url.arguments_map = nullptr;
-        url.tmp_key = nullptr;
 }
 
 HttpUrl::~HttpUrl(){
     if(arguments_map){
         delete arguments_map;
         arguments_map = nullptr;
-    }
-    tmp_key = nullptr;
+    }   
 }
 
 HttpUrl& HttpUrl::operator=(const HttpUrl& url){
@@ -48,7 +42,6 @@ HttpUrl& HttpUrl::operator=(const HttpUrl& url){
 
     arguments_map = url.arguments_map ? new std::map<std::string, std::string>(*url.arguments_map) : nullptr;
     end_point = url.end_point;
-    tmp_key = nullptr;
 
     return *this;
 }
@@ -61,9 +54,6 @@ HttpUrl& HttpUrl::operator=(HttpUrl&& url){
     arguments_map = url.arguments_map;
     url.arguments_map = nullptr;
     end_point = std::move(url.end_point);
-
-    tmp_key = nullptr;
-    url.tmp_key = nullptr;
 
     return *this;
 }
@@ -85,21 +75,11 @@ const std::string& HttpUrl::get_end_point() const{
     return end_point;
 }
 
-HttpUrl& HttpUrl::operator[](const std::string& key){
-    tmp_key = &key;
-    return *this;
-}
-
-HttpUrl& HttpUrl::operator=(const std::string& value){
+std::string& HttpUrl::operator[](const std::string& key){
     if(!arguments_map){
-        arguments_map = new std::map<std::string, std::string>{};
+        arguments_map = new std::map<std::string, std::string>();
     }
-
-    if(tmp_key){
-        arguments_map->insert(std::make_pair(*tmp_key, value));
-        tmp_key = nullptr;
-    }
-    return *this;
+    return arguments_map->operator[](key);
 }
 
 const std::string& HttpUrl::get_argument(const std::string& key) const{

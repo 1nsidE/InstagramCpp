@@ -18,7 +18,7 @@ TagInfo::TagInfo(TagInfo&& tag_info) : BaseResult{std::forward<BaseResult>(tag_i
 
 TagInfo::~TagInfo(){}
 
-const TagInfo& TagInfo::operator=(const TagInfo& tag_info){
+TagInfo& TagInfo::operator=(const TagInfo& tag_info){
     if(this == &tag_info){
         return *this;
     }
@@ -31,7 +31,7 @@ const TagInfo& TagInfo::operator=(const TagInfo& tag_info){
     return *this;
 }
 
-const TagInfo& TagInfo::operator=(TagInfo&& tag_info){
+TagInfo& TagInfo::operator=(TagInfo&& tag_info){
     if(this == &tag_info){
         return *this;
     }
