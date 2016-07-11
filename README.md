@@ -6,46 +6,7 @@ Project is under active development.
 
 Supported API's:
 ----------------
-
-From 'Users' Group :
-
-	/users/self
-	/users/{user-id}
-	/users/self/media
-	/users/{user-id}/media/recent
-	/users/self/media/liked
-	/users/search
-
-From 'Relationships' Group:
-
-	/users/self/follows
-	/users/self/followed-by
-	/users/self/requested-by
-    /users/{user-id}/relationship
-
-From 'Media' Group:
-
-    /media/{media-id}
-    /media/shortcode/{media-id}
-    /media/search
-
-From 'Comments' Group:
-
-    /media/{media-id}/comments
-    /media/{media-id}/comments //POST
-    /media/media-id/comments/comment-id //DELETE
-
-From 'Likes' Group:
-    
-    /media/{media-id}/likes 
-    /media/{media-id}/likes //POST
-    /media/{media-id}/likes //DELETE
-
-From 'Tags' Group:
-
-    /tags/{tag_name}
-    /tags/search
-    /tags/{tag_name}/media/recent
+All official endpoints are supported.
 
 Usage Example:
 ----------------
