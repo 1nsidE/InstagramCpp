@@ -19,7 +19,7 @@ public:
     BaseResult& operator=(const BaseResult& base_result);
     BaseResult& operator=(BaseResult&& base_result);
 
-	const std::string& get_error_message();
+	const std::string& get_error_message() const;
 	bool is_succeed();
 private:
 	std::string* err_msg;

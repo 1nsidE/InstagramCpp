@@ -12,6 +12,8 @@ TagInfo.cpp
 TagsInfo.cpp
 CommentInfo.cpp
 CommentsInfo.cpp
+LocationInfo.cpp
+LocationsInfo.cpp
 )
 
 add_library(results OBJECT ${RESULT_SOURCES})

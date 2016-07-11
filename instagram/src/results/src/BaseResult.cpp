@@ -71,7 +71,7 @@ BaseResult& BaseResult::operator=(BaseResult&& base_result){
     return *this;
 }
 
-const std::string& BaseResult::get_error_message() {
+const std::string& BaseResult::get_error_message() const {
     const static std::string empty_error{""};
     return err_msg ? *err_msg : empty_error;
 }

@@ -14,6 +14,7 @@
 #include "TagInfo.h"
 #include "TagsInfo.h"
 #include "CommentsInfo.h"
+#include "LocationsInfo.h"
 
 #include "InstagramParser.h"
 
@@ -46,10 +47,10 @@ public:
     UsersInfo get_followed_by();
     UsersInfo get_requested_by();
     RelationshipInfo get_relationship_info(const std::string& user_id);
-//Medi
+//Media
     MediaEntry get_media(const std::string& media_id);
     MediaEntry get_media_short(const std::string& shortcode);
-    MediaEntries search_media(double lat, double lng, int distance);
+    MediaEntries search_media(double lat, double lng, int distance = 1000);
 //Comments
     CommentsInfo get_comments(const std::string& media_id);    
     BaseResult comment(const std::string& media_id, const std::string& text);
@@ -62,6 +63,10 @@ public:
     TagInfo get_tag_info(const std::string& tag_name);
     TagsInfo search_tags(const std::string& query);
     MediaEntries get_recent_media_tag(const std::string& tag_name);
+//Locations
+    LocationInfo get_location(const std::string& location_id);
+    MediaEntries get_media_loc(const std::string& location_id);  
+    LocationsInfo search_locations(double lat, double lng, int distance = 500);
 private:
     InstagramParser parser;
     Http::HttpClient http_client;

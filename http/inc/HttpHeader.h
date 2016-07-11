@@ -22,7 +22,6 @@ public:
     
     const std::string& operator[](Header header) const noexcept;
 
-    virtual std::string get_data();
     virtual const std::string& get_data() const noexcept;
     virtual void set_data(const std::string& data);
     virtual void append_data(const std::string& _data);

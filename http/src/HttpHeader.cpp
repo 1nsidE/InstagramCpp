@@ -90,10 +90,6 @@ void HttpHeader::set_data(const std::string &_data){
     }
 }
 
-std::string HttpHeader::get_data(){
-    return data ? std::string{*data} : "";
-}
-
 const std::string& HttpHeader::get_data() const noexcept{
     static const std::string empty_data{""};
     return data ? *data : empty_data;

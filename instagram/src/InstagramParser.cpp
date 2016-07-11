@@ -249,6 +249,48 @@ CommentInfo InstagramParser::get_comment_info(const Json::Value& comment){
     return comment_info;
 }
 
+LocationInfo InstagramParser::parse_location(const std::string& json){
+    Json::Value root{};
+    if(!reader.parse(json, root, false)){
+        return "Failed to parse location";
+    }
+    
+    return get_location(root["data"]); 
+}
+
+LocationInfo InstagramParser::get_location(const Json::Value& location){
+    if(!location.isNull()){
+        LocationInfo info{};
+        info.set_id(location["id"].asString());
+        info.set_name(location["name"].asString());
+        info.set_latitude(location["latitude"].asDouble());
+        info.set_longitude(location["longitude"].asDouble());
+
+        return info;
+    }else{
+        return "Invalid json, failed to parse location";
+    }   
+}
+
+LocationsInfo InstagramParser::parse_locations(const std::string& json){
+    Json::Value root;
+    if(!reader.parse(json, root, false)){
+        return "Failed to parse locations";
+    }
+
+    const Json::Value& data = root["data"];
+    if(data.isArray()){
+        LocationsInfo infos{};
+        for(const auto& location : data){
+            infos << get_location(location);
+        }
+
+        return infos;
+    }else{
+        return "Invalid json, failed to parse locations";
+    }
+}
+
 std::string InstagramParser::get_error(const std::string& json){
     Json::Value root;
 

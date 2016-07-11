@@ -238,11 +238,11 @@ MediaEntry InstagramClient::get_media_short(const std::string& shortcode){
 MediaEntries InstagramClient::search_media(double lat, double lng, int distance){
     try{
         check_auth();
-
+        
         Http::HttpUrl url{Media::media_search};
-        url[Media::LAT_ARG] = std::to_string(lat);
-        url[Media::LNG_ARG] = std::to_string(lng);
-        url[Media::DST_ARG] = std::to_string(distance);
+        url[LAT_ARG] = std::to_string(lat);
+        url[LNG_ARG] = std::to_string(lng);
+        url[DST_ARG] = std::to_string(distance);
         url[AUTH_TOKEN_ARG] = auth_token;
 
         return get_media(url);
@@ -406,6 +406,62 @@ MediaEntries InstagramClient::get_recent_media_tag(const std::string& tag_name){
             return get_result(response);
         }
     }catch(const std::exception& err){
+        return err.what();
+    }
+}
+
+LocationInfo InstagramClient::get_location(const std::string& location_id){
+    try{
+        check_auth();
+
+        Http::HttpUrl url{Locations::locations, location_id};
+        url[AUTH_TOKEN_ARG] = auth_token;
+
+        const Http::HttpResponse response = http_client << url;
+        if(response.get_status() == Http::Status::OK){
+            return parser.parse_location(response.get_data());
+        }else{
+            return get_result(response);
+        }
+    }catch(const std::exception& err){
+        return err.what();
+    }
+}
+
+MediaEntries InstagramClient::get_media_loc(const std::string& location_id){
+    try{
+        check_auth();
+
+        Http::HttpUrl url{Locations::locations, location_id, Locations::recent_media};
+        Http::HttpResponse response = http_client << url;
+
+        if(response.get_status() == Http::Status::OK){
+            return parser.parse_media_entries(response.get_data());
+        }else{
+            return get_result(response);
+        }
+    }catch(std::exception& err){
+        return err.what();
+    } 
+}
+
+LocationsInfo InstagramClient::search_locations(double lat, double lng, int distance){
+    try{
+        check_auth();
+
+        Http::HttpUrl url{Locations::locations, Locations::search};
+        url[LAT_ARG] = std::to_string(lat);
+        url[LNG_ARG] = std::to_string(lng);
+        url[DST_ARG] = std::to_string(distance);
+        url[AUTH_TOKEN_ARG] = auth_token;
+
+        Http::HttpResponse response = http_client << url;
+        if(response.get_status() == Http::Status::OK){
+            return parser.parse_locations(response.get_data());
+        }else{
+            return get_result(response);
+        }
+   }catch(std::exception& err){
         return err.what();
     }
 }

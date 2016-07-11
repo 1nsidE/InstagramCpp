@@ -9,6 +9,9 @@ namespace Instagram{
     static const char* GET_AUTH_CODE = "/oauth/access_token";
     static const char* SELF = "self";
     static const char* QUERY_ARG = "q";   
+    const char* LAT_ARG = "lat";
+    const char* LNG_ARG = "lng";
+    const char* DST_ARG = "distance";
 
     namespace Users{
         static const char* users = "/v1/users/";
@@ -30,9 +33,6 @@ namespace Instagram{
         static const char* get_media_shortcode = "/v1/media/shortcode/";
         static const char* media_search = "/v1/media/search/";
 
-        const char* LAT_ARG = "lat";
-        const char* LNG_ARG = "lng";
-        const char* DST_ARG = "distance";
     }
 
     namespace Comments{
@@ -51,6 +51,12 @@ namespace Instagram{
         static const char* tags = "/v1/tags/";
         static const char* tags_search = "search/";
         static const char* recent_media = "/media/recent/";
+    }
+
+    namespace Locations{
+        static const char* locations = "/v1/locations/";
+        static const char* recent_media = "/media/recent/";
+        static const char* search = "search/";
     }
 }
 
