@@ -88,7 +88,7 @@ HttpResponse HttpClient::send_request(const HttpRequest& http_request) {
     send(http_request); 
     HttpResponse http_response = recieve(20);
     
-    if(http_response.get_header(Header::CONNECTION) == "close"){
+    if(http_response[Header::CONNECTION] == "close"){
         disconnect();
     }
 

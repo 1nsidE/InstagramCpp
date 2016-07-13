@@ -11,6 +11,23 @@ HttpResponse::HttpResponse(HttpResponse&& response) : HttpHeader{std::forward<Ht
 
 HttpResponse::~HttpResponse(){}
 
+HttpResponse &HttpResponse::operator=(const HttpResponse& http_response) {
+    if(this != &http_response){
+        HttpHeader::operator=(http_response);
+        status = http_response.status;
+    }
+    return *this;
+}
+
+HttpResponse &HttpResponse::operator=(HttpResponse &&http_response) {
+    if(this != &http_response){
+        HttpHeader::operator=(std::forward<HttpHeader>(http_response));
+        status = http_response.status;
+        http_response.status = Http::Status::UNKNOWN;
+    }
+    return *this;
+}
+
 void HttpResponse::set_status(Http::Status _status){
     status = _status;
 }
@@ -25,23 +42,6 @@ std::string HttpResponse::get_string() const{
 
 Http::Status HttpResponse::get_status() const {
     return status;
-}
-
-HttpResponse &HttpResponse::operator=(HttpResponse &&http_response) {
-    if(this != &http_response){
-        HttpHeader::operator=(std::forward<HttpHeader>(http_response));
-        status = http_response.status;
-        http_response.status = Http::Status::UNKNOWN;
-    }
-    return *this;
-}
-
-HttpResponse &HttpResponse::operator=(const HttpResponse& http_response) {
-    if(this != &http_response){
-        HttpHeader::operator=(http_response);
-        status = http_response.status;
-    }
-    return *this;
 }
 
 }

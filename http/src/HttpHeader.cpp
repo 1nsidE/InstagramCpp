@@ -2,13 +2,12 @@
 
 namespace Http{
 
-HttpHeader::HttpHeader() : headers_map{}, data{nullptr}, tmp_header{Header::UNKNOWN}{}
+HttpHeader::HttpHeader(){}
 
 HttpHeader::HttpHeader(const HttpHeader& http_header) : headers_map(http_header.headers_map), 
-    data{http_header.data == nullptr ? nullptr : new std::string{*http_header.data}},
-    tmp_header{Header::UNKNOWN}{}
+    data{http_header.data == nullptr ? nullptr : new std::string{*http_header.data}}{}
 
-HttpHeader::HttpHeader(HttpHeader&& http_header) : headers_map(std::move(http_header.headers_map)), data{http_header.data}, tmp_header{Header::UNKNOWN} {
+HttpHeader::HttpHeader(HttpHeader&& http_header) : headers_map(std::move(http_header.headers_map)), data{http_header.data} {
     http_header.data = nullptr;
 }        
 
@@ -22,6 +21,7 @@ HttpHeader& HttpHeader::operator=(const HttpHeader& http_header){
     if(this == &http_header){
         return *this;
     }
+
     headers_map = http_header.headers_map;
 
     if(data != nullptr){
@@ -33,7 +33,6 @@ HttpHeader& HttpHeader::operator=(const HttpHeader& http_header){
         data = new std::string{*http_header.data};
     }
     
-    tmp_header = Header::UNKNOWN;
     return *this;
 }
 
@@ -46,40 +45,28 @@ HttpHeader& HttpHeader::operator=(HttpHeader&& http_header){
     data = http_header.data;
     http_header.data = nullptr;
     
-    tmp_header = Header::UNKNOWN;
-    http_header.tmp_header = Header::UNKNOWN;
-
     return *this;
-}
-
-HttpHeader& HttpHeader::operator[](Header header) noexcept {
-    tmp_header = header;
-    return *this;
-}
-
-HttpHeader& HttpHeader::operator=(const std::string& value){
-    if(tmp_header != Header::UNKNOWN){
-        add_header(tmp_header, value);
-        tmp_header = Header::UNKNOWN;
-   }
-   return *this;
-}
-
-void HttpHeader::add_header(Header header, const std::string& _val){
-    headers_map[header] = _val;
 }
 
 const std::string& HttpHeader::get_header(Header header) const noexcept {
     static const std::string empty_header{""};
-    if(headers_map.count(header)){
-        return headers_map.at(header);
-    }else{
-        return empty_header;
-    }
+    return headers_map.count(header) ? headers_map.at(header) : empty_header;
+}
+
+std::string& HttpHeader::get_header(Header header){
+    return headers_map[header];
 }
 
 const std::string& HttpHeader::operator[](Header header) const noexcept {
     return get_header(header);
+}
+
+std::string& HttpHeader::operator[](Header header){
+    return get_header(header);
+}
+
+void HttpHeader::add_header(Header header, const std::string& _val){
+    headers_map[header] = _val;
 }
 
 void HttpHeader::set_data(const std::string &_data){
@@ -103,7 +90,7 @@ void HttpHeader::append_data(const std::string &_data) {
     }
 }
 
-void HttpHeader::append_data(const char *_data) noexcept {
+void HttpHeader::append_data(const char *_data) {
     if(_data == nullptr){
         return;
     }    
