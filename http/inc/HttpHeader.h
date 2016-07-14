@@ -15,7 +15,6 @@ public:
     virtual ~HttpHeader();
 
     const std::string& get_header(Header header) const noexcept;
-    std::string& get_header(Header header);
 
     const std::string& operator[](Header header) const noexcept;
     std::string& operator[](Header header);

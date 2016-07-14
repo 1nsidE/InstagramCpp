@@ -53,16 +53,12 @@ const std::string& HttpHeader::get_header(Header header) const noexcept {
     return headers_map.count(header) ? headers_map.at(header) : empty_header;
 }
 
-std::string& HttpHeader::get_header(Header header){
-    return headers_map[header];
-}
-
 const std::string& HttpHeader::operator[](Header header) const noexcept {
     return get_header(header);
 }
 
 std::string& HttpHeader::operator[](Header header){
-    return get_header(header);
+    return headers_map[header];
 }
 
 void HttpHeader::add_header(Header header, const std::string& _val){
