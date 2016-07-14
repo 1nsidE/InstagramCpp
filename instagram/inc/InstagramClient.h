@@ -38,10 +38,13 @@ public:
 //Users
     UserInfo get_user_info();
     UserInfo get_user_info(const std::string& user_id);
-    MediaEntries get_recent_media();
-    MediaEntries get_recent_media(const std::string& user_id);
+    MediaEntries get_recent_media(unsigned count = 20);
+    MediaEntries get_recent_media(const std::string& min_id, const std::string& max_id, unsigned count = 20);
+    MediaEntries get_recent_media(const std::string& user_id, const std::string& min_id, const std::string& max_id, unsigned count = 20);
+    MediaEntries get_recent_media(const std::string& user_id, unsigned count = 20);
     MediaEntries get_liked_media();
-    UsersInfo search_users(const std::string& query);
+    MediaEntries get_liked_media(const std::string& max_id);
+    UsersInfo search_users(const std::string& query, unsigned count = 20);
 //Relationships
     UsersInfo get_follows();
     UsersInfo get_followed_by();
