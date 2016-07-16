@@ -112,7 +112,7 @@ namespace Http{
         }
     }
    
-    template<>
+/*    template<>
     Header from_str<Header>(const char* str){
         const static std::map<std::string, Header> map{
             {"content-length", Header::CONTENT_LENGTH},
@@ -140,7 +140,7 @@ namespace Http{
             return Header::UNKNOWN;   
         }
     }
-
+*/
     template<>
     Header from_str<Header>(const std::string& str){
         return from_str<Header>(str.c_str());
