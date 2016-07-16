@@ -12,6 +12,8 @@
 #include "exceptions/HttpFailedToSend.h"
 #include "exceptions/HttpTooBigResponse.h"
 
+#include <iostream>
+
 namespace Http{
 
 HttpClient::HttpClient(const std::string &_host, HttpProtocol _protocol) : socket{nullptr}, host{_host}, protocol{_protocol}, connected{false}{
@@ -107,7 +109,7 @@ void HttpClient::send(const HttpRequest& http_request) {
     const std::string& str = http_request.get_string();
     const char* request = str.c_str();
     const size_t length = str.length();
-    
+
     size_t written = 0;
     while(written < length){
         int count = socket->write(request + written, length - static_cast<size_t>(written));
@@ -127,7 +129,7 @@ void HttpClient::send(const HttpRequest& http_request) {
 
 HttpResponse HttpClient::recieve(long timeout) {
     std::string response = read(timeout);
-    
+
     HttpResponse http_response = HttpHeaderParser::parse_response(response);
     if(http_response.get_status() == Status::UNKNOWN){
         int retry_count = 3;

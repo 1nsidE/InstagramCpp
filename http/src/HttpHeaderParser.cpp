@@ -102,7 +102,7 @@ void HttpHeaderParser::parse_headers(std::istringstream& string_stream, HttpHead
         if(tokens.size() != 2){
             throw std::runtime_error("invalid header : " + line);
         }
-        header.add_header(from_str<Header>(tokens[0]), tokens[1]);
+        header.add_header(tokens[0], tokens[1]);
     }
 }
 

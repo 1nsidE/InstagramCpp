@@ -28,7 +28,7 @@ public:
     void set_url(HttpUrl&& url);
     const HttpUrl& get_url() const;
 
-    virtual std::string get_string() const;
+    virtual std::string get_string() const override;
 private:
 	Http::Method method;
     HttpUrl url;

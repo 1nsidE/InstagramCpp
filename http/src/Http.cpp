@@ -5,20 +5,21 @@
 
 namespace Http{
     
-    const std::string change_case(const char* str, bool to_upper){
+    std::string change_case(const char* str, bool to_upper){
         std::string result{str};
 
         std::transform(result.begin(), result.end(), result.begin(), to_upper ? ::toupper : ::tolower);
         return result;  
     }
 
-    const std::string change_case(const std::string& str, bool to_upper){
+   std::string change_case(const std::string& str, bool to_upper) {
         std::string result{str};
         std::transform(result.begin(), result.end(), result.begin(), to_upper ? ::toupper : ::tolower);
+
         return result;
     }
 
-    const char* get_str(Method method){
+     const char* to_string(Method method) noexcept{
         switch(method){
             case Method::POST:
                 return "POST";
@@ -37,61 +38,61 @@ namespace Http{
         }
     }
 
-    const char* get_str(Header header){
+     const char* to_string(Header header) noexcept{
         switch(header){
             case Header::CONTENT_LENGTH:
-                return "Content-Length: ";
+                return "content-length";
             case Header::CONTENT_TYPE:
-                return "Content-Type: ";
+                return "content-type";
             case Header::USER_AGENT:
-                return "User-Agent: ";
+                return "user-agent";
             case Header::CONNECTION:
-                return "Connection: ";
+                return "connection";
             case Header::HOST:
-                return "Host: ";
+                return "host";
             case Header::ACCEPT:
-                return "Accept: ";
+                return "accept";
             case Header::CACHE_CONTROL:
-                return "Cache-Control: ";
+                return "cache-control";
             case Header::SET_COOKIE:
-                return "Set-Cookie: ";
+                return "set-cookie";
             case Header::EXPIRES:
-                return "Expires: ";
+                return "expires";
             case Header::ACCEPT_ENCODING:
-                return "Accept-Encoding: ";
+                return "accept-encoding";
             case Header::ACCEPT_LANGUAGE:
-                return "Accept-Language: ";
+                return "accept-language";
             case Header::CONTENT_LANGUAGE:
-                return "Content-Language: ";
+                return "content-language";
             case Header::COOKIE:
-                return "Cookie: ";
+                return "cookie";
             case Header::TRANSFER_ENCODING:
-                return "Transfer-Encoding: ";
+                return "transfer-encoding";
             case Header::LOCATION:
-                return "Location: ";
+                return "location";
             default:
-                return "Unknown: ";
+                return "unknown";
         }
     }
 
-    const char* get_str(Status status){
+     const char* to_string(Status status) noexcept{
         switch(status){
             case Status::OK:
                 return "OK";
             case Status::BAD_REQUEST:
-                return "Bad Request";
+                return "BAD REQUEST";
             case Status::UNAUTHORIZED:
-                return "Unauthorized";
+                return "UNAUTHORIZED";
             case Status::FORBIDDEN:
-                return "Forbidden";
+                return "FORBIDDEN";
             case Status::INTERNAL_SERVER_ERROR:
-                return "Internal Server Error";
+                return "INTERNAL_SERVER_ERROR";
             case Status::NOT_FOUND:
-                return "Not Found";
+                return "NOT FOUND";
             case Status::MOVED:
-                return "Moved";
+                return "MOVED";
             default:
-                return "Unknown";
+                return "UNKNOWN";
         }
     }
     
@@ -178,7 +179,8 @@ namespace Http{
             {"GET", Method::GET},
             {"PUSH", Method::PUSH},
             {"UPDATE", Method::UPDATE},
-            {"HEAD", Method::HEAD}
+            {"HEAD", Method::HEAD},
+            {"DELETE", Method::DELETE}
         };
 
         std::string method = change_case(str, true);
@@ -194,3 +196,4 @@ namespace Http{
         return from_str<Method>(str.c_str());
     }
 }
+

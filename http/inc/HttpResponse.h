@@ -16,9 +16,9 @@ public:
     HttpResponse& operator=(HttpResponse&& http_response);
 	HttpResponse& operator=(const HttpResponse& http_response);
 	
-    virtual std::string get_string() const;
     Http::Status get_status() const;
     void set_status(Http::Status _status);
+    virtual std::string get_string() const override;
 private:
     Http::Status status;
 };

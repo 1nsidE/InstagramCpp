@@ -34,7 +34,7 @@ void HttpResponse::set_status(Http::Status _status){
 
 std::string HttpResponse::get_string() const{
     std::string result("");
-    result.append(HTTP_1_1).append(" ").append(std::to_string(static_cast<int>(status))).append(" ").append(get_str(status)).append(CRLF);
+    result.append(HTTP_1_1).append(" ").append(std::to_string(static_cast<int>(status))).append(" ").append(to_string(status)).append(CRLF);
     
     result.append(HttpHeader::get_string());
     return result;

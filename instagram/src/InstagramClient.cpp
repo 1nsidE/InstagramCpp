@@ -25,7 +25,7 @@ std::string InstagramClient::get_result(const Http::HttpResponse& response){
         case Http::Status::BAD_REQUEST:
             return parser.get_error(response.get_data());
         default:
-            return Http::get_str(response.get_status());
+            return Http::to_string(response.get_status());
     }
 
 }

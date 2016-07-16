@@ -50,7 +50,8 @@ HttpHeader& HttpHeader::operator=(HttpHeader&& http_header){
 
 const std::string& HttpHeader::get_header(Header header) const noexcept {
     static const std::string empty_header{""};
-    return headers_map.count(header) ? headers_map.at(header) : empty_header;
+    std::string header_str = to_string(header);
+    return headers_map.count(header_str) ? headers_map.at(header_str) : empty_header;
 }
 
 const std::string& HttpHeader::operator[](Header header) const noexcept {
@@ -58,11 +59,30 @@ const std::string& HttpHeader::operator[](Header header) const noexcept {
 }
 
 std::string& HttpHeader::operator[](Header header){
-    return headers_map[header];
+    return headers_map[to_string(header)];
+}
+
+const std::string& HttpHeader::get_header(const std::string& header) const noexcept{
+    static const std::string empty_header{""};
+    std::string header_low = change_case(header);
+    return headers_map.count(header_low) ? headers_map.at(header_low) : empty_header;
+}
+
+const std::string& HttpHeader::operator[](const std::string& header) const noexcept{
+    return get_header(change_case(header));
+}
+
+std::string& HttpHeader::operator[](const std::string& header){
+    std::string header_low = change_case(header);
+    return headers_map[header_low];
 }
 
 void HttpHeader::add_header(Header header, const std::string& _val){
-    headers_map[header] = _val;
+    headers_map[to_string(header)] = _val;
+}
+
+void HttpHeader::add_header(const std::string& header, const std::string& val){
+    headers_map[change_case(header)] = val;
 }
 
 void HttpHeader::set_data(const std::string &_data){
@@ -113,18 +133,20 @@ size_t HttpHeader::data_len() const noexcept{
 }
 
 bool HttpHeader::contain_header(Http::Header header) const noexcept {
-    return headers_map.count(header) > 0;
+    const char* header_str = to_string(header);
+    return headers_map.count(header_str) > 0;
 }
 
 size_t HttpHeader::content_len() const {
-    return (headers_map.count(Http::Header::CONTENT_LENGTH) ? static_cast<size_t>(std::stoi(headers_map.at(Http::Header::CONTENT_LENGTH))) : 0);
+    const std::string content_len = to_string(Http::Header::CONTENT_LENGTH);
+    return headers_map.count(content_len) ? static_cast<size_t>(std::stoi(headers_map.at(content_len))) : 0;
 }
 
 std::string HttpHeader::get_string() const{
     std::string result{};
 
     for(const auto &p : headers_map){
-        result.append(get_str(p.first)).append(p.second).append(CRLF);
+        result.append(p.first).append(HEADER_SEPARATOR).append(p.second).append(CRLF);
     }
     result.append(CRLF);
 

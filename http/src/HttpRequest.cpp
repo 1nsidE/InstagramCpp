@@ -47,7 +47,7 @@ std::string HttpRequest::get_string() const {
         return "";
     }
 
-    std::string result{get_str(method)};
+    std::string result{to_string(method)};
     result += " " + url.get_url() + " " + HTTP_1_1 + CRLF;
     
     result += HttpHeader::get_string();
@@ -59,7 +59,7 @@ void HttpRequest::set_url(const HttpUrl& _url){
 }
 
 void HttpRequest::set_url(HttpUrl&& _url){
-    url = _url;
+    url = std::move(_url);
 }
 
 const HttpUrl& HttpRequest::get_url() const{

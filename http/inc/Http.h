@@ -7,6 +7,7 @@
 
 #define HTTP_1_1 "HTTP/1.1"
 #define CRLF "\r\n"
+#define HEADER_SEPARATOR ": "
 #define ARG_START_DELIMETER '?'
 #define ARG_DELIMETER '&'
 #define ARG_EQUAL '='
@@ -33,10 +34,13 @@ namespace Http{
         UNKNOWN = 0, OK = 200, MOVED = 302, BAD_REQUEST = 400, UNAUTHORIZED = 401, FORBIDDEN = 403, NOT_FOUND = 404, INTERNAL_SERVER_ERROR = 500
     };
 
-    const char* get_str(Method method);
-    const char* get_str(Header header);
-    const char* get_str(Content_Type content_type);
-    const char* get_str(Status status);
+    const char* to_string(Method method) noexcept;
+    const char* to_string(Header header) noexcept;
+    const char* to_string(Content_Type content_type) noexcept;
+    const char* to_string(Status status) noexcept;
+
+     std::string change_case(const char* str, bool to_upper = false);
+     std::string change_case(const std::string& str, bool to_upper = false);
 
     template<typename T>
     T from_str(const char* str);
@@ -45,14 +49,6 @@ namespace Http{
     T from_str(const std::string& str);
     
     Status from_int(int status);
-
-    struct enum_hash{
-        template <typename T>
-        inline typename std::enable_if<std::is_enum<T>::value, std::size_t>::type
-        operator ()(T const value) const{
-            return static_cast<std::size_t>(value);
-        }
-    };
 }
 
 #endif
