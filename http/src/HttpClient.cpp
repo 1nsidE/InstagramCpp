@@ -131,16 +131,16 @@ HttpResponse HttpClient::recieve(long timeout) {
     std::string response = read(timeout);
 
     HttpResponse http_response = HttpHeaderParser::parse_response(response);
-    if(http_response.get_status() == Status::UNKNOWN){
+    if(http_response.get_code() == Status::UNKNOWN){
         int retry_count = 3;
-        while(retry_count && http_response.get_status() == Status::UNKNOWN){
+        while(retry_count && http_response.get_code() == Status::UNKNOWN){
             response.append(read(timeout));
             http_response = HttpHeaderParser::parse_response(response);
             --retry_count;
         }
     }
     
-    if(http_response.get_status() == Status::UNKNOWN){
+    if(http_response.get_code() == Status::UNKNOWN){
         return http_response;
     }
     size_t content_len = http_response.content_len();

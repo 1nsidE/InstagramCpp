@@ -21,13 +21,12 @@ void InstagramClient::check_auth(){
 }
 
 std::string InstagramClient::get_result(const Http::HttpResponse& response){
-    switch(response.get_status()){
+    switch(response.get_code()){
         case Http::Status::BAD_REQUEST:
             return parser.get_error(response.get_data());
         default:
-            return Http::to_string(response.get_status());
+            return response.get_status();
     }
-
 }
 
 AuthorizationToken InstagramClient::exchange_code(const std::string& code, 
@@ -44,7 +43,7 @@ AuthorizationToken InstagramClient::exchange_code(const std::string& code,
 
     try{
         const Http::HttpResponse response = http_client.post({GET_AUTH_CODE}, form_data);
-        if(response.get_status() == Http::Status::OK){
+        if(response.get_code() == Http::Status::OK){
             return parser.parse_auth_token(response.get_data());
         }else{
             return get_result(response);
@@ -65,7 +64,7 @@ UserInfo InstagramClient::get_user_info(const std::string& user_id){
         url[AUTH_TOKEN_ARG] = auth_token; 
         
         const Http::HttpResponse response = http_client << url;
-        if(response.get_status() == Http::Status::OK){
+        if(response.get_code() == Http::Status::OK){
             return parser.parse_user_info(response.get_data());
         }else{
             return get_result(response);
@@ -143,7 +142,7 @@ MediaEntries InstagramClient::get_liked_media(const std::string& max_id){
 MediaEntries InstagramClient::get_media(const Http::HttpUrl& url){
     const Http::HttpResponse response = http_client << url;
 
-    if(response.get_status() == Http::Status::OK){
+    if(response.get_code() == Http::Status::OK){
         return parser.parse_media_entries(response.get_data());
     }else{
         return get_result(response);
@@ -203,7 +202,7 @@ UsersInfo InstagramClient::get_users_info(const Http::HttpUrl& url){
         check_auth();
         const Http::HttpResponse response = http_client << url;
 
-        if(response.get_status() == Http::Status::OK){
+        if(response.get_code() == Http::Status::OK){
             return parser.parse_users_info(response.get_data());
         }else{
             return get_result(response);
@@ -221,7 +220,7 @@ RelationshipInfo InstagramClient::get_relationship_info(const std::string& user_
         
         const Http::HttpResponse response = http_client << url;
         
-        if(response.get_status() == Http::Status::OK){
+        if(response.get_code() == Http::Status::OK){
             return parser.parse_relationship_info(response.get_data());
         }else{
             return get_result(response);
@@ -239,7 +238,7 @@ MediaEntry InstagramClient::get_media(const std::string& media_id){
         url[AUTH_TOKEN_ARG] = auth_token;
 
         const Http::HttpResponse response = http_client << url;
-        if(response.get_status() == Http::Status::OK){
+        if(response.get_code() == Http::Status::OK){
             return parser.parse_media_entry(response.get_data());
         }else{
             return get_result(response);
@@ -258,7 +257,7 @@ MediaEntry InstagramClient::get_media_short(const std::string& shortcode){
         url[AUTH_TOKEN_ARG] = auth_token;
 
         const Http::HttpResponse response = http_client << url;
-        if(response.get_status() == Http::Status::OK){
+        if(response.get_code() == Http::Status::OK){
             return parser.parse_media_entry(response.get_data());
         }else{
             return get_result(response);
@@ -292,7 +291,7 @@ CommentsInfo InstagramClient::get_comments(const std::string& media_id){
         url[AUTH_TOKEN_ARG] = auth_token;
 
         const Http::HttpResponse response = http_client << url;
-        if(response.get_status() == Http::Status::OK){
+        if(response.get_code() == Http::Status::OK){
             return parser.parse_comments(response.get_data());
         }else{
             return get_result(response);
@@ -312,7 +311,7 @@ BaseResult InstagramClient::comment(const std::string& media_id, const std::stri
         form_data[Comments::TEXT_ARG] = text;
         
         const Http::HttpResponse response = http_client.post(url, form_data);
-        if(response.get_status() == Http::Status::OK){
+        if(response.get_code() == Http::Status::OK){
             return {};
         }else{
             return get_result(response);
@@ -329,7 +328,7 @@ BaseResult InstagramClient::delete_comment(const std::string& media_id, const st
         Http::HttpUrl url{Comments::media, media_id, Comments::comments, comment_id};
         url[AUTH_TOKEN_ARG] = auth_token;
         const Http::HttpResponse response = http_client.del(url);
-        if(response.get_status() == Http::Status::OK){
+        if(response.get_code() == Http::Status::OK){
             return {};
         }else{
             return get_result(response);
@@ -361,7 +360,7 @@ BaseResult InstagramClient::like(const std::string& media_id){
         form_data[AUTH_TOKEN_ARG] = auth_token;
         
         const Http::HttpResponse response = http_client.post(url, form_data);
-        if(response.get_status() == Http::Status::OK){
+        if(response.get_code() == Http::Status::OK){
             return {};
         }else{
             return get_result(response);
@@ -379,7 +378,7 @@ BaseResult InstagramClient::unlike(const std::string& media_id){
         url[AUTH_TOKEN_ARG] = auth_token;
 
         const Http::HttpResponse response = http_client.del(url);
-        if(response.get_status() == Http::Status::OK){
+        if(response.get_code() == Http::Status::OK){
             return {};
         }else{
             return get_result(response);
@@ -396,7 +395,7 @@ TagInfo InstagramClient::get_tag_info(const std::string& tag_name){
         url[AUTH_TOKEN_ARG] = auth_token;
 
         const Http::HttpResponse response = http_client << url;
-        if(response.get_status() == Http::Status::OK){
+        if(response.get_code() == Http::Status::OK){
             return parser.parse_tag_info(response.get_data());
         }else{
             return get_result(response);
@@ -414,7 +413,7 @@ TagsInfo InstagramClient::search_tags(const std::string& query){
         url[AUTH_TOKEN_ARG] = auth_token;
 
         const Http::HttpResponse response = http_client << url;
-        if(response.get_status() == Http::Status::OK){
+        if(response.get_code() == Http::Status::OK){
             return parser.parse_tags_info(response.get_data());
         }else{
             return get_result(response);
@@ -433,7 +432,7 @@ MediaEntries InstagramClient::get_recent_media_tag(const std::string& tag_name){
         url[AUTH_TOKEN_ARG] = auth_token;
 
         const Http::HttpResponse response = http_client << url;
-        if(response.get_status() == Http::Status::OK){
+        if(response.get_code() == Http::Status::OK){
             return parser.parse_media_entries(response.get_data());
         }else{
             return get_result(response);
@@ -451,7 +450,7 @@ LocationInfo InstagramClient::get_location(const std::string& location_id){
         url[AUTH_TOKEN_ARG] = auth_token;
 
         const Http::HttpResponse response = http_client << url;
-        if(response.get_status() == Http::Status::OK){
+        if(response.get_code() == Http::Status::OK){
             return parser.parse_location(response.get_data());
         }else{
             return get_result(response);
@@ -468,7 +467,7 @@ MediaEntries InstagramClient::get_media_loc(const std::string& location_id){
         Http::HttpUrl url{Locations::locations, location_id, Locations::recent_media};
         Http::HttpResponse response = http_client << url;
 
-        if(response.get_status() == Http::Status::OK){
+        if(response.get_code() == Http::Status::OK){
             return parser.parse_media_entries(response.get_data());
         }else{
             return get_result(response);
@@ -489,7 +488,7 @@ LocationsInfo InstagramClient::search_locations(double lat, double lng, int dist
         url[AUTH_TOKEN_ARG] = auth_token;
 
         Http::HttpResponse response = http_client << url;
-        if(response.get_status() == Http::Status::OK){
+        if(response.get_code() == Http::Status::OK){
             return parser.parse_locations(response.get_data());
         }else{
             return get_result(response);

@@ -26,29 +26,19 @@ namespace Http{
         CONTENT_LANGUAGE = 8, EXPIRES = 9, ACCEPT_ENCODING = 10, ACCEPT_LANGUAGE = 11, COOKIE  = 12, TRANSFER_ENCODING = 13, LOCATION = 14
     };
 
-    enum class Content_Type {
-        FORM_DATA = 0
-    };
-
-    enum class Status{
-        UNKNOWN = 0, OK = 200, MOVED = 302, BAD_REQUEST = 400, UNAUTHORIZED = 401, FORBIDDEN = 403, NOT_FOUND = 404, INTERNAL_SERVER_ERROR = 500
+    enum  Status{
+        UNKNOWN = -1, OK = 200, MOVED = 302, BAD_REQUEST = 400, UNAUTHORIZED = 401, FORBIDDEN = 403, NOT_FOUND = 404, INTERNAL_SERVER_ERROR = 500
     };
 
     const char* to_string(Method method) noexcept;
     const char* to_string(Header header) noexcept;
-    const char* to_string(Content_Type content_type) noexcept;
     const char* to_string(Status status) noexcept;
 
-     std::string change_case(const char* str, bool to_upper = false);
-     std::string change_case(const std::string& str, bool to_upper = false);
+    std::string change_case(const char* str, bool to_upper = false);
+    std::string change_case(const std::string& str, bool to_upper = false);
 
-    template<typename T>
-    T from_str(const char* str);
-    
-    template<typename T>
-    T from_str(const std::string& str);
-    
-    Status from_int(int status);
+    Method from_str(const char* str);
+    Method from_str(const std::string& str);
 }
 
 #endif

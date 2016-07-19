@@ -8,7 +8,7 @@ namespace Http{
 class HttpResponse : public HttpHeader{
 public:
     HttpResponse();
-    HttpResponse(HttpResponse& response);
+    HttpResponse(const HttpResponse& response);
     HttpResponse(HttpResponse&& response);
 
     virtual ~HttpResponse();
@@ -16,13 +16,16 @@ public:
     HttpResponse& operator=(HttpResponse&& http_response);
 	HttpResponse& operator=(const HttpResponse& http_response);
 	
-    Http::Status get_status() const;
+    const std::string& get_status() const noexcept;
+    int get_code() const noexcept;
     void set_status(Http::Status _status);
+    void set_status(const std::string& status, int code);
+
     virtual std::string get_string() const override;
 private:
-    Http::Status status;
+    std::string status{};
+    int code = -1;
 };
 
 }
-
 #endif
