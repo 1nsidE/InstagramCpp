@@ -43,7 +43,7 @@ protected:
     
     HttpHeader& operator=(const HttpHeader& http_heade);
     HttpHeader& operator=(HttpHeader&& http_header);
-
+private:
     HeadersMap headers_map{};
     std::string* data = nullptr;
 };

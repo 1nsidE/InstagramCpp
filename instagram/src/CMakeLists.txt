@@ -4,8 +4,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 add_subdirectory(results)
 
 set(INSTAGRAM_SOURCES 
-	InstagramClient.cpp
-	InstagramParser.cpp
+    InstagramClient.cpp
+    InstagramParser.cpp
 )
 
 add_library(instagramcpp SHARED ${INSTAGRAM_SOURCES}

@@ -58,7 +58,7 @@ Build:
 ----------------
 Tested only on Linux with 4.5 kernel.
 
-	cmake .
-	make
+    cmake .
+    make
 
 You will find shared library in "lib" folder.

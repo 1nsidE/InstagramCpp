@@ -14,7 +14,6 @@ FormData::FormData(const FormData& form_data) : data{form_data.data},
 
 FormData::FormData(FormData&& form_data) : data{std::move(form_data.data)},
                                            boundary{std::move(form_data.boundary)}{}
-
 void FormData::add_pair(const std::string &name, const std::string &value) {
     data[name] = value;
 }

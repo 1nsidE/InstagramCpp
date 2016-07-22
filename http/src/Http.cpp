@@ -11,15 +11,15 @@ namespace Http{
         std::transform(result.begin(), result.end(), result.begin(), to_upper ? ::toupper : ::tolower);
         return result;  
     }
-
-   std::string change_case(const std::string& str, bool to_upper) {
+    
+    std::string change_case(const std::string& str, bool to_upper) {
         std::string result{str};
         std::transform(result.begin(), result.end(), result.begin(), to_upper ? ::toupper : ::tolower);
 
         return result;
     }
-
-     const char* to_string(Method method) noexcept{
+    
+    const char* to_string(Method method) noexcept{
         switch(method){
             case Method::POST:
                 return "POST";
@@ -38,7 +38,7 @@ namespace Http{
         }
     }
 
-     const char* to_string(Header header) noexcept{
+    const char* to_string(Header header) noexcept{
         switch(header){
             case Header::CONTENT_LENGTH:
                 return "content-length";
@@ -75,7 +75,7 @@ namespace Http{
         }
     }
 
-     const char* to_string(Status status) noexcept{
+    const char* to_string(Status status) noexcept{
         switch(status){
             case Status::OK:
                 return "OK";

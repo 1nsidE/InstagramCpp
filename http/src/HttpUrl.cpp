@@ -59,7 +59,7 @@ HttpUrl& HttpUrl::operator=(HttpUrl&& url){
 }
 
 const std::string& HttpUrl::operator[](const std::string& key) const{
-    static const std::string& empty_arg{""};
+    const static std::string& empty_arg{""};
     return (arguments_map && arguments_map->count(key) ? arguments_map->at(key) : empty_arg);
 }
 
