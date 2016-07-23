@@ -10,6 +10,9 @@ namespace Instagram{
 
     class MediaEntries : public BaseResult{
     public:
+        using iterator = std::vector<MediaEntry>::iterator;
+        using const_iterator = std::vector<MediaEntry>::const_iterator;
+        
         MediaEntries();
         MediaEntries(const char* err_msg);
         MediaEntries(const std::string& err_msg);
@@ -22,6 +25,15 @@ namespace Instagram{
         MediaEntries& operator=(MediaEntries&& media_entries);
 
         const std::vector<MediaEntry>& get_media_entries() const;
+        
+        MediaEntry& operator[](size_t n);
+        const MediaEntry& operator[](size_t n) const;
+
+        iterator begin();
+        iterator end();
+
+        const_iterator begin() const;
+        const_iterator end() const;
 
         MediaEntries& operator<<(const MediaEntry& media_entry);
         MediaEntries& operator<<(MediaEntry&& media_entry);

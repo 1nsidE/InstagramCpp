@@ -9,6 +9,9 @@ namespace Instagram{
 
     class TagsInfo : public BaseResult{
     public:
+        using iterator = std::vector<TagInfo>::iterator;
+        using const_iterator = std::vector<TagInfo>::const_iterator;
+        
         TagsInfo();
         TagsInfo(const char* err_msg);
         TagsInfo(const std::string& err_msg);
@@ -20,6 +23,15 @@ namespace Instagram{
         TagsInfo& operator=(TagsInfo&& tags_info);
 
         const std::vector<TagInfo>& get_tags() const noexcept;
+        
+        TagInfo& operator[](size_t n);
+        const TagInfo& operator[](size_t n) const;
+
+        iterator begin();
+        iterator end();
+
+        const_iterator begin() const;
+        const_iterator end() const;
 
         void add_tag(const TagInfo& tag_info);
         void add_tag(TagInfo&& tag_info);

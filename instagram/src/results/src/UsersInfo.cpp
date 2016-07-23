@@ -58,4 +58,27 @@ namespace Instagram{
         return users;
     }
 
+    UserInfo& UsersInfo::operator[](size_t n){
+        return users[n];
+    }
+
+    const UserInfo& UsersInfo::operator[](size_t n) const{
+        return users[n];
+    }
+
+    UsersInfo::iterator UsersInfo::begin(){
+        return users.begin();
+    }
+
+    UsersInfo::iterator UsersInfo::end(){
+        return users.end();
+    }
+
+    UsersInfo::const_iterator UsersInfo::begin() const{
+        return users.begin();
+    }
+
+    UsersInfo::const_iterator UsersInfo::end() const{
+        return users.end();
+    }
 }

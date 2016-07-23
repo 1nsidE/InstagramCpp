@@ -34,8 +34,32 @@ namespace Instagram{
         return *this;
     }
 
-    const std::vector<LocationInfo>& LocationsInfo::get_locations() const{
+    const std::vector<LocationInfo>& LocationsInfo::get_locations() const noexcept{
         return locations;
+    }
+
+    const LocationInfo& LocationsInfo::operator[](size_t n) const {
+        return locations[n];
+    }
+
+    LocationInfo& LocationsInfo::operator[](size_t n) {
+        return locations[n];
+    }
+
+    LocationsInfo::iterator LocationsInfo::begin() {
+        return locations.begin();
+    }
+
+    LocationsInfo::iterator LocationsInfo::end() {
+        return locations.end();
+    }
+
+    LocationsInfo::const_iterator LocationsInfo::begin() const {
+        return locations.begin();
+    }
+
+    LocationsInfo::const_iterator LocationsInfo::end() const {
+        return locations.end();
     }
 
     void LocationsInfo::add_location(const LocationInfo& loc){

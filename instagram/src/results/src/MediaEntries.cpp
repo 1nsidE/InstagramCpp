@@ -36,6 +36,30 @@ namespace Instagram{
         return medias;
     }
 
+    MediaEntry& MediaEntries::operator[](size_t n){
+        return medias[n];
+    }
+
+    const MediaEntry& MediaEntries::operator[](size_t n) const{
+        return medias[n];
+    }
+
+    MediaEntries::iterator MediaEntries::begin(){
+        return medias.begin();
+    }
+
+    MediaEntries::iterator MediaEntries::end(){
+        return medias.end();
+    }
+
+    MediaEntries::const_iterator MediaEntries::begin() const{
+        return medias.begin();
+    }
+
+    MediaEntries::const_iterator MediaEntries::end() const{
+        return medias.end();
+    }
+
     MediaEntries& MediaEntries::operator<<(const MediaEntry& media_entry){
         add_media_entry(media_entry);
         return *this;

@@ -9,6 +9,9 @@ namespace Instagram{
 
     class CommentsInfo : public  BaseResult{
     public:
+        using iterator = std::vector<CommentInfo>::iterator;
+        using const_iterator = std::vector<CommentInfo>::const_iterator;
+        
         CommentsInfo();
         CommentsInfo(const CommentsInfo& comments_info);
         CommentsInfo(CommentsInfo&& comments_info);
@@ -21,6 +24,16 @@ namespace Instagram{
         CommentsInfo& operator=(CommentsInfo&& comments_info);
 
         const std::vector<CommentInfo>& get_comments() const noexcept;
+
+        CommentInfo& operator[](size_t n);
+        const CommentInfo& operator[](size_t n) const;
+
+        iterator begin();
+        iterator end();
+
+        const_iterator begin() const;
+        const_iterator end() const;
+
         void add_comment(const CommentInfo& comment_info);
         void add_comment(CommentInfo&& comment_info);
 

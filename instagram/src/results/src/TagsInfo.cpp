@@ -60,6 +60,30 @@ namespace Instagram{
         return tags;
     }
 
+    TagInfo& TagsInfo::operator[](size_t n){
+        return tags[n];
+    }
+
+    const TagInfo& TagsInfo::operator[](size_t n) const{
+        return tags[n];
+    }
+
+    TagsInfo::iterator TagsInfo::begin(){
+        return tags.begin();
+    }
+
+    TagsInfo::iterator TagsInfo::end(){
+        return tags.end();
+    }
+
+    TagsInfo::const_iterator TagsInfo::begin() const{
+        return tags.begin();
+    }
+
+    TagsInfo::const_iterator TagsInfo::end() const{
+        return tags.end();
+    }
+
     void TagsInfo::clear(){
         tags.clear();
     }

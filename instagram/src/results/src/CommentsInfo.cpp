@@ -40,6 +40,30 @@ namespace Instagram{
         return comments;
     }
 
+    CommentInfo& CommentsInfo::operator[](size_t n){
+        return comments[n];
+    }
+
+    const CommentInfo& CommentsInfo::operator[](size_t n) const{
+        return comments[n];
+    }
+
+    CommentsInfo::iterator CommentsInfo::begin(){
+        return comments.begin();
+    }
+
+    CommentsInfo::iterator CommentsInfo::end(){
+        return comments.end();
+    }
+
+    CommentsInfo::const_iterator CommentsInfo::begin() const{
+        return comments.begin();
+    }
+
+    CommentsInfo::const_iterator CommentsInfo::end() const{
+        return comments.end();
+    }
+
     void CommentsInfo::add_comment(const CommentInfo& comment_info){
         comments.push_back(comment_info);
     }
