@@ -38,7 +38,7 @@ int main(){
     	return 1;
     }
    
-    for(const auto& media : media_entries.get_media_entries()){
+    for(const auto& media : media_entries){
         std::cout << media.get_caption() << "\n";
         std::cout << "likes count : "  << media.get_like_count() << "\n";
         std::cout << "comments count " << media.get_comments_count() << "\n"<< std::endl; 
