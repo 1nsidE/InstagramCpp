@@ -30,7 +30,7 @@ namespace Instagram{
 
     namespace Comments{
         static const char* TEXT_ARG = "text";
-        
+
         static const char* media = "/v1/media/";
         static const char* comments = "/comments/";
     }

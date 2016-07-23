@@ -11,28 +11,28 @@
 
 namespace Http{
 
-class HttpRequest : public HttpHeader{
-public:
-    HttpRequest();
-    HttpRequest(const HttpRequest& request);
-    HttpRequest(HttpRequest&& request);
-	
-    virtual ~HttpRequest();
+	class HttpRequest : public HttpHeader{
+	public:
+		HttpRequest();
+		HttpRequest(const HttpRequest& request);
+		HttpRequest(HttpRequest&& request);
 
-	HttpRequest& operator=(const HttpRequest& http_request);
-	HttpRequest& operator=(HttpRequest&& http_request);
+		virtual ~HttpRequest();
 
-    void set_method(Http::Method _method);
-	Http::Method get_method() const;
-    void set_url(const HttpUrl& url);
-    void set_url(HttpUrl&& url);
-    const HttpUrl& get_url() const;
+		HttpRequest& operator=(const HttpRequest& http_request);
+		HttpRequest& operator=(HttpRequest&& http_request);
 
-    virtual std::string get_string() const override;
-private:
-	Http::Method method;
-    HttpUrl url;
-};
+		void set_method(Http::Method _method);
+		Http::Method get_method() const;
+		void set_url(const HttpUrl& url);
+		void set_url(HttpUrl&& url);
+		const HttpUrl& get_url() const;
+
+		virtual std::string get_string() const override;
+	private:
+		Http::Method method;
+		HttpUrl url;
+	};
 
 }
 

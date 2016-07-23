@@ -7,7 +7,7 @@ namespace Instagram{
     static const char* AUTH_TOKEN_ARG = "access_token";
     static const char* GET_AUTH_CODE = "/oauth/access_token";
     static const char* SELF = "self";
-    static const char* QUERY_ARG = "q";   
+    static const char* QUERY_ARG = "q";
     static const char* LAT_ARG = "lat";
     static const char* LNG_ARG = "lng";
     static const char* DST_ARG = "distance";

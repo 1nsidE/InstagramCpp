@@ -5,29 +5,29 @@
 
 namespace Instagram{
 
-class TagInfo : public BaseResult{
-public:
-    TagInfo();
-    TagInfo(const std::string& name_, int count_);
-    TagInfo(const char* err_msg);
-    TagInfo(const std::string& err_msg);
-    TagInfo(const TagInfo& tag_info);
-    TagInfo(TagInfo&& tag_info);
+    class TagInfo : public BaseResult{
+    public:
+        TagInfo();
+        TagInfo(const std::string& name_, int count_);
+        TagInfo(const char* err_msg);
+        TagInfo(const std::string& err_msg);
+        TagInfo(const TagInfo& tag_info);
+        TagInfo(TagInfo&& tag_info);
 
-    ~TagInfo();    
-    
-    TagInfo& operator=(const TagInfo& tag_info);
-    TagInfo& operator=(TagInfo&& tag_info);
+        ~TagInfo();
 
-    const std::string& get_name() const noexcept;
-    int get_count() const noexcept;
+        TagInfo& operator=(const TagInfo& tag_info);
+        TagInfo& operator=(TagInfo&& tag_info);
 
-    void set_name(const std::string& name_);
-    void set_count(int count_);
-private:
-    std::string name{""};
-    int count = -1;
-};
+        const std::string& get_name() const noexcept;
+        int get_count() const noexcept;
+
+        void set_name(const std::string& name_);
+        void set_count(int count_);
+    private:
+        std::string name{""};
+        int count = -1;
+    };
 
 }
 

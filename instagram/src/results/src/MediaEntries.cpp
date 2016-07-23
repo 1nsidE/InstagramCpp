@@ -2,57 +2,57 @@
 
 namespace Instagram{
 
-MediaEntries::MediaEntries() : BaseResult{}, medias(0) {}
+    MediaEntries::MediaEntries() : BaseResult{}, medias(0) {}
 
-MediaEntries::MediaEntries(const char* err_msg) : BaseResult{err_msg}, medias(0){}
+    MediaEntries::MediaEntries(const char* err_msg) : BaseResult{err_msg}, medias(0){}
 
-MediaEntries::MediaEntries(const std::string& err_msg) : BaseResult{err_msg}, medias(0){}
+    MediaEntries::MediaEntries(const std::string& err_msg) : BaseResult{err_msg}, medias(0){}
 
-MediaEntries::MediaEntries(const MediaEntries& media_entries) : BaseResult{media_entries}, medias{media_entries.medias}{}
+    MediaEntries::MediaEntries(const MediaEntries& media_entries) : BaseResult{media_entries}, medias{media_entries.medias}{}
 
-MediaEntries::MediaEntries(MediaEntries&& media_entries) : BaseResult{std::forward<BaseResult>(media_entries)}, medias{std::move(media_entries.medias)}{}
+    MediaEntries::MediaEntries(MediaEntries&& media_entries) : BaseResult{std::forward<BaseResult>(media_entries)}, medias{std::move(media_entries.medias)}{}
 
-MediaEntries::~MediaEntries(){}
+    MediaEntries::~MediaEntries(){}
 
-MediaEntries& MediaEntries::operator=(const MediaEntries& media_entries){
-    if(this == &media_entries) return *this;
-    
-    BaseResult::operator=(media_entries);
+    MediaEntries& MediaEntries::operator=(const MediaEntries& media_entries){
+        if(this == &media_entries) return *this;
 
-    medias = media_entries.medias;
-    return *this;
-}
+        BaseResult::operator=(media_entries);
 
-MediaEntries& MediaEntries::operator=(MediaEntries&& media_entries){
-    if(this == &media_entries) return *this;
-    
-    BaseResult::operator=(std::forward<BaseResult>(media_entries));
+        medias = media_entries.medias;
+        return *this;
+    }
 
-    medias = std::move(media_entries.medias);
-    return *this;
-}
+    MediaEntries& MediaEntries::operator=(MediaEntries&& media_entries){
+        if(this == &media_entries) return *this;
 
-const std::vector<MediaEntry>& MediaEntries::get_media_entries() const{
-    return medias;
-}
+        BaseResult::operator=(std::forward<BaseResult>(media_entries));
 
-MediaEntries& MediaEntries::operator<<(const MediaEntry& media_entry){
-    add_media_entry(media_entry);
-    return *this;
-}
+        medias = std::move(media_entries.medias);
+        return *this;
+    }
 
-MediaEntries& MediaEntries::operator<<(MediaEntry&& media_entry){
-    add_media_entry(std::forward<MediaEntry>(media_entry));
-    return *this;
-}
+    const std::vector<MediaEntry>& MediaEntries::get_media_entries() const{
+        return medias;
+    }
 
-void MediaEntries::add_media_entry(const MediaEntry& media_entry){
-    medias.push_back(media_entry);
-}
+    MediaEntries& MediaEntries::operator<<(const MediaEntry& media_entry){
+        add_media_entry(media_entry);
+        return *this;
+    }
 
-void MediaEntries::add_media_entry(MediaEntry&& media_entry){
-    medias.push_back(std::forward<MediaEntry>(media_entry));
-}
+    MediaEntries& MediaEntries::operator<<(MediaEntry&& media_entry){
+        add_media_entry(std::forward<MediaEntry>(media_entry));
+        return *this;
+    }
+
+    void MediaEntries::add_media_entry(const MediaEntry& media_entry){
+        medias.push_back(media_entry);
+    }
+
+    void MediaEntries::add_media_entry(MediaEntry&& media_entry){
+        medias.push_back(std::forward<MediaEntry>(media_entry));
+    }
 
 }
 

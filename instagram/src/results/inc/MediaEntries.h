@@ -8,30 +8,30 @@
 
 namespace Instagram{
 
-class MediaEntries : public BaseResult{
-public:
-    MediaEntries();
-    MediaEntries(const char* err_msg);
-    MediaEntries(const std::string& err_msg);
-    MediaEntries(const MediaEntries& media_entries);
-    MediaEntries(MediaEntries&& media_entries);
+    class MediaEntries : public BaseResult{
+    public:
+        MediaEntries();
+        MediaEntries(const char* err_msg);
+        MediaEntries(const std::string& err_msg);
+        MediaEntries(const MediaEntries& media_entries);
+        MediaEntries(MediaEntries&& media_entries);
 
-    ~MediaEntries();
+        ~MediaEntries();
 
-    MediaEntries& operator=(const MediaEntries& media_entries);
-    MediaEntries& operator=(MediaEntries&& media_entries);
-    
-    const std::vector<MediaEntry>& get_media_entries() const;
-    
-    MediaEntries& operator<<(const MediaEntry& media_entry);
-    MediaEntries& operator<<(MediaEntry&& media_entry);
+        MediaEntries& operator=(const MediaEntries& media_entries);
+        MediaEntries& operator=(MediaEntries&& media_entries);
 
-    void add_media_entry(const MediaEntry& media_entry);
-    void add_media_entry(MediaEntry&& media_entry);
+        const std::vector<MediaEntry>& get_media_entries() const;
 
-private:
-    std::vector<MediaEntry> medias;
-};
+        MediaEntries& operator<<(const MediaEntry& media_entry);
+        MediaEntries& operator<<(MediaEntry&& media_entry);
+
+        void add_media_entry(const MediaEntry& media_entry);
+        void add_media_entry(MediaEntry&& media_entry);
+
+    private:
+        std::vector<MediaEntry> medias;
+    };
 
 }
 

@@ -4,21 +4,21 @@
 #include "Http.h"
 
 namespace Http{
-    
+
     std::string change_case(const char* str, bool to_upper){
         std::string result{str};
 
         std::transform(result.begin(), result.end(), result.begin(), to_upper ? ::toupper : ::tolower);
-        return result;  
+        return result;
     }
-    
+
     std::string change_case(const std::string& str, bool to_upper) {
         std::string result{str};
         std::transform(result.begin(), result.end(), result.begin(), to_upper ? ::toupper : ::tolower);
 
         return result;
     }
-    
+
     const char* to_string(Method method) noexcept{
         switch(method){
             case Method::POST:
@@ -95,7 +95,7 @@ namespace Http{
                 return "UNKNOWN";
         }
     }
-    
+
     Status from_int(int _status){
         Status status = static_cast<Status>(_status);
         switch (status){
@@ -113,13 +113,13 @@ namespace Http{
     }
 
     Method from_str(const char* str){
-       const static std::unordered_map<std::string, Method> map{
-            {"POST", Method::POST},
-            {"GET", Method::GET},
-            {"HEAD", Method::HEAD},
-            {"PUSH", Method::PUSH},
-            {"UPDATE", Method::UPDATE},
-            {"DELETE", Method::DELETE}
+        const static std::unordered_map<std::string, Method> map{
+                {"POST", Method::POST},
+                {"GET", Method::GET},
+                {"HEAD", Method::HEAD},
+                {"PUSH", Method::PUSH},
+                {"UPDATE", Method::UPDATE},
+                {"DELETE", Method::DELETE}
         };
 
         std::string method = change_case(str, true);

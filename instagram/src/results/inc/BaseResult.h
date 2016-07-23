@@ -5,25 +5,25 @@
 
 namespace Instagram{
 
-class BaseResult{
-public:
-	BaseResult();
-    BaseResult(const char* _err_msg);
-	BaseResult(const std::string& _err_msg);
-	
-	BaseResult(const BaseResult& base_result);
-	BaseResult(BaseResult&& base_result);
+	class BaseResult{
+	public:
+		BaseResult();
+		BaseResult(const char* _err_msg);
+		BaseResult(const std::string& _err_msg);
 
-	virtual ~BaseResult();
-    
-    BaseResult& operator=(const BaseResult& base_result);
-    BaseResult& operator=(BaseResult&& base_result);
+		BaseResult(const BaseResult& base_result);
+		BaseResult(BaseResult&& base_result);
 
-	const std::string& get_error_message() const;
-	bool is_succeed();
-private:
-	std::string* err_msg;
-};
+		virtual ~BaseResult();
+
+		BaseResult& operator=(const BaseResult& base_result);
+		BaseResult& operator=(BaseResult&& base_result);
+
+		const std::string& get_error_message() const noexcept final;
+		bool is_succeed() const noexcept final;
+	private:
+		std::string* err_msg;
+	};
 
 }
 
