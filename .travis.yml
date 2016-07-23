@@ -1,6 +1,6 @@
  language: cpp
 
- compiler: gcc
+compiler: gcc
 addons:
     apt:
       packages:
@@ -8,9 +8,6 @@ addons:
       sources:
         - kalakris-cmake
 
- before_script:
-   - mkdir build
-   - cd build
-   - cmake ..
-
- script: make
+ script: 
+ - cmake .
+ - make 
