@@ -71,12 +71,12 @@ namespace Instagram{
         return *this;
     }
 
-    const std::string& BaseResult::get_error_message() const {
+    const std::string& BaseResult::get_error_message() const noexcept {
         const static std::string empty_error{""};
         return err_msg ? *err_msg : empty_error;
     }
 
-    bool BaseResult::is_succeed() {
+    bool BaseResult::is_succeed() const noexcept {
         return err_msg == nullptr;
     }
 
