@@ -1,29 +1,14 @@
-# Enable C++ support
-language: cpp
-# Compiler selection
-compiler: clang
-    addons:
-      apt:
-        sources:
-          - ubuntu-toolchain-r-test
-          - llvm-toolchain-precise-3.6
-          - kalakris-cmake
-        packages:
-          - clang-3.6
-          - cmake
-    env: COMPILER=clang++-3.6
-compiler: gcc
- addons:
-      apt:
-        sources:
-          - ubuntu-toolchain-r-test
-          - kalakris-cmake
-        packages:
-          - gcc-6
-          - g++-6
-          - cmake
-  env: COMPILER=g++-6
-# Build steps
-script:
-  - cmake .
-  - make
+ language: cpp
+
+ compiler: gcc
+
+ before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq cmake openssl jsoncpp
+
+ before_script:
+   - mkdir build
+   - cd build
+   - cmake ..
+
+ script: make
