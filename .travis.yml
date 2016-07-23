@@ -11,8 +11,7 @@ compiler: clang
           - clang-3.6
           - cmake-3.5
     env: COMPILER=clang++-3.6
-compiler:
-- gcc
+compiler: gcc
  addons:
       apt:
         sources:
