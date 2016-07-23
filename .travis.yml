@@ -1,10 +1,12 @@
  language: cpp
 
  compiler: gcc
-
- before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq cmake openssl jsoncpp
+addons:
+    apt:
+      packages:
+        - cmake
+      sources:
+        - kalakris-cmake
 
  before_script:
    - mkdir build
