@@ -9,7 +9,6 @@
 #include <openssl/x509v3.h>
 
 #include "SSLSocket.h"
-
 namespace Socket{
 
     SSLSocket::SSLSocket(const std::string& hostname, const std::string& port) : TCPSocket{hostname, port}, ssl{nullptr}, ctx{nullptr}{
@@ -47,16 +46,15 @@ namespace Socket{
         if(!is_initialized){
             SSL_library_init();
             SSL_load_error_strings();
-
             OpenSSL_add_ssl_algorithms();
             ERR_load_CRYPTO_strings();
 
             is_initialized = true;
         }
     }
-
+    
     void SSLSocket::connect(const std::string& hostname){
-        const SSL_METHOD* method = SSLv23_client_method();
+        const SSL_METHOD* method = TLSv1_2_method();
         if(method == nullptr){
             throw_error("failed to get SSL method! : ", ERR_get_error());
         }
@@ -71,30 +69,16 @@ namespace Socket{
             throw_error("failed to get SSL object : ", ERR_get_error());
         }
 
+        X509_VERIFY_PARAM* param = SSL_get0_param(ssl);
+        /* Enable automatic hostname checks */
+        X509_VERIFY_PARAM_set_hostflags(param, X509_CHECK_FLAG_NO_PARTIAL_WILDCARDS);
+        X509_VERIFY_PARAM_set1_host(param, hostname.c_str(), hostname.size());
+        //TODO : make configrable
+        SSL_set_verify(ssl, SSL_VERIFY_NONE, nullptr);
+
         SSL_set_fd(ssl, sockfd);
         if(SSL_connect(ssl) < 0){
             throw_error("failed to establish secure connection : ", ERR_get_error());
-        }
-
-        verify_hostname(hostname); //TODO : make configurable
-    }
-
-    void SSLSocket::verify_hostname(const std::string& hostname){
-        X509* x509_cert = SSL_get_peer_certificate(ssl);
-        if(x509_cert == nullptr){
-            throw_error("failed to get peer certificate", 0);
-        }
-        int verify_result = X509_check_host(x509_cert, hostname.c_str(), hostname.size(), 0, nullptr); //TODO: make flags configurable
-
-        switch(verify_result){
-            case 1: //all OK
-                break;
-            case 0: //verify failed
-                throw_error("failed to verify hostname", 0);
-                break; //we don't achieve this line, but...
-            case -1: //internal ssl error
-                throw_error("failed to check hostname", ERR_get_error());
-                break;
         }
     }
 
@@ -122,7 +106,7 @@ namespace Socket{
     }
 
     void SSLSocket::throw_error(const char* err_msg, unsigned long code) const {
-        if(code != 0){
+        if(code == 0){
             throw std::runtime_error(err_msg);
         }else{
             const static unsigned int err_msg_size = 512;
