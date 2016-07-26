@@ -1,4 +1,4 @@
- language: cpp
+language: cpp
 
 compiler: 
 - gcc
@@ -14,3 +14,5 @@ before_script:
 
 script:
 - make
+
+build: make
