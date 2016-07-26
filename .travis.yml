@@ -1,13 +1,15 @@
  language: cpp
 
-compiler: gcc
-addons:
-    apt:
-      packages:
-        - cmake
-      sources:
-        - kalakris-cmake
+compiler: 
+- gcc
+- clang
 
- script: 
- - cmake .
- - make 
+dist: trusty
+
+before_script:
+  - mkdir build
+  - cd build
+  - cmake --version
+  - cmake ..
+
+script: make
