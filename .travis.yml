@@ -15,7 +15,7 @@ addons:
   - libssl-dev
 
 install:
-- if [ "$CXX" = "g++" ]; then export CXX="g++-5" CC="gcc-5"; fi
+- if [ "$CXX" = "g++" ]; then export CXX="g++-6" CC="gcc-6"; fi
 
 dist: trusty
 
