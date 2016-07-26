@@ -12,6 +12,7 @@ addons:
   - cmake
   - gcc-5
   - g++-5
+  - libssl-dev
 
 install:
 - if [ "$CXX" = "g++" ]; then export CXX="g++-5" CC="gcc-5"; fi
@@ -21,7 +22,6 @@ dist: trusty
 before_script:
 - mkdir build
 - cd build
-- cmake --version
 - cmake ..
 
 script:
