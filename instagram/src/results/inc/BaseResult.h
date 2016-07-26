@@ -19,6 +19,8 @@ namespace Instagram{
 		BaseResult& operator=(const BaseResult& base_result);
 		BaseResult& operator=(BaseResult&& base_result);
 
+        explicit operator bool() const noexcept;
+
 		const std::string& get_error_message() const noexcept;
 		bool is_succeed() const noexcept;
 	private:

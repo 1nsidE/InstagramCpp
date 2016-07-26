@@ -71,6 +71,10 @@ namespace Instagram{
         return *this;
     }
 
+    BaseResult::operator bool() const noexcept{
+        return is_succeed();
+    }
+
     const std::string& BaseResult::get_error_message() const noexcept {
         const static std::string empty_error{""};
         return err_msg ? *err_msg : empty_error;
