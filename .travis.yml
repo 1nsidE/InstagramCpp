@@ -2,7 +2,6 @@ language: cpp
 
 compiler: 
 - gcc
-- clang
 addons:
  apt:
   sources: kalakris-cmake
