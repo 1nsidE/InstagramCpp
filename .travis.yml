@@ -7,9 +7,10 @@ compiler:
 dist: trusty
 
 before_script:
-  - mkdir build
-  - cd build
-  - cmake --version
-  - cmake ..
+- mkdir build
+- cd build
+- cmake --version
+- cmake ..
 
-script: make
+script:
+- make
