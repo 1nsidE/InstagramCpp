@@ -7,8 +7,10 @@
 
 #include <openssl/err.h>
 #include <openssl/x509v3.h>
+#include <openssl/x509_vfy.h>
 
 #include "SSLSocket.h"
+
 namespace Socket{
 
     SSLSocket::SSLSocket(const std::string& hostname, const std::string& port) : TCPSocket{hostname, port}, ssl{nullptr}, ctx{nullptr}{
