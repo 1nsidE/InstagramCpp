@@ -4,8 +4,17 @@ compiler:
 - gcc
 addons:
  apt:
-  sources: kalakris-cmake
-  packages: cmake
+  sources: 
+  - kalakris-cmake
+  - llvm-toolchain-precise
+  - ubuntu-toolchain-r-test
+  packages:
+  - cmake
+  - gcc-5
+  - g++-5
+
+install:
+- if [ "$CXX" = "g++" ]; then export CXX="g++-5" CC="gcc-5"; fi
 
 dist: trusty
 
