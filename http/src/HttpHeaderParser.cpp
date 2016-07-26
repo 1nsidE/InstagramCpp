@@ -65,29 +65,20 @@ namespace Http{
 
     std::vector<std::string> HttpHeaderParser::tokenize(const std::string& str, const char delimeter, bool once){
         std::vector<std::string> result{};
+        
+        const char* ptr = str.c_str();
+        const char* end = str.size() + ptr;
+        do{
+            const char* begin = ptr;
 
-        size_t j = 0;
-        size_t i = 0;
-        while(i < str.length()){
-            j = str.find_first_of(delimeter, i + 1);
-            if(j != std::string::npos){
-                std::string token = trim(str.substr(i, j - i));
-                result.push_back(token);
-                i = j;
-                if(once){
-                    break;
-                }
-            }else {
+            while(*ptr != delimeter && ptr < end) ++ptr;
+
+            result.push_back(trim(std::string{begin, ptr})); 
+            if(once){
+                result.push_back(trim(std::string{++ptr, end - 1}));
                 break;
             }
-        }
-
-        if(i != 0){
-            std::string token = trim(str.substr(i + 1, str.length() - (i + 1)));
-            result.push_back(token);
-        }else{
-            result.push_back(str);
-        }
+        }while(end > ++ptr);
 
         return result;
     }
