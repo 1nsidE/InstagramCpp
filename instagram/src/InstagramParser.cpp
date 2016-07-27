@@ -75,6 +75,9 @@ namespace Instagram{
                 entry.set_type(MediaType::IMAGE);
             }else{
                 entry.set_type(MediaType::VIDEO);
+                const Json::Value& videos = media["videos"];
+                entry.set_video_low(videos["low_resolution"].asString());
+                entry.set_video_standart(videos["standart_resolution"].asString());
             }
         }
 
@@ -83,7 +86,7 @@ namespace Instagram{
         entry.set_created_time(created_time);
 
         const Json::Value& link = media["link"];
-        if(!link.isNull()) entry.set_url(link.asString());
+        if(!link.isNull()) entry.set_link(link.asString());
 
         const Json::Value& caption = media["caption"];
         if(!caption.isNull()) entry.set_caption(caption["text"].asString());

@@ -6,20 +6,22 @@
 
 namespace Instagram{
 
-    MediaEntry::MediaEntry() :  tags(0), users_in_photo(0), comments_count{-1}, likes_count{-1}, created_time{-1} {}
+    MediaEntry::MediaEntry() :  BaseResult{} {}
 
     MediaEntry::MediaEntry(const std::string& err) : BaseResult{err}{}
 
     MediaEntry::MediaEntry(const char* err) : BaseResult{err} {}
 
     MediaEntry::MediaEntry(const MediaEntry &media_entry) : BaseResult{media_entry},
-                                                            url{media_entry.url},
+                                                            link{media_entry.link},
                                                             id{media_entry.id},
                                                             caption{media_entry.caption},
                                                             low_resolution{media_entry.low_resolution},
                                                             thumbnail{media_entry.thumbnail},
                                                             standart_resolution{media_entry.standart_resolution},
                                                             filter{media_entry.filter},
+                                                            video_low{media_entry.video_low},
+                                                            video_standart{media_entry.video_standart},
                                                             tags{media_entry.tags},
                                                             users_in_photo{media_entry.users_in_photo},
                                                             comments_count{media_entry.comments_count},
@@ -28,13 +30,15 @@ namespace Instagram{
                                                             media_type{media_entry.media_type}{}
 
     MediaEntry::MediaEntry(MediaEntry &&media_entry) :  BaseResult{std::move(media_entry)},
-                                                        url{std::move(media_entry.url)},
+                                                        link{std::move(media_entry.link)},
                                                         id{std::move(media_entry.id)},
                                                         caption{std::move(media_entry.caption)},
                                                         low_resolution{std::move(media_entry.low_resolution)},
                                                         thumbnail{std::move(media_entry.thumbnail)},
                                                         standart_resolution{std::move(media_entry.standart_resolution)},
                                                         filter{std::move(media_entry.filter)},
+                                                        video_low{media_entry.video_low},
+                                                        video_standart{media_entry.video_standart},
                                                         tags(std::move(media_entry.tags)),
                                                         users_in_photo{std::move(media_entry.users_in_photo)},
                                                         comments_count(media_entry.comments_count),
@@ -54,13 +58,15 @@ namespace Instagram{
 
         BaseResult::operator=(media_entry);
 
-        url = media_entry.url;
+        link = media_entry.link;
         id = media_entry.id;
         caption = media_entry.caption;
         low_resolution = media_entry.low_resolution;
         thumbnail = media_entry.thumbnail;
         standart_resolution = media_entry.standart_resolution;
         filter = media_entry.filter;
+        video_low = media_entry.video_low;
+        video_standart = media_entry.video_standart;
 
         tags = media_entry.tags;
         users_in_photo = media_entry.users_in_photo;
@@ -78,13 +84,15 @@ namespace Instagram{
 
         BaseResult::operator=(std::move(media_entry));
 
-        url = std::move(media_entry.url);
+        link = std::move(media_entry.link);
         id = std::move(media_entry.id);
         caption = std::move(media_entry.caption);
         low_resolution = std::move(media_entry.low_resolution);
         thumbnail = std::move(media_entry.thumbnail);
         standart_resolution = std::move(media_entry.standart_resolution);
         filter = std::move(media_entry.filter);
+        video_low = std::move(media_entry.video_low);
+        video_standart = std::move(media_entry.video_standart);
 
         tags = std::move(media_entry.tags);
         users_in_photo = std::move(media_entry.users_in_photo);
@@ -104,64 +112,72 @@ namespace Instagram{
         return *this;
     }
 
-    MediaType MediaEntry::get_type() const{
+    MediaType MediaEntry::get_type() const noexcept{
         return media_type;
     }
 
-    const std::string& MediaEntry::get_url() const{
-        return url;
+    const std::string& MediaEntry::get_link() const noexcept{
+        return link;
     }
 
-    const std::string& MediaEntry::get_id() const{
+    const std::string& MediaEntry::get_id() const noexcept{
         return id;
     }
 
-    const std::string& MediaEntry::get_caption() const{
+    const std::string& MediaEntry::get_caption() const noexcept{
         return caption;
     }
 
-    const std::vector<std::string>& MediaEntry::get_tags() const {
+    const std::vector<std::string>& MediaEntry::get_tags() const noexcept {
         return tags;
     }
 
-    const std::vector<std::string>& MediaEntry::get_users_in_photo() const{
+    const std::vector<std::string>& MediaEntry::get_users_in_photo() const noexcept{
         return users_in_photo;
     }
 
-    int MediaEntry::get_comments_count() const {
+    int MediaEntry::get_comments_count() const  noexcept{
         return comments_count;
     }
 
-    int MediaEntry::get_like_count() const {
+    int MediaEntry::get_like_count() const noexcept {
         return likes_count;
     }
 
-    long MediaEntry::get_created_time() const {
+    long MediaEntry::get_created_time() const noexcept {
         return created_time;
     }
 
-    const std::string& MediaEntry::get_standart_resolution() const{
+    const std::string& MediaEntry::get_standart_resolution() const noexcept{
         return standart_resolution;
     }
 
-    const std::string& MediaEntry::get_thumbnail() const{
+    const std::string& MediaEntry::get_thumbnail() const noexcept{
         return thumbnail;
     }
 
-    const std::string& MediaEntry::get_low_resolution() const{
+    const std::string& MediaEntry::get_low_resolution() const noexcept{
         return low_resolution;
     }
 
-    const std::string& MediaEntry::get_filter() const{
+    const std::string& MediaEntry::get_filter() const noexcept{
         return filter;
+    }
+
+    const std::string& MediaEntry::get_video_low() const noexcept{
+        return video_low;
+    }
+
+    const std::string& MediaEntry::get_video_standart() const noexcept{
+        return video_standart;
     }
 
     void MediaEntry::set_type(MediaType type){
         media_type = type;
     }
 
-    void MediaEntry::set_url(const std::string& _url){
-        url = _url;
+    void MediaEntry::set_link(const std::string& _link){
+        link = _link;
     }
 
     void MediaEntry::set_id(const std::string& _id){
@@ -202,6 +218,14 @@ namespace Instagram{
 
     void MediaEntry::set_filter(const std::string& _filter){
         filter = _filter;
+    }
+
+    void MediaEntry::set_video_low(const std::string& url){
+        video_low = url;
+    }
+
+    void MediaEntry::set_video_standart(const std::string& url){
+        video_standart = url;
     }
 
     void MediaEntry::add_user_in_photo(const std::string& user){
