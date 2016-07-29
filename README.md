@@ -52,7 +52,7 @@ Dependencies:
 ----------------
 JsonCpp - https://github.com/open-source-parsers/jsoncpp
 
-OpenSSL - https://github.com/openssl/openssl
+GnuTLS - https://www.gnutls.org
 
 Build:
 ----------------
