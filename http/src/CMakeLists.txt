@@ -15,4 +15,4 @@ add_library(httpcpp SHARED ${HTTP_SOURCES}
     $<TARGET_OBJECTS:sockets>
 )
 
-target_link_libraries(httpcpp ssl crypto)
+target_link_libraries(httpcpp gnutls)

@@ -2,8 +2,7 @@
 #define SSL_SERVICE_H
 
 #include <string>
-#include <openssl/ssl.h>
-
+#include <gnutls/gnutls.h>
 #include "TCPSocket.h"
 
 namespace Socket{
@@ -17,16 +16,19 @@ namespace Socket{
         virtual ~SSLSocket();
         virtual SSLSocket& operator=(SSLSocket&& ssl_socket);
 
-        virtual int write(const void *data, size_t len) const;
-        virtual int read(void *buf, size_t len) const;
-        virtual void close();
+        long write(const void *data, size_t len) override;
+        long read(void *buf, size_t len) override;
+
+        void close() override;
     private:
         void init();
-        [[noreturn]] void  throw_error(const char* err_msg, unsigned long code) const;
+        [[noreturn]] void  throw_error(const char* err_msg) const;
         void connect(const std::string& hostname);
         void verify_hostname(const std::string& hostname);
-        SSL* ssl = nullptr;
-        SSL_CTX* ctx = nullptr;
+
+        inline void check(int result);
+        gnutls_session_t session{};
+        gnutls_certificate_credentials_t credentials;
     };
 
 }

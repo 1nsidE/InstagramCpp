@@ -68,21 +68,21 @@ namespace Socket{
         freeaddrinfo(res);
     }
 
-    int TCPSocket::write(const void *data, size_t length) const {
+    long TCPSocket::write(const void *data, size_t length) {
         if(sockfd == -1){
             throw std::runtime_error("not connected");
         }
 
-        int count = send(sockfd, data, length, 0);
+        long count = send(sockfd, data, length, 0);
         return count;
     }
 
-    int TCPSocket::read(void *data, size_t length) const {
+    long TCPSocket::read(void *data, size_t length) {
         if (sockfd == -1) {
             throw std::runtime_error("not_connected");
         }
 
-        int count = recv(sockfd, data, length, 0);
+        long count = recv(sockfd, data, length, 0);
         return count;
     }
 
@@ -155,6 +155,7 @@ namespace Socket{
 
         int result = poll(&pfd, 1, 1000*timeout);
         return result + 1;
+    
     }
 
     void TCPSocket::throw_error(const char* err_msg, int code) const{

@@ -12,16 +12,13 @@
 #include "exceptions/HttpFailedToSend.h"
 #include "exceptions/HttpTooBigResponse.h"
 
-#include <iostream>
-
 namespace Http{
 
-    HttpClient::HttpClient(const std::string &_host, HttpProtocol _protocol) : socket{nullptr}, host{_host}, protocol{_protocol}, connected{false}{
-    }
+    HttpClient::HttpClient(const std::string &_host, HttpProtocol _protocol) : socket{nullptr}, host{_host}, protocol{_protocol}, connected{false}{    }
 
-    HttpClient::HttpClient(HttpClient &&http_socket) : socket{std::move(http_socket.socket)}, host{std::move(http_socket.host)}, protocol{http_socket.protocol}, connected{http_socket.connected} {
-        http_socket.socket = nullptr;
-        http_socket.connected = false;
+    HttpClient::HttpClient(HttpClient&& http_client) : socket{std::move(http_client.socket)}, host{std::move(http_client.host)}, protocol{http_client.protocol}, connected{http_client.connected} {
+        http_client.socket = nullptr;
+        http_client.connected = false;
     }
 
     HttpClient::~HttpClient(){
@@ -184,7 +181,6 @@ namespace Http{
             }
         }
 
-        disconnect();
         return result;
     }
 

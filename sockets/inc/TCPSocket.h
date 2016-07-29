@@ -21,8 +21,8 @@ namespace Socket{
 
         virtual TCPSocket& operator=(TCPSocket&& tcp_socket);
 
-        virtual int write(const void *data, size_t length) const;
-        virtual int read(void *data, size_t length) const;
+        virtual long write(const void *data, size_t length);
+        virtual long read(void *data, size_t length);
         virtual void close();
         std::string get_ip() const;
 
