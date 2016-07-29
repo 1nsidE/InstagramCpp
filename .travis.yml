@@ -22,9 +22,9 @@ install:
 before_script:
 - mkdir build
 - cd build
-- cmake ..
+- cmake -G "Unix Makefiles" . ..
 
 script:
-- make
+- cmake --build .
 
-build: make
+build: cmake --build .
