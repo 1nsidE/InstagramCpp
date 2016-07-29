@@ -1,5 +1,7 @@
 language: cpp
 
+dist: trusty
+
 compiler: 
 - gcc
 addons:
@@ -13,11 +15,10 @@ addons:
   - gcc-6
   - g++-6
   - libssl-dev
+  - libgnutls-dev
 
 install:
 - if [ "$CXX" = "g++" ]; then export CXX="g++-6" CC="gcc-6"; fi
-
-dist: trusty
 
 before_script:
 - mkdir build
