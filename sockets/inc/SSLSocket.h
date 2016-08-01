@@ -2,6 +2,7 @@
 #define SSL_SERVICE_H
 
 #include <string>
+
 #include <gnutls/gnutls.h>
 #include "TCPSocket.h"
 

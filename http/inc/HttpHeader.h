@@ -9,8 +9,9 @@
 namespace Http{
 
     using HeadersMap = std::unordered_map<std::string, std::string>;
+	EXPIMP_TEMPLATE template class EXPORT_HTTP std::unordered_map<std::string, std::string>;
 
-    class HttpHeader{
+    class EXPORT_HTTP HttpHeader{
     public:
         virtual ~HttpHeader();
 

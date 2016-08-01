@@ -4,11 +4,35 @@
 #include <string>
 #include <map>
 
+#ifdef WIN32
+#include<IOSFWD>
+#ifdef HTTP_LIB_EXPORT
+#define EXPORT_HTTP __declspec(dllexport)
+#define EXPIMP_TEMPLATE
+#else
+#define EXPORT_HTTP __declspec(dllimport)
+#define EXPIMP_TEMPLATE extern
+#endif
+
+#else
+#ifdef __linux__
+#define EXPORT_HTTP
+#define EXPIMP_TEMPLATE
+#endif
+#endif
+
 namespace Http{
 
     using Argument = std::pair<std::string, std::string>;
 
-    class HttpUrl{
+#ifdef WIN32
+	/*EXPIMP_TEMPLATE template class EXPORT_HTTP std::allocator<char>;
+	EXPIMP_TEMPLATE template struct EXPORT_HTTP std::char_traits<char>;
+	EXPIMP_TEMPLATE template class EXPORT_HTTP std::basic_string<char, std::char_traits<char>, std::allocator<char>>;*/
+	EXPIMP_TEMPLATE template struct EXPORT_HTTP std::pair<std::string, std::string>;
+#endif
+
+    class EXPORT_HTTP HttpUrl{
     public:
         HttpUrl();
         HttpUrl(const std::string& endpoint);

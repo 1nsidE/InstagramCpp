@@ -8,7 +8,7 @@
 
 namespace Instagram{
 
-    class UsersInfo : public BaseResult{
+    class EXPORT_INSTAGRAM UsersInfo : public BaseResult{
     public:
         using iterator = std::vector<UserInfo>::iterator;
         using const_iterator = std::vector<UserInfo>::const_iterator;

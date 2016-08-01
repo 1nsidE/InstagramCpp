@@ -5,13 +5,12 @@
 #ifndef HTTPSERVER_HTTPREQUEST_H
 #define HTTPSERVER_HTTPREQUEST_H
 
-#include <map>
 #include "HttpHeader.h"
 #include "HttpUrl.h"
 
 namespace Http{
 
-	class HttpRequest : public HttpHeader{
+	class EXPORT_HTTP HttpRequest : public HttpHeader{
 	public:
 		HttpRequest();
 		HttpRequest(const HttpRequest& request);

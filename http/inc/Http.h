@@ -12,6 +12,23 @@
 #define ARG_DELIMETER '&'
 #define ARG_EQUAL '='
 
+#ifdef WIN32
+#include<xstring>
+#ifdef HTTP_LIB_EXPORT
+#define EXPORT_HTTP __declspec(dllexport)
+#define EXPIMP_TEMPLATE
+#else
+#define EXPORT_HTTP __declspec(dllimport)
+#define EXPIMP_TEMPLATE extern
+#endif
+
+#else
+#ifdef __linux__
+#define EXPORT_HTTP
+#define EXPIMP_TEMPLATE
+#endif
+#endif
+
 namespace Http{
     enum class HttpProtocol{
         HTTP, HTTPS

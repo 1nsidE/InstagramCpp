@@ -5,7 +5,7 @@
 
 namespace Http{
 
-	class HttpResponse : public HttpHeader{
+	class EXPORT_HTTP HttpResponse : public HttpHeader{
 	public:
 		HttpResponse();
 		HttpResponse(const HttpResponse& response);

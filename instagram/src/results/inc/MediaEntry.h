@@ -10,7 +10,7 @@ namespace Instagram{
 
     enum class MediaType{ UNKNOWN, IMAGE, VIDEO };
 
-    class MediaEntry : public BaseResult{
+    class EXPORT_INSTAGRAM MediaEntry : public BaseResult{
     public:
         MediaEntry();
         MediaEntry(const std::string& err);

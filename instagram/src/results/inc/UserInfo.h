@@ -5,7 +5,7 @@
 
 namespace Instagram{
 
-    class UserInfo : public BaseResult{
+    class EXPORT_INSTAGRAM UserInfo : public BaseResult{
     public:
         UserInfo();
         UserInfo(const UserInfo& user_info);

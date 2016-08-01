@@ -2,10 +2,19 @@
 // Created by inside on 4/10/16.
 //
 
+#ifdef __linux__
 #include <netdb.h>
-#include <cstring>
 #include <unistd.h>
 #include <fcntl.h>
+#endif
+
+#ifdef WIN32
+#include <Ws2tcpip.h>
+#include <Winsock2.h>
+
+#endif
+
+#include <cstring>
 
 #include "ConnectionListener.h"
 
@@ -46,7 +55,13 @@ namespace Socket{
                 continue;
             }
 
+			#ifdef __linux__
             int yes = 1;
+			#endif
+
+			#ifdef WIN32
+			char yes = 1;
+			#endif
             if(setsockopt(server_sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1){
                 std::string err_msg = "failed to configure socket as reusable : ";
                 err_msg += gai_strerror(errno);
@@ -54,7 +69,8 @@ namespace Socket{
             }
 
             if(bind(server_sockfd, tmp_addrinfo->ai_addr, tmp_addrinfo->ai_addrlen) == -1){
-                ::close(server_sockfd);
+				ConnectionListener::close();
+
                 std::string err_msg = "bind() failed : ";
                 err_msg += gai_strerror(errno);
                 throw std::runtime_error(err_msg);
@@ -88,7 +104,7 @@ namespace Socket{
             //TODO : report about invalid client socket
         }
 
-        return TCPSocket(client_sockfd);
+        return TCPSocket(client_sockfd, false);
     }
 
     TCPSocket ConnectionListener::nonblocking_wait(){
@@ -97,10 +113,17 @@ namespace Socket{
 
     void ConnectionListener::close() {
         if(server_sockfd != - 1){
-            ::close(server_sockfd);
+			#ifdef __linux__
+			::close(server_sockfd);
+			#endif
+
+			#ifdef WIN32
+			closesocket(server_sockfd);
+			#endif
         }
     }
 
+#ifdef __linux__
     void ConnectionListener::make_non_blocking(){
         if(server_sockfd != -1){
             int flags = fcntl(server_sockfd, F_GETFL, 0);
@@ -120,5 +143,6 @@ namespace Socket{
             throw std::runtime_error("not connected!");
         }
     }
+#endif
 
 }

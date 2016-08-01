@@ -7,7 +7,7 @@
 
 namespace Instagram{
 
-    class LocationsInfo : public  BaseResult{
+    class EXPORT_INSTAGRAM LocationsInfo : public  BaseResult{
     public:
         using iterator = std::vector<LocationInfo>::iterator;
         using const_iterator = std::vector<LocationInfo>::const_iterator;

@@ -2,25 +2,32 @@
 // Created by inside on 4/23/16.
 //
 
-#include <stdexcept>
+#ifdef __linux__
 #include <sys/socket.h>
 #include <unistd.h>
 #include <netdb.h>
-#include <cstring>
 #include <arpa/inet.h>
-#include <fcntl.h>
 #include <poll.h>
+#endif
+
+#ifdef WIN32
+#include <Ws2tcpip.h>
+#include <Winsock2.h>
+#endif
+
+#include <stdexcept>
+#include <cstring>
+#include <fcntl.h>
+
 #include "TCPSocket.h"
 
 namespace Socket{
 
-    TCPSocket::TCPSocket(const std::string &host, const std::string &port) {
+	TCPSocket::TCPSocket(const std::string &host, const std::string &port) {
         connect(host, port);
     }
 
-    TCPSocket::TCPSocket(int _sockfd) : sockfd{_sockfd} {
-        sockfd = _sockfd;
-    }
+	TCPSocket::TCPSocket(int _sockfd, bool is_blocking_) : sockfd{_sockfd}, is_blocking{is_blocking_} {}
 
     TCPSocket::TCPSocket(TCPSocket&& client_socket) : sockfd{client_socket.sockfd}, is_blocking{client_socket.is_blocking}{
         client_socket.sockfd = -1;
@@ -28,9 +35,7 @@ namespace Socket{
     }
 
     TCPSocket::~TCPSocket(){
-        if(sockfd != -1){
-            ::close(sockfd);
-        }
+		TCPSocket::close();
     }
 
     TCPSocket &TCPSocket::operator=(TCPSocket &&tcp_socket) {
@@ -48,6 +53,9 @@ namespace Socket{
         addrinfo hints;
         addrinfo* res;
         std::memset(&hints, 0, sizeof(hints));
+
+		WSAData data{};
+		WSAStartup(MAKEWORD(2, 2), &data);
 
         hints.ai_socktype = SOCK_STREAM;
         hints.ai_family = AF_UNSPEC;
@@ -73,7 +81,14 @@ namespace Socket{
             throw std::runtime_error("not connected");
         }
 
+		#ifdef __linux__
         long count = send(sockfd, data, length, 0);
+		#endif
+
+		#ifdef WIN32
+		long count = send(sockfd, static_cast<const char*>(data), length, 0);
+		#endif
+
         return count;
     }
 
@@ -82,13 +97,26 @@ namespace Socket{
             throw std::runtime_error("not_connected");
         }
 
+		#ifdef __linux__
         long count = recv(sockfd, data, length, 0);
+		#endif
+
+		#ifdef WIN32
+		long count = recv(sockfd, static_cast<char*>(data), length, 0);
+		#endif
+
         return count;
     }
 
     void TCPSocket::close(){
         if(sockfd != -1){
-            ::close(sockfd);
+			#ifdef __linux__
+			::close(sockfd);
+			#endif
+
+			#ifdef WIN32
+			closesocket(sockfd);
+			#endif
         }
     }
 
@@ -120,8 +148,13 @@ namespace Socket{
         return "Invalid";
     }
 
+#ifdef __linux__
     void TCPSocket::make_non_blocking(){
-        if(sockfd != -1 && !is_blocking){
+		if (!is_blocking) {
+			return;
+		}
+
+		if(sockfd != -1){
             int flags = fcntl(sockfd, F_GETFL, 0);
             if(flags < 0){
                 throw_error("failed to get socket flags : ", errno);
@@ -132,11 +165,30 @@ namespace Socket{
                 throw_error("failed to change socket to non-blocking mode : ", errno);
             }
 
-            is_blocking = true;
+            is_blocking = false;
         }else{
             throw std::runtime_error("not connected!");
         }
     }
+#endif
+
+#ifdef WIN32
+	void TCPSocket::make_non_blocking() {
+		if (!is_blocking) {
+			return;
+		}
+		
+		if (sockfd != -1) {
+			unsigned long yes{ 1 };
+			ioctlsocket(sockfd, FIONBIO, &yes);
+			is_blocking = false;
+		} else {
+			throw std::runtime_error("not connected!");
+		}
+	}
+#endif
+
+#ifdef __linux__
     bool TCPSocket::wait_for_read(long timeout) const{
         pollfd pfd;
 
@@ -146,7 +198,25 @@ namespace Socket{
 
         return result + 1;;
     }
+#endif
 
+#ifdef WIN32
+	bool TCPSocket::wait_for_read(long timeout) const {
+		fd_set readfs{};
+		readfs.fd_count = 1;
+		readfs.fd_array[0] = sockfd;
+
+		timeval time{};
+		time.tv_sec = timeout * 1000;
+		time.tv_usec = 0;
+
+		int result = select(0, &readfs, nullptr, nullptr, &time);
+
+		return result == SOCKET_ERROR ? false : result;
+	}
+#endif
+
+#ifdef __linux__
     bool TCPSocket::wait_for_write(long timeout) const{
         pollfd pfd;
 
@@ -157,13 +227,30 @@ namespace Socket{
         return result + 1;
     
     }
+#endif
+
+#ifdef WIN32
+	bool TCPSocket::wait_for_write(long timeout) const {
+		fd_set writefs{};
+		writefs.fd_count = 1;
+		writefs.fd_array[0] = sockfd;
+
+		timeval time{};
+		time.tv_sec = timeout * 1000;
+		time.tv_usec = 0;
+
+		int result = select(0, &writefs, nullptr, nullptr, &time);
+
+		return result == SOCKET_ERROR ? false : result;
+	}
+#endif
 
     void TCPSocket::throw_error(const char* err_msg, int code) const{
         std::string msg{err_msg};
         msg += gai_strerror(code);
         throw std::runtime_error(err_msg);
     }
-
+#ifdef __linux_
     Error TCPSocket::get_last_err() const{
         switch(errno){
             case EWOULDBLOCK:
@@ -179,5 +266,33 @@ namespace Socket{
     std::string TCPSocket::get_last_err_str() const {
         return gai_strerror(errno);
     }
+#endif
+
+#ifdef WIN32
+	Error TCPSocket::get_last_err() const {
+		int code = WSAGetLastError();
+		switch (code) {
+		case WSAEWOULDBLOCK:
+			return Error::WOULDBLOCK;
+		case WSAEINTR:
+			return Error::INTERRUPTED;
+		default:
+			return Error::UNKNOWN;
+
+		}
+	}
+
+	std::string TCPSocket::get_last_err_str() const {
+		int code = WSAGetLastError();
+		char* msg = nullptr;
+		
+		if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr, code, 0, msg, 0, nullptr) == 0) {
+			return "Unknown Error";
+		}
+
+		return msg;
+
+	}
+#endif
 
 }

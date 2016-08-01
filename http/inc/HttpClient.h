@@ -15,7 +15,7 @@
 
 namespace Http{
 
-	class HttpClient {
+	class EXPORT_HTTP HttpClient {
 	public:
 		HttpClient(const std::string& _host, HttpProtocol _protocol);
 		HttpClient(HttpClient&) = delete;

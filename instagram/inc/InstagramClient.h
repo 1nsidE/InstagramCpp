@@ -18,9 +18,26 @@
 
 #include "InstagramParser.h"
 
+#ifdef WIN32
+#include<xstring>
+#ifdef INSTAGRAM_LIB_EXPORT
+#define EXPORT_INSTAGRAM __declspec(dllexport)
+#define EXPIMP_TEMPLATE
+#else
+#define EXPORT_INSTAGRAM __declspec(dllimport)
+#define EXPIMP_TEMPLATE extern
+#endif
+
+#else
+#ifdef __linux__
+#define EXPORT_INSTAGRAM
+#define EXPIMP_TEMPLATE
+#endif
+#endif
+
 namespace Instagram{
 
-    class InstagramClient{
+    class EXPORT_INSTAGRAM InstagramClient{
     public:
         InstagramClient();
         InstagramClient(const std::string& _auth_token);

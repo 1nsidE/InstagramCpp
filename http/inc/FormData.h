@@ -8,9 +8,33 @@
 #include <string>
 #include <map>
 
-namespace Http{
+#ifdef WIN32
+#include<xstring>
+#ifdef HTTP_LIB_EXPORT
+#define EXPORT_HTTP __declspec(dllexport)
+#define EXPIMP_TEMPLATE
+#else
+#define EXPORT_HTTP __declspec(dllimport)
+#define EXPIMP_TEMPLATE extern
+#endif
 
-    class FormData {
+#else
+#ifdef __linux__
+#define EXPORT_HTTP
+#define EXPIMP_TEMPLATE
+#endif
+#endif
+
+#ifdef WIN32
+/*EXPIMP_TEMPLATE template class EXPORT_HTTP std::allocator<char>;
+EXPIMP_TEMPLATE template struct EXPORT_HTTP std::char_traits<char>;
+EXPIMP_TEMPLATE template class EXPORT_HTTP std::basic_string<char, std::char_traits<char>, std::allocator<char>>;*/
+EXPIMP_TEMPLATE template class EXPORT_HTTP std::map<std::string, std::string>;
+#endif
+
+namespace  Http{
+
+    class EXPORT_HTTP FormData {
     public:
         FormData(const std::string& _boundary = "##############");
         FormData(const FormData& form_data);

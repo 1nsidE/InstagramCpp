@@ -5,7 +5,7 @@
 
 namespace Instagram{
 
-    class TagInfo : public BaseResult{
+    class EXPORT_INSTAGRAM TagInfo : public BaseResult{
     public:
         TagInfo();
         TagInfo(const std::string& name_, int count_);

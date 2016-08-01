@@ -6,7 +6,7 @@
 
 namespace Instagram{
 
-    class CommentInfo : public BaseResult{
+    class EXPORT_INSTAGRAM CommentInfo : public BaseResult{
     public:
         CommentInfo();
         CommentInfo(const std::string& text_, const std::string& id_, long created_time_, const UserInfo& user_info_);

@@ -5,7 +5,7 @@
 
 namespace Instagram{
 
-    class RelationshipInfo : public BaseResult{
+    class EXPORT_INSTAGRAM RelationshipInfo : public BaseResult{
     public:
         RelationshipInfo();
         RelationshipInfo(const std::string& incoming, const std::string& outgoing);

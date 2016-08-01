@@ -1,5 +1,6 @@
 #include <sstream>
 #include <cstring>
+#include <algorithm>
 
 #include "HttpHeaderParser.h"
 

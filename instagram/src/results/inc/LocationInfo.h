@@ -5,7 +5,7 @@
 
 namespace Instagram{
 
-    class LocationInfo : public BaseResult{
+    class EXPORT_INSTAGRAM LocationInfo : public BaseResult{
     public:
         LocationInfo();
         LocationInfo(const LocationInfo& loc_info);
