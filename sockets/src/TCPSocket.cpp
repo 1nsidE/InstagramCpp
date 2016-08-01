@@ -81,13 +81,13 @@ namespace Socket {
             throw std::runtime_error("not connected");
         }
 
-#ifdef __linux__
+        #ifdef __linux__
         long count = send(sockfd, data, length, 0);
-#endif
+        #endif
 
-#ifdef WIN32
+        #ifdef WIN32
         long count = send(sockfd, static_cast<const char*>(data), length, 0);
-#endif
+        #endif
 
         return count;
     }
@@ -97,26 +97,26 @@ namespace Socket {
             throw std::runtime_error("not_connected");
         }
 
-#ifdef __linux__
+        #ifdef __linux__
         long count = recv(sockfd, data, length, 0);
-#endif
+        #endif
 
-#ifdef WIN32
+        #ifdef WIN32
         long count = recv(sockfd, static_cast<char*>(data), length, 0);
-#endif
+        #endif
 
         return count;
     }
 
     void TCPSocket::close() {
         if (sockfd != -1) {
-#ifdef __linux__
+            #ifdef __linux__
             ::close(sockfd);
-#endif
+            #endif
 
-#ifdef WIN32
+            #ifdef WIN32
             closesocket(sockfd);
-#endif
+            #endif
         }
     }
 
@@ -294,7 +294,6 @@ namespace Socket {
         }
 
         return msg;
-
     }
 #endif
 
