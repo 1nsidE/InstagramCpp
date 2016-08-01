@@ -4,10 +4,10 @@
 
 #include "HttpHeaderParser.h"
 
-namespace Http{
+namespace Http {
 
-    HttpResponse HttpHeaderParser::parse_response(const std::string &header){
-        if(header.empty()){
+    HttpResponse HttpHeaderParser::parse_response(const std::string &header) {
+        if (header.empty()) {
             return HttpResponse{};
         }
 
@@ -17,25 +17,25 @@ namespace Http{
         std::getline(string_stream, line);
         std::vector<std::string> tokens = tokenize(line, ' ');
 
-        if(tokens.size() < 3){
+        if (tokens.size() < 3) {
             throw std::runtime_error("invalid response : " + line);
         }
 
         HttpResponse http_response{};
-        http_response.set_status(tokens[2],std::stoi(tokens[1]));
+        http_response.set_status(tokens[2], std::stoi(tokens[1]));
 
         parse_headers(string_stream, http_response);
 
         size_t pos;
-        if((pos = static_cast<size_t>(string_stream.tellg())) < header.length()){
+        if ((pos = static_cast<size_t>(string_stream.tellg())) < header.length()) {
             http_response.set_data(header.substr(pos, header.length() - pos));
         }
 
         return http_response;
     }
 
-    HttpRequest HttpHeaderParser::parse_request(const std::string &header){
-        if(header.empty()){
+    HttpRequest HttpHeaderParser::parse_request(const std::string &header) {
+        if (header.empty()) {
             return HttpRequest{};
         }
 
@@ -44,8 +44,8 @@ namespace Http{
 
         std::getline(string_stream, line);
         std::vector<std::string> tokens = tokenize(line, ' ');
-        if(tokens.size() != 3){
-            throw std::runtime_error({"invalid request header: " + line});
+        if (tokens.size() != 3) {
+            throw std::runtime_error({ "invalid request header: " + line });
         }
 
         HttpRequest http_request{};
@@ -57,41 +57,41 @@ namespace Http{
 
         parse_headers(string_stream, http_request);
         size_t pos;
-        if((pos = static_cast<size_t>(string_stream.tellg())) < header.length()){
+        if ((pos = static_cast<size_t>(string_stream.tellg())) < header.length()) {
             http_request.set_data(header.substr(pos, header.length() - pos));
         }
 
         return http_request;
     }
 
-    std::vector<std::string> HttpHeaderParser::tokenize(const std::string& str, const char delimeter, bool once){
+    std::vector<std::string> HttpHeaderParser::tokenize(const std::string& str, const char delimeter, bool once) {
         std::vector<std::string> result{};
-        
+
         const char* ptr = str.c_str();
         const char* end = str.size() + ptr;
-        do{
+        do {
             const char* begin = ptr;
 
-            while(*ptr != delimeter && ptr < end) ++ptr;
+            while (*ptr != delimeter && ptr < end) ++ptr;
 
-            result.push_back(trim(std::string{begin, ptr})); 
-            if(once){
-                result.push_back(trim(std::string{++ptr, end - 1}));
+            result.push_back(trim(std::string{ begin, ptr }));
+            if (once) {
+                result.push_back(trim(std::string{ ++ptr, end - 1 }));
                 break;
             }
-        }while(end > ++ptr);
+        } while (end > ++ptr);
 
         return result;
     }
 
-    void HttpHeaderParser::parse_headers(std::istringstream& string_stream, HttpHeader& header){
+    void HttpHeaderParser::parse_headers(std::istringstream& string_stream, HttpHeader& header) {
         std::string line{};
-        while(std::getline(string_stream, line)){
-            if(!line.compare("\r")){
+        while (std::getline(string_stream, line)) {
+            if (!line.compare("\r")) {
                 break;
             }
             std::vector<std::string> tokens = tokenize(line, ':', true);
-            if(tokens.size() != 2){
+            if (tokens.size() != 2) {
                 throw std::runtime_error("invalid header : " + line);
             }
             header.add_header(tokens[0], tokens[1]);
@@ -120,23 +120,24 @@ namespace Http{
         return str.substr(first, (last - first) + 1);
     }
 
-    HttpUrl HttpHeaderParser::parse_url(const std::string& str){
+    HttpUrl HttpHeaderParser::parse_url(const std::string& str) {
         HttpUrl url{};
-        size_t delimeter_pos = str.find_first_of('?',0);
-        if(delimeter_pos == std::string::npos){
+        size_t delimeter_pos = str.find_first_of('?', 0);
+        if (delimeter_pos == std::string::npos) {
             url.set_end_point(str);
             return url;
-        }else{
+        }
+        else {
             std::vector<std::string> tokens = tokenize(str, ARG_START_DELIMETER, true);
-            if(tokens.size() != 2){
+            if (tokens.size() != 2) {
                 throw std::runtime_error("invalid url in request!");
             }
             url.set_end_point(tokens[0]);
 
             std::vector<std::string> url_str = tokenize(tokens[1], ARG_DELIMETER);
-            for(std::string arg_pair : url_str){
+            for (std::string arg_pair : url_str) {
                 std::vector<std::string> args = tokenize(arg_pair, ARG_EQUAL);
-                if(args.size() != 2){
+                if (args.size() != 2) {
                     throw std::runtime_error("invalid url format!");
                 }
                 url.add_argument(args[0], args[1]);

@@ -1,13 +1,13 @@
 #include "InstagramParser.h"
 
-namespace Instagram{
+namespace Instagram {
 
     InstagramParser::InstagramParser() : reader{} {}
 
-    AuthorizationToken InstagramParser::parse_auth_token(const std::string& json){
+    AuthorizationToken InstagramParser::parse_auth_token(const std::string& json) {
         AuthorizationToken token{};
         Json::Value root;
-        if(!reader.parse(json, root, false)){
+        if (!reader.parse(json, root, false)) {
             return "Failed to parse response";
 
         }
@@ -25,25 +25,25 @@ namespace Instagram{
         return token;
     }
 
-    MediaEntries InstagramParser::parse_media_entries(const std::string& json){
+    MediaEntries InstagramParser::parse_media_entries(const std::string& json) {
         Json::Value root;
-        if(!reader.parse(json, root, false)){
+        if (!reader.parse(json, root, false)) {
             return "Failed to parse media entries";
         };
 
         const Json::Value& data = root["data"];
         MediaEntries result{};
-        if(data.isArray()){
-            for(const auto& media : data){
+        if (data.isArray()) {
+            for (const auto& media : data) {
                 result << get_media_entry(media);
             }
         }
         return result;
     }
 
-    MediaEntry InstagramParser::parse_media_entry(const std::string& json){
+    MediaEntry InstagramParser::parse_media_entry(const std::string& json) {
         Json::Value root;
-        if(!reader.parse(json, root, false)){
+        if (!reader.parse(json, root, false)) {
             return "Failed to parse media entry";
         }
 
@@ -51,29 +51,30 @@ namespace Instagram{
         return get_media_entry(data);
     }
 
-    MediaEntry InstagramParser::get_media_entry(const Json::Value& media){
+    MediaEntry InstagramParser::get_media_entry(const Json::Value& media) {
         MediaEntry entry{};
 
         const Json::Value& tags = media["tags"];
-        if(tags.isArray()){
-            for(const auto& tag : tags){
+        if (tags.isArray()) {
+            for (const auto& tag : tags) {
                 entry.add_tag(tag.asString());
             }
         }
 
         const Json::Value& users_in_photo = media["users_in_photo"];
-        if(users_in_photo.isArray()){
-            for(const auto& user : users_in_photo){
+        if (users_in_photo.isArray()) {
+            for (const auto& user : users_in_photo) {
                 entry.add_user_in_photo(user.asString());
             }
         }
 
         const Json::Value& type = media["type"];
-        if(!type.isNull()){
+        if (!type.isNull()) {
             const std::string type_str = type.asString();
-            if(type_str == "image"){
+            if (type_str == "image") {
                 entry.set_type(MediaType::IMAGE);
-            }else{
+            }
+            else {
                 entry.set_type(MediaType::VIDEO);
                 const Json::Value& videos = media["videos"];
                 entry.set_video_low(videos["low_resolution"].asString());
@@ -86,21 +87,21 @@ namespace Instagram{
         entry.set_created_time(created_time);
 
         const Json::Value& link = media["link"];
-        if(!link.isNull()) entry.set_link(link.asString());
+        if (!link.isNull()) entry.set_link(link.asString());
 
         const Json::Value& caption = media["caption"];
-        if(!caption.isNull()) entry.set_caption(caption["text"].asString());
+        if (!caption.isNull()) entry.set_caption(caption["text"].asString());
 
         const Json::Value& images = media["images"];
 
         const Json::Value& low_resolution = images["low_resolution"];
-        if(!low_resolution.isNull()) entry.set_low_resolution(low_resolution["url"].asString());
+        if (!low_resolution.isNull()) entry.set_low_resolution(low_resolution["url"].asString());
 
         const Json::Value& thumbnail = images["thumbnail"];
-        if(!thumbnail.isNull()) entry.set_thumbnail(thumbnail["url"].asString());
+        if (!thumbnail.isNull()) entry.set_thumbnail(thumbnail["url"].asString());
 
         const Json::Value& standart_resolution = images["standard_resolution"];
-        if(!standart_resolution.isNull()) entry.set_standart_resolution(standart_resolution["url"].asString());
+        if (!standart_resolution.isNull()) entry.set_standart_resolution(standart_resolution["url"].asString());
 
         const Json::Value& comments = media["comments"];
         int comments_count = comments.isNull() ? -1 : comments["count"].asInt();
@@ -115,15 +116,15 @@ namespace Instagram{
         entry.set_like_count(likes_count);
 
         const Json::Value& id = media["id"];
-        if(!id.isNull()) entry.set_id(id.asString());
+        if (!id.isNull()) entry.set_id(id.asString());
 
         return entry;
     }
 
-    UserInfo InstagramParser::parse_user_info(const std::string& json){
+    UserInfo InstagramParser::parse_user_info(const std::string& json) {
         Json::Value root;
 
-        if(!reader.parse(json, root, false)){
+        if (!reader.parse(json, root, false)) {
             return "Failed to parse user info";
         }
 
@@ -131,15 +132,15 @@ namespace Instagram{
         return get_user_info(data);
     }
 
-    UsersInfo InstagramParser::parse_users_info(const std::string& json){
+    UsersInfo InstagramParser::parse_users_info(const std::string& json) {
         Json::Value root;
-        if(!reader.parse(json, root, false)){
+        if (!reader.parse(json, root, false)) {
             return "Failed to parse users info";
         }
 
         const Json::Value& data = root["data"];
         UsersInfo users_info{};
-        for(const Json::Value& user_info : data){
+        for (const Json::Value& user_info : data) {
             users_info << get_user_info(user_info);
         }
 
@@ -154,9 +155,10 @@ namespace Instagram{
         user_info.set_prof_pic_url(info["profile_picture"].asString());
 
         const Json::Value& fullname = info["full_name"];
-        if(fullname.isNull()){
+        if (fullname.isNull()) {
             user_info.set_name(info["first_name"].asString());
-        }else{
+        }
+        else {
             user_info.set_name(fullname.asString());
         }
 
@@ -165,7 +167,7 @@ namespace Instagram{
         user_info.set_website(info["website"].asString());
 
         const Json::Value& counts = info["counts"];
-        if(!counts.isNull()) {
+        if (!counts.isNull()) {
             const Json::Value &followed_by = counts["followed_by"];
             user_info.set_followed_by(followed_by.isNull() ? -1 : followed_by.asInt());
 
@@ -179,22 +181,22 @@ namespace Instagram{
         return user_info;
     }
 
-    RelationshipInfo InstagramParser::parse_relationship_info(const std::string& json){
+    RelationshipInfo InstagramParser::parse_relationship_info(const std::string& json) {
         Json::Value root{};
-        if(!reader.parse(json, root, false)){
+        if (!reader.parse(json, root, false)) {
             return "Failed to parse relationship info";
         }
 
         const Json::Value& data = root["data"];
-        RelationshipInfo rel_info{data["incoming_status"].asString(), data["outgoing_status"].asString()};
+        RelationshipInfo rel_info{ data["incoming_status"].asString(), data["outgoing_status"].asString() };
 
         return rel_info;
     }
 
-    TagInfo InstagramParser::parse_tag_info(const std::string& json){
+    TagInfo InstagramParser::parse_tag_info(const std::string& json) {
         Json::Value root{};
 
-        if(!reader.parse(json, root, false)){
+        if (!reader.parse(json, root, false)) {
             return "Failed to parse tag info";
         }
 
@@ -204,34 +206,34 @@ namespace Instagram{
         return tag_info;
     }
 
-    TagsInfo InstagramParser::parse_tags_info(const std::string& json){
+    TagsInfo InstagramParser::parse_tags_info(const std::string& json) {
         Json::Value root{};
 
-        if(!reader.parse(json, root, false)){
+        if (!reader.parse(json, root, false)) {
             return "Failed to parse tags info";
         }
 
         TagsInfo tags_info;
         const Json::Value& data = root["data"];
-        if(data.isArray()){
-            for(const auto& tag : data){
-                tags_info << TagInfo{tag["name"].asString(), tag["media_count"].asInt()};
+        if (data.isArray()) {
+            for (const auto& tag : data) {
+                tags_info << TagInfo{ tag["name"].asString(), tag["media_count"].asInt() };
             }
         }
 
         return tags_info;
     }
 
-    CommentsInfo InstagramParser::parse_comments(const std::string& json){
+    CommentsInfo InstagramParser::parse_comments(const std::string& json) {
         Json::Value root{};
-        if(!reader.parse(json, root, false)){
+        if (!reader.parse(json, root, false)) {
             return "Failed to parse comments";
         }
 
         CommentsInfo comments_info{};
         const Json::Value& data = root["data"];
-        if(data.isArray()){
-            for(const Json::Value& comment : data){
+        if (data.isArray()) {
+            for (const Json::Value& comment : data) {
                 comments_info << get_comment_info(comment);
             }
         }
@@ -239,7 +241,7 @@ namespace Instagram{
         return comments_info;
     }
 
-    CommentInfo InstagramParser::get_comment_info(const Json::Value& comment){
+    CommentInfo InstagramParser::get_comment_info(const Json::Value& comment) {
         CommentInfo comment_info{};
 
         comment_info.set_text(comment["text"].asString());
@@ -252,17 +254,17 @@ namespace Instagram{
         return comment_info;
     }
 
-    LocationInfo InstagramParser::parse_location(const std::string& json){
+    LocationInfo InstagramParser::parse_location(const std::string& json) {
         Json::Value root{};
-        if(!reader.parse(json, root, false)){
+        if (!reader.parse(json, root, false)) {
             return "Failed to parse location";
         }
 
         return get_location(root["data"]);
     }
 
-    LocationInfo InstagramParser::get_location(const Json::Value& location){
-        if(!location.isNull()){
+    LocationInfo InstagramParser::get_location(const Json::Value& location) {
+        if (!location.isNull()) {
             LocationInfo info{};
             info.set_id(location["id"].asString());
             info.set_name(location["name"].asString());
@@ -270,50 +272,53 @@ namespace Instagram{
             info.set_longitude(location["longitude"].asDouble());
 
             return info;
-        }else{
+        }
+        else {
             return "Invalid json, failed to parse location";
         }
     }
 
-    LocationsInfo InstagramParser::parse_locations(const std::string& json){
+    LocationsInfo InstagramParser::parse_locations(const std::string& json) {
         Json::Value root;
-        if(!reader.parse(json, root, false)){
+        if (!reader.parse(json, root, false)) {
             return "Failed to parse locations";
         }
 
         const Json::Value& data = root["data"];
-        if(data.isArray()){
+        if (data.isArray()) {
             LocationsInfo infos{};
-            for(const auto& location : data){
+            for (const auto& location : data) {
                 infos << get_location(location);
             }
 
             return infos;
-        }else{
+        }
+        else {
             return "Invalid json, failed to parse locations";
         }
     }
 
-    std::string InstagramParser::get_error(const std::string& json){
+    std::string InstagramParser::get_error(const std::string& json) {
         Json::Value root;
 
-        if(!reader.parse(json, root, false)){
+        if (!reader.parse(json, root, false)) {
             return "Failed to parse error";
         }
 
         const Json::Value& meta = root["meta"].isNull() ? root : root["meta"];
 
         int code = meta["code"].asInt();
-        if(code == 200){
+        if (code == 200) {
             return "";
         }
 
         const Json::Value& err_msg = meta["error_message"];
         const Json::Value& err_type = meta["error_type"];
 
-        if(!err_type.isNull() || !err_msg.isNull()){
+        if (!err_type.isNull() || !err_msg.isNull()) {
             return err_type.asString() + " : " + err_msg.asString();
-        }else{
+        }
+        else {
             return "Unknown error with code = " + std::to_string(code);
         }
     }

@@ -4,16 +4,16 @@
 
 #include "HttpRequest.h"
 
-namespace Http{
+namespace Http {
 
     HttpRequest::HttpRequest() : HttpHeader{}, method(Http::Method::UNKNOWN){}
-    HttpRequest::HttpRequest(const HttpRequest& request) : HttpHeader{request}, method{request.method}, url{request.url}{}
-    HttpRequest::HttpRequest(HttpRequest&& request) : HttpHeader{std::forward<HttpHeader>(request)}, method{request.method}, url{std::move(request.url)}{}
+    HttpRequest::HttpRequest(const HttpRequest& request) : HttpHeader{ request }, method{ request.method }, url{ request.url } {}
+    HttpRequest::HttpRequest(HttpRequest&& request) : HttpHeader{ std::forward<HttpHeader>(request) }, method{ request.method }, url{ std::move(request.url) } {}
 
     HttpRequest::~HttpRequest() {}
 
-    HttpRequest& HttpRequest::operator=(const HttpRequest& http_request){
-        if(this == &http_request){
+    HttpRequest& HttpRequest::operator=(const HttpRequest& http_request) {
+        if (this == &http_request) {
             return *this;
         }
         HttpHeader::operator=(http_request);
@@ -23,8 +23,8 @@ namespace Http{
         return *this;
     }
 
-    HttpRequest& HttpRequest::operator=(HttpRequest&& http_request){
-        if(this == &http_request){
+    HttpRequest& HttpRequest::operator=(HttpRequest&& http_request) {
+        if (this == &http_request) {
             return *this;
         }
         HttpHeader::operator=(std::forward<HttpHeader>(http_request));
@@ -38,31 +38,31 @@ namespace Http{
         method = _method;
     }
 
-    Http::Method HttpRequest::get_method() const{
+    Http::Method HttpRequest::get_method() const {
         return method;
     }
 
     std::string HttpRequest::get_string() const {
-        if(method == Http::Method::UNKNOWN){
+        if (method == Http::Method::UNKNOWN) {
             return "";
         }
 
-        std::string result{to_string(method)};
+        std::string result{ to_string(method) };
         result += " " + url.get_url() + " " + HTTP_1_1 + CRLF;
 
         result += HttpHeader::get_string();
         return result;
     }
 
-    void HttpRequest::set_url(const HttpUrl& _url){
+    void HttpRequest::set_url(const HttpUrl& _url) {
         url = _url;
     }
 
-    void HttpRequest::set_url(HttpUrl&& _url){
+    void HttpRequest::set_url(HttpUrl&& _url) {
         url = std::move(_url);
     }
 
-    const HttpUrl& HttpRequest::get_url() const{
+    const HttpUrl& HttpRequest::get_url() const {
         return url;
     }
 
