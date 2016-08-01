@@ -1,15 +1,12 @@
 #ifndef HTTP_HEADER_H
 #define HTTP_HEADER_H
 
-#include <string>
 #include <unordered_map>
-#include <memory>
 #include "Http.h"
 
 namespace Http{
 
     using HeadersMap = std::unordered_map<std::string, std::string>;
-	EXPIMP_TEMPLATE template class EXPORT_HTTP std::unordered_map<std::string, std::string>;
 
     class EXPORT_HTTP HttpHeader{
     public:

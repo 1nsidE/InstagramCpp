@@ -2,25 +2,13 @@
 #define BASE_RESULT_H
 
 #include <string>
-
-#ifdef WIN32
-#include<xstring>
-#ifdef INSTAGRAM_LIB_EXPORT
-#define EXPORT_INSTAGRAM __declspec(dllexport)
-#define EXPIMP_TEMPLATE
-#else
-#define EXPORT_INSTAGRAM __declspec(dllimport)
-#define EXPIMP_TEMPLATE extern
-#endif
-
-#else
-#ifdef __linux__
-#define EXPORT_INSTAGRAM
-#define EXPIMP_TEMPLATE
-#endif
-#endif
+#include <xstring>
+#include "InstagramDefinitions.h"
 
 namespace  Instagram{
+    EXPIMP_TEMPLATE template struct EXPORT_INSTAGRAM std::char_traits<char>;
+    EXPIMP_TEMPLATE template class EXPORT_INSTAGRAM std::allocator<char>;
+    EXPIMP_TEMPLATE template class EXPORT_INSTAGRAM std::basic_string<char, std::char_traits<char>, std::allocator<char>>;
 
 	class EXPORT_INSTAGRAM BaseResult{
 	public:

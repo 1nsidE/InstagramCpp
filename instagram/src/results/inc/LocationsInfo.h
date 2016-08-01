@@ -6,6 +6,7 @@
 #include <vector>
 
 namespace Instagram{
+    EXPIMP_TEMPLATE template class EXPORT_INSTAGRAM std::vector<LocationInfo>;
 
     class EXPORT_INSTAGRAM LocationsInfo : public  BaseResult{
     public:

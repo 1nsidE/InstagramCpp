@@ -6,7 +6,7 @@
 
 namespace Instagram{
 
-	class AuthorizationToken : public BaseResult{
+	class EXPORT_INSTAGRAM AuthorizationToken : public BaseResult{
 	public:
 		AuthorizationToken();
 		AuthorizationToken(const char* err_msg);
