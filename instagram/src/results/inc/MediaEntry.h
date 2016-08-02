@@ -7,8 +7,11 @@
 //TODO: make this class iterable
 
 namespace Instagram{
-    enum class MediaType{ UNKNOWN, IMAGE, VIDEO };
+    #ifdef WIN32
     INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM std::vector<std::string>;
+    #endif
+
+    enum class MediaType{ UNKNOWN, IMAGE, VIDEO };
 
     class EXPORT_INSTAGRAM MediaEntry : public BaseResult{
     public:

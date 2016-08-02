@@ -20,6 +20,9 @@
     HTTP_EXP_TMP template struct EXPORT_HTTP std::pair<std::string, std::string>;
 #endif
 
+#ifdef __linux__
+    #define EXPORT_HTTP
+#endif
 
 #define HTTP_1_1 "HTTP/1.1"
 #define CRLF "\r\n"

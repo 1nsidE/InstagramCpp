@@ -13,4 +13,8 @@
     #endif
 #endif
 
+#ifdef __linux__
+    #define EXPORT_INSTAGRAM
+#endif
+
 #endif
