@@ -1,7 +1,6 @@
 #ifndef AUTHORIZATION_TOKEN
 #define AUTHORIZATION_TOKEN
 
-#include <string>
 #include "BaseResult.h"
 
 namespace Instagram{

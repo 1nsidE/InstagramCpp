@@ -1,12 +1,14 @@
 #ifndef USERS_INFO_H
 #define USERS_INFO_H
 
-#include "BaseResult.h"
 #include "UserInfo.h"
 
 #include <vector>
 
 namespace Instagram{
+    #ifdef WIN32
+    INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM std::vector<Instagram::UserInfo>;
+    #endif
 
     class EXPORT_INSTAGRAM UsersInfo : public BaseResult{
     public:

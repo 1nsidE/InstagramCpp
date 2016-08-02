@@ -1,11 +1,13 @@
 #ifndef COMMENTS_INFO_H
 #define COMMENTS_INFO_H
 
-#include "BaseResult.h"
-#include "CommentInfo.h"
 #include <vector>
+#include "CommentInfo.h"
 
 namespace Instagram{
+    #ifdef WIN32
+    INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM std::vector<Instagram::CommentInfo>;
+    #endif
 
     class EXPORT_INSTAGRAM CommentsInfo : public  BaseResult{
     public:

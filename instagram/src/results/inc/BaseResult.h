@@ -1,7 +1,6 @@
 #ifndef BASE_RESULT_H
 #define BASE_RESULT_H
 
-#include <string>
 #include "InstagramDefinitions.h"
 
 namespace  Instagram{

@@ -8,6 +8,7 @@
 
 namespace Instagram{
     enum class MediaType{ UNKNOWN, IMAGE, VIDEO };
+    INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM std::vector<std::string>;
 
     class EXPORT_INSTAGRAM MediaEntry : public BaseResult{
     public:

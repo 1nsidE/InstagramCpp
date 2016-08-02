@@ -1,11 +1,13 @@
 #ifndef LOCATIONS_INFO_H
 #define LOCATIONS_INFO_H
 
-#include "BaseResult.h"
 #include "LocationInfo.h"
 #include <vector>
 
 namespace Instagram{
+    #ifdef WIN32
+    INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM std::vector<Instagram::LocationInfo>;
+    #endif
 
     class EXPORT_INSTAGRAM LocationsInfo : public  BaseResult{
     public:
