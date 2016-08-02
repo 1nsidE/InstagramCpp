@@ -7,7 +7,7 @@
 #include <vector>
 
 namespace Instagram{
-    EXPIMP_TEMPLATE template class EXPORT_INSTAGRAM std::vector<UserInfo>;
+    INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM std::vector<UserInfo>;
 
     class EXPORT_INSTAGRAM UsersInfo : public BaseResult{
     public:

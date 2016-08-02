@@ -5,7 +5,7 @@
 #include "Http.h"
 
 namespace Http{
-
+    HTTP_EXP_TMP template class EXPORT_HTTP std::unordered_map<std::string, std::string>;
     using HeadersMap = std::unordered_map<std::string, std::string>;
 
     class EXPORT_HTTP HttpHeader{

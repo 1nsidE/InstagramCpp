@@ -1,10 +1,11 @@
 #ifdef WIN32
+    #include<xstring>
     #ifdef HTTP_LIB_EXPORT
         #define EXPORT_HTTP __declspec(dllexport)
-        #define EXPIMP_TEMPLATE
+        #define HTTP_EXP_TMP
     #else
         #define EXPORT_HTTP __declspec(dllimport)
-        #define EXPIMP_TEMPLATE extern
+        #define HTTP_EXP_TMP extern
     #endif
 #endif
 

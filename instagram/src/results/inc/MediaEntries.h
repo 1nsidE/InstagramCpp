@@ -7,7 +7,7 @@
 #include "MediaEntry.h"
 
 namespace Instagram{
-    EXPIMP_TEMPLATE template class EXPORT_INSTAGRAM std::vector<MediaEntry>;
+    INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM std::vector<MediaEntry>;
 
     class EXPORT_INSTAGRAM MediaEntries : public BaseResult{
     public:

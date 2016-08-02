@@ -533,8 +533,7 @@ namespace Instagram {
             Http::HttpResponse response = http_client << url;
             if (response.get_code() == Http::Status::OK) {
                 return parser.parse_locations(response.get_data());
-            }
-            else {
+            } else {
                 return get_result(response);
             }
         }

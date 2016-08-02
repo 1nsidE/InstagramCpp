@@ -79,5 +79,4 @@ namespace Instagram {
         add_location(std::move(loc));
         return *this;
     }
-
 }
