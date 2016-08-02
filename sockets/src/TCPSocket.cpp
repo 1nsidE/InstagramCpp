@@ -62,23 +62,28 @@ namespace Socket {
         hints.ai_family = AF_UNSPEC;
 
         if (getaddrinfo(host.c_str(), port.c_str(), &hints, &res) != 0) {
-            throw_error("getaddrinfo() failed: ", last_err_code());
-        }
-
-        for (addrinfo* tmp_res = res; tmp_res != nullptr; tmp_res = res->ai_next) {
-            sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
             #ifdef WIN32
             if (WSAGetLastError() == WSANOTINITIALISED) {
                 init_wsa();
-                sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+            }
+            if(getaddrinfo(host.c_str(), port.c_str(), &hints, &res) != 0){
+                throw_error("getaddrinfo() failed: ", last_err_code());
             }
             #endif
+
+            #ifdef __linux__
+            throw_error("getaddrinfo() failed: ", last_err_code());
+            #endif
+        }
+
+        for (addrinfo* tmp_res = res; tmp_res != nullptr; tmp_res = res->ai_next) {
+            sockfd = socket(tmp_res->ai_family, tmp_res->ai_socktype, tmp_res->ai_protocol);
 
             if (sockfd == -1) {
                 continue;
             }
 
-            if (::connect(sockfd, res->ai_addr, res->ai_addrlen) == -1) {
+            if (::connect(sockfd, tmp_res->ai_addr, tmp_res->ai_addrlen) == -1) {
                 throw_error("connect() failed: ", last_err_code());
             }
 
