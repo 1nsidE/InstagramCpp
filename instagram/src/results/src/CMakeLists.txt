@@ -16,4 +16,8 @@ LocationInfo.cpp
 LocationsInfo.cpp
 )
 
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    add_definitions(-DINSTAGRAM_LIB_EXPORT)
+endif()
+
 add_library(results OBJECT ${RESULT_SOURCES})

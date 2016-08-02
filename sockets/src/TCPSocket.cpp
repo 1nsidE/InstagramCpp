@@ -65,16 +65,31 @@ namespace Socket {
         hints.ai_family = AF_UNSPEC;
 
         if (getaddrinfo(host.c_str(), port.c_str(), &hints, &res) != 0) {
-            throw_error("getaddrinfo() failed: ", errno);
+            throw_error("getaddrinfo() failed: ", last_err_code());
         }
 
-        sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+        for (addrinfo* tmp_res = res; tmp_res != nullptr; tmp_res = res->ai_next) {
+            sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+            #ifdef WIN32
+            if (WSAGetLastError() == WSANOTINITIALISED) {
+                init_wsa();
+                sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+            }
+            #endif
+
+            if (sockfd == -1) {
+                continue;
+            }
+
+            if (::connect(sockfd, res->ai_addr, res->ai_addrlen) == -1) {
+                throw_error("connect() failed: ", last_err_code());
+            }
+
+            break;
+        }
+
         if (sockfd == -1) {
-            throw_error("failed to create socket: ", errno);
-        }
-
-        if (::connect(sockfd, res->ai_addr, res->ai_addrlen) == -1) {
-            throw_error("connect() failed: ", errno);
+            throw_error("failed to craete socket : ", last_err_code());
         }
 
         freeaddrinfo(res);
@@ -162,12 +177,12 @@ namespace Socket {
         if (sockfd != -1) {
             int flags = fcntl(sockfd, F_GETFL, 0);
             if (flags < 0) {
-                throw_error("failed to get socket flags : ", errno);
+                throw_error("failed to get socket flags : ", last_err_code());
             }
 
             flags |= O_NONBLOCK;
             if (fcntl(sockfd, F_SETFL, flags) < 0) {
-                throw_error("failed to change socket to non-blocking mode : ", errno);
+                throw_error("failed to change socket to non-blocking mode : ", last_err_code());
             }
 
             is_blocking = false;
@@ -199,7 +214,7 @@ namespace Socket {
     }
 
     Error TCPSocket::get_last_err() const {
-        switch (errno) {
+        switch (last_err_code()) {
         case EWOULDBLOCK:
             return Error::WOULDBLOCK;
         case EINTR:
@@ -211,7 +226,11 @@ namespace Socket {
     }
 
     std::string TCPSocket::get_last_err_str() const {
-        return gai_strerror(errno);
+        return gai_strerror(last_err_code());
+    }
+
+    int TCPSocket::last_err_code() {
+        return errno;
     }
 #endif
 
@@ -297,6 +316,14 @@ namespace Socket {
 
         return msg;
     }
+
+    int TCPSocket::last_err_code() {
+        return WSAGetLastError();
+    }
+
+    void at_exit() {
+        WSACleanup();
+    }
 #endif
 
     void TCPSocket::throw_error(const char* err_msg, int code) const {
@@ -304,10 +331,4 @@ namespace Socket {
         msg += get_last_err_str();
         throw std::runtime_error(err_msg);
     }
-
-#ifdef WIN32
-    void at_exit() {
-        WSACleanup();
-    }
-#endif
 }

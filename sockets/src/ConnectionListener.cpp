@@ -55,13 +55,13 @@ namespace Socket {
                 continue;
             }
 
-#ifdef __linux__
+            #ifdef __linux__
             int yes = 1;
-#endif
+            #endif
 
-#ifdef WIN32
+            #ifdef WIN32
             char yes = 1;
-#endif
+            #endif
             if (setsockopt(server_sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
                 std::string err_msg = "failed to configure socket as reusable : ";
                 err_msg += gai_strerror(errno);
