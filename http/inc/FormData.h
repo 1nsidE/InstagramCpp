@@ -10,7 +10,6 @@
 #include "Definitions.h"
 
 namespace  Http{
-    HTTP_EXP_TMP template class EXPORT_HTTP std::map<std::string, std::string>;
 
     class EXPORT_HTTP FormData {
     public:

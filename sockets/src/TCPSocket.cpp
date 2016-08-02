@@ -28,10 +28,7 @@ namespace Socket {
     #endif
 
     TCPSocket::TCPSocket(const std::string &host, const std::string &port) {
-        #ifdef WIN32
-            init_wsa();
-        #endif
-        connect(host, port);
+       connect(host, port);
     }
 
     TCPSocket::TCPSocket(int _sockfd, bool is_blocking_) : sockfd{ _sockfd }, is_blocking{ is_blocking_ } {}
@@ -229,7 +226,7 @@ namespace Socket {
         return gai_strerror(last_err_code());
     }
 
-    int TCPSocket::last_err_code() {
+    int TCPSocket::last_err_code() const {
         return errno;
     }
 #endif
@@ -317,7 +314,7 @@ namespace Socket {
         return msg;
     }
 
-    int TCPSocket::last_err_code() {
+    int TCPSocket::last_err_code() const {
         return WSAGetLastError();
     }
 

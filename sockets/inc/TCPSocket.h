@@ -38,7 +38,7 @@ namespace Socket{
     private:
         TCPSocket(int _sockfd, bool is_blocking_);
         void connect(const std::string& host, const std::string& port);
-        int last_err_code();
+        int last_err_code() const;
         [[noreturn]] void throw_error(const char* err_msg, int code) const;
 
         #ifdef WIN32

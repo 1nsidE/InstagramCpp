@@ -1,3 +1,6 @@
+#ifndef HTTP_DEFINITIONS_HEADER
+#define HTTP_DEFINITIONS_HEADER
+
 #ifdef WIN32
     #include<xstring>
     #ifdef HTTP_LIB_EXPORT
@@ -7,11 +10,15 @@
         #define EXPORT_HTTP __declspec(dllimport)
         #define HTTP_EXP_TMP extern
     #endif
+
+    HTTP_EXP_TMP template class EXPORT_HTTP std::map<std::string, std::string>;
+    HTTP_EXP_TMP template class EXPORT_HTTP std::unordered_map<std::string, std::string>;
+    HTTP_EXP_TMP template struct EXPORT_HTTP std::pair<std::string, std::string>;
 #endif
 
 #ifdef __linux__
     #define EXPORT_HTTP
-    #define EXPIMP_TEMPLATE
+    #define HTTP_EXP_TMP
 #endif
 
 #define HTTP_1_1 "HTTP/1.1"
@@ -20,3 +27,5 @@
 #define ARG_START_DELIMETER '?'
 #define ARG_DELIMETER '&'
 #define ARG_EQUAL '='
+
+#endif

@@ -7,7 +7,6 @@
 //TODO: make this class iterable
 
 namespace Instagram{
-    INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM std::vector<std::string>;
     enum class MediaType{ UNKNOWN, IMAGE, VIDEO };
 
     class EXPORT_INSTAGRAM MediaEntry : public BaseResult{

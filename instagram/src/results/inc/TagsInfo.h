@@ -6,7 +6,6 @@
 #include"BaseResult.h"
 
 namespace Instagram{
-    INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM std::vector<TagInfo>;
 
     class EXPORT_INSTAGRAM TagsInfo : public BaseResult{
     public:
