@@ -4,6 +4,8 @@
 
 namespace Socket {
 
+    void at_exit_ssl();
+
     SSLSocket::SSLSocket(const std::string& hostname, const std::string& port) : TCPSocket{ hostname, port } {
         SSLSocket::init();
         SSLSocket::connect(hostname);
@@ -28,9 +30,10 @@ namespace Socket {
     }
 
     void SSLSocket::init() {
-        static bool is_initialized = false;
+        static bool is_initialized = false; //TODO: make threadsafe
         if (!is_initialized) {
             int result = gnutls_global_init();
+            
             if (result < 0) {
                 throw_error(gnutls_strerror(result));
             }
@@ -60,6 +63,7 @@ namespace Socket {
         if (result < 0) {
             throw_error(gnutls_strerror(result));
         }
+        std::atexit(at_exit_ssl);
     }
 
     inline void SSLSocket::check(int result) {
@@ -88,6 +92,10 @@ namespace Socket {
 
     void SSLSocket::throw_error(const char* err_msg) const {
         throw std::runtime_error(err_msg);
+    }
+
+    void at_exit_ssl() {
+        gnutls_global_deinit();
     }
 }
 

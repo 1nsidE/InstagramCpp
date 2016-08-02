@@ -8,6 +8,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <poll.h>
+#include <fcntl.h>
 #endif
 
 #ifdef WIN32
@@ -17,13 +18,19 @@
 
 #include <stdexcept>
 #include <cstring>
-#include <fcntl.h>
 
 #include "TCPSocket.h"
 
 namespace Socket {
 
+    #ifdef WIN32
+        void at_exit();
+    #endif
+
     TCPSocket::TCPSocket(const std::string &host, const std::string &port) {
+        #ifdef WIN32
+            init_wsa();
+        #endif
         connect(host, port);
     }
 
@@ -53,9 +60,6 @@ namespace Socket {
         addrinfo hints;
         addrinfo* res;
         std::memset(&hints, 0, sizeof(hints));
-
-        WSAData data{};
-        WSAStartup(MAKEWORD(2, 2), &data);
 
         hints.ai_socktype = SOCK_STREAM;
         hints.ai_family = AF_UNSPEC;
@@ -172,26 +176,7 @@ namespace Socket {
             throw std::runtime_error("not connected!");
         }
     }
-#endif
 
-#ifdef WIN32
-    void TCPSocket::make_non_blocking() {
-        if (!is_blocking) {
-            return;
-        }
-
-        if (sockfd != -1) {
-            unsigned long yes{ 1 };
-            ioctlsocket(sockfd, FIONBIO, &yes);
-            is_blocking = false;
-        }
-        else {
-            throw std::runtime_error("not connected!");
-        }
-    }
-#endif
-
-#ifdef __linux__
     bool TCPSocket::wait_for_read(long timeout) const {
         pollfd pfd;
 
@@ -201,25 +186,7 @@ namespace Socket {
 
         return result + 1;;
     }
-#endif
 
-#ifdef WIN32
-    bool TCPSocket::wait_for_read(long timeout) const {
-        fd_set readfs{};
-        readfs.fd_count = 1;
-        readfs.fd_array[0] = sockfd;
-
-        timeval time{};
-        time.tv_sec = timeout * 1000;
-        time.tv_usec = 0;
-
-        int result = select(0, &readfs, nullptr, nullptr, &time);
-
-        return result == SOCKET_ERROR ? false : result;
-    }
-#endif
-
-#ifdef __linux__
     bool TCPSocket::wait_for_write(long timeout) const {
         pollfd pfd;
 
@@ -230,30 +197,7 @@ namespace Socket {
         return result + 1;
 
     }
-#endif
 
-#ifdef WIN32
-    bool TCPSocket::wait_for_write(long timeout) const {
-        fd_set writefs{};
-        writefs.fd_count = 1;
-        writefs.fd_array[0] = sockfd;
-
-        timeval time{};
-        time.tv_sec = timeout * 1000;
-        time.tv_usec = 0;
-
-        int result = select(0, &writefs, nullptr, nullptr, &time);
-
-        return result == SOCKET_ERROR ? false : result;
-    }
-#endif
-
-    void TCPSocket::throw_error(const char* err_msg, int code) const {
-        std::string msg{ err_msg };
-        msg += gai_strerror(code);
-        throw std::runtime_error(err_msg);
-    }
-#ifdef __linux_
     Error TCPSocket::get_last_err() const {
         switch (errno) {
         case EWOULDBLOCK:
@@ -272,6 +216,64 @@ namespace Socket {
 #endif
 
 #ifdef WIN32
+    void TCPSocket::init_wsa() {
+        static bool is_wsa_initialized = false;  //TODO: make thread safe
+        if (!is_wsa_initialized) {
+            WSAData data{};
+
+            int result = WSAStartup(MAKEWORD(2, 2), &data);
+            if (result != 0) {
+                throw_error("Failed to initalize WSA : ", result);
+            }
+
+            std::atexit(at_exit);
+            is_wsa_initialized = true;
+        }
+    }
+
+    void TCPSocket::make_non_blocking() {
+        if (!is_blocking) {
+            return;
+        }
+
+        if (sockfd != -1) {
+            unsigned long yes{ 1 };
+            ioctlsocket(sockfd, FIONBIO, &yes);
+            is_blocking = false;
+        }
+        else {
+            throw std::runtime_error("not connected!");
+        }
+    }
+
+    bool TCPSocket::wait_for_read(long timeout) const {
+        fd_set readfs{};
+        readfs.fd_count = 1;
+        readfs.fd_array[0] = sockfd;
+
+        timeval time{};
+        time.tv_sec = timeout * 1000;
+        time.tv_usec = 0;
+
+        int result = select(0, &readfs, nullptr, nullptr, &time);
+
+        return result == SOCKET_ERROR ? false : result;
+    }
+
+    bool TCPSocket::wait_for_write(long timeout) const {
+        fd_set writefs{};
+        writefs.fd_count = 1;
+        writefs.fd_array[0] = sockfd;
+
+        timeval time{};
+        time.tv_sec = timeout * 1000;
+        time.tv_usec = 0;
+
+        int result = select(0, &writefs, nullptr, nullptr, &time);
+
+        return result == SOCKET_ERROR ? false : result;
+    }
+
     Error TCPSocket::get_last_err() const {
         int code = WSAGetLastError();
         switch (code) {
@@ -297,4 +299,15 @@ namespace Socket {
     }
 #endif
 
+    void TCPSocket::throw_error(const char* err_msg, int code) const {
+        std::string msg{ err_msg };
+        msg += get_last_err_str();
+        throw std::runtime_error(err_msg);
+    }
+
+#ifdef WIN32
+    void at_exit() {
+        WSACleanup();
+    }
+#endif
 }

@@ -39,6 +39,10 @@ namespace Socket{
         void connect(const std::string& host, const std::string& port);
         TCPSocket(int _sockfd, bool is_blocking_);
         [[noreturn]] void throw_error(const char* err_msg, int code) const;
+
+        #ifdef WIN32
+        void init_wsa();
+        #endif  
     };
 
 }

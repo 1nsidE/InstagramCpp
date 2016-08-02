@@ -25,7 +25,6 @@ namespace Socket{
         void init();
         [[noreturn]] void  throw_error(const char* err_msg) const;
         void connect(const std::string& hostname);
-        void verify_hostname(const std::string& hostname);
 
         inline void check(int result);
         gnutls_session_t session{};
