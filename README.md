@@ -56,9 +56,26 @@ GnuTLS - https://www.gnutls.org
 
 Build:
 ----------------
+
+Linux:
+----------------
+
 Tested only on Linux with 4.5 kernel.
 
     cmake .
     make
 
-You will find shared library in "lib" folder.
+You will find shared library with headers file divided into 2 folders in "lib" folder.
+
+Windows:
+----------------
+
+Experimental Windows builds is supported. To build under Windows you need to provide path to the headers and .lib's of the dependencies (GnuTLS and JsonCpp).
+
+Tested only with Visual Studio 2015.
+
+    cmake -G "Visual Studio 14 [Win64]" . -DJSON_LIB_DIR=<PATH_TO_JSONCPP_LIB_FILE> -DJSON_INCLUDE_DIR=<PATH_TO_JSONCPP_HEADERS> -GNUTLS_LIB=<PATH_TO_GNUTLS_LIB_FILE> -DGNUTLS_INCLUDE=<PATH_TO_GNUTLS_HEADERS>
+
+This will create Visual Studio project.
+
+
