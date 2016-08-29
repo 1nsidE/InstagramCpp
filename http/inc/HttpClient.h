@@ -13,40 +13,40 @@
 
 #define STANDART_USER_AGENT "http_cpp"
 
-namespace Http{
+namespace Http {
 
-	class EXPORT_HTTP HttpClient {
-	public:
-		HttpClient(const std::string& _host, HttpProtocol _protocol);
-		HttpClient(HttpClient&) = delete;
-		HttpClient(HttpClient&& http_socket);
-		~HttpClient();
+class EXPORT_HTTP HttpClient {
+public:
+    HttpClient(const std::string& _host, HttpProtocol _protocol);
+    HttpClient(HttpClient&) = delete;
+    HttpClient(HttpClient&& http_socket);
+    ~HttpClient();
 
-		HttpResponse get(const HttpUrl& url);
-		HttpResponse post(const HttpUrl& url, const std::string& data, const std::string& content_type);
-		HttpResponse post(const HttpUrl& url, const std::pair<std::string, std::string>& type_and_data);
-		HttpResponse post(const HttpUrl& url, const FormData& form_data);
-		HttpResponse del(const HttpUrl& url);
+    HttpResponse get(const HttpUrl& url);
+    HttpResponse post(const HttpUrl& url, const std::string& data, const std::string& content_type);
+    HttpResponse post(const HttpUrl& url, const std::pair<std::string, std::string>& type_and_data);
+    HttpResponse post(const HttpUrl& url, const FormData& form_data);
+    HttpResponse del(const HttpUrl& url);
 
-		HttpResponse send_request(const HttpRequest& http_request);
-		HttpResponse operator<<(const HttpRequest& http_request);
-		HttpResponse operator<<(const HttpUrl& url);
-	private:
-		HttpRequest get_standart_request();
-		void send(const HttpRequest& http_request);
-		HttpResponse recieve(long timeout);
+    HttpResponse send_request(const HttpRequest& http_request);
+    HttpResponse operator<<(const HttpRequest& http_request);
+    HttpResponse operator<<(const HttpUrl& url);
+private:
+    HttpRequest get_standart_request();
+    void send(const HttpRequest& http_request);
+    HttpResponse recieve(long timeout);
 
-		std::string read(long timeout);
-		std::string read_until(size_t len, long timeout);
+    std::string read(long timeout);
+    std::string read_until(size_t len, long timeout);
 
-		void connect();
-		void disconnect();
+    void connect();
+    void disconnect();
 
-		Socket::TCPSocket *socket;
-		std::string host;
-		HttpProtocol protocol;
-		bool connected;
-	};
+    Socket::TCPSocket *socket;
+    std::string host;
+    HttpProtocol protocol;
+    bool connected;
+};
 
 }
 

@@ -9,26 +9,26 @@
 #include <map>
 #include "Definitions.h"
 
-namespace  Http{
+namespace  Http {
 
-    class EXPORT_HTTP FormData {
-    public:
-        FormData(const std::string& _boundary = "##############");
-        FormData(const FormData& form_data);
-        FormData(FormData&& form_data);
+class EXPORT_HTTP FormData {
+public:
+    FormData(const std::string& _boundary = "##############");
+    FormData(const FormData& form_data);
+    FormData(FormData&& form_data);
 
-        void add_pair(const std::string& name, const std::string& value);
-        std::string& operator[](const std::string& name);
-        const std::string& operator[](const std::string& name) const;
+    void add_pair(const std::string& name, const std::string& value);
+    std::string& operator[](const std::string& name);
+    const std::string& operator[](const std::string& name) const;
 
-        const std::string get_string() const;
-        std::string get_content_type() const;
-    private:
-        std::map<std::string, std::string> data;
-        std::string boundary;
-        const char* CONTENT_DISP = "Content-Disposition: form-data; name=";
-        const char* CONTENT_TYPE = "multipart/form-data; boundary=";
-    };
+    const std::string get_string() const;
+    std::string get_content_type() const;
+private:
+    std::map<std::string, std::string> data;
+    std::string boundary;
+    const char* CONTENT_DISP = "Content-Disposition: form-data; name=";
+    const char* CONTENT_TYPE = "multipart/form-data; boundary=";
+};
 
 }
 #endif //HTTPSERVER_FORMDATA_H

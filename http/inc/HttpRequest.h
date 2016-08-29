@@ -8,30 +8,30 @@
 #include "HttpHeader.h"
 #include "HttpUrl.h"
 
-namespace Http{
+namespace Http {
 
-	class EXPORT_HTTP HttpRequest : public HttpHeader{
-	public:
-		HttpRequest();
-		HttpRequest(const HttpRequest& request);
-		HttpRequest(HttpRequest&& request);
+class EXPORT_HTTP HttpRequest : public HttpHeader {
+public:
+    HttpRequest();
+    HttpRequest(const HttpRequest& request);
+    HttpRequest(HttpRequest&& request);
 
-		virtual ~HttpRequest();
+    virtual ~HttpRequest();
 
-		HttpRequest& operator=(const HttpRequest& http_request);
-		HttpRequest& operator=(HttpRequest&& http_request);
+    HttpRequest& operator=(const HttpRequest& http_request);
+    HttpRequest& operator=(HttpRequest&& http_request);
 
-		void set_method(Http::Method _method);
-		Http::Method get_method() const;
-		void set_url(const HttpUrl& url);
-		void set_url(HttpUrl&& url);
-		const HttpUrl& get_url() const;
+    void set_method(Http::Method _method);
+    Http::Method get_method() const;
+    void set_url(const HttpUrl& url);
+    void set_url(HttpUrl&& url);
+    const HttpUrl& get_url() const;
 
-		virtual std::string get_string() const override;
-	private:
-		Http::Method method;
-		HttpUrl url;
-	};
+    virtual std::string get_string() const override;
+private:
+    Http::Method method;
+    HttpUrl url;
+};
 
 }
 
