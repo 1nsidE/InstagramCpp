@@ -51,6 +51,7 @@ HttpHeader& HttpHeader::operator=(HttpHeader&& http_header) {
 const std::string& HttpHeader::get_header(Header header) const noexcept {
     static const std::string empty_header {"" };
     std::string header_str = to_string(header);
+    
     const auto it = headers_map.find(header_str);
     return it == headers_map.end() ? empty_header : it->second;
 }
@@ -66,6 +67,7 @@ std::string& HttpHeader::operator[](Header header) {
 const std::string& HttpHeader::get_header(const std::string& header) const noexcept {
     static const std::string empty_header {""};
     std::string header_low = change_case(header);
+
     const auto it = headers_map.find(header_low);
     return it == headers_map.end() ? empty_header : it->second;
 }
