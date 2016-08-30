@@ -109,7 +109,7 @@ void HttpClient::send(const HttpRequest& http_request) {
 
     size_t written = 0;
     while (written < length) {
-        int count = socket->write(request + written, length - static_cast<size_t>(written));
+        long count = socket->write(request + written, length - written);
         if (count < 0) {
             switch (socket->get_last_err()) {
             case Socket::Error::INTERRUPTED:
@@ -162,7 +162,7 @@ std::string HttpClient::read(long timeout) {
     if (socket->wait_for_read(timeout)) {
         const static unsigned int buff_size = 1024;
         char buff[buff_size] = {};
-        while (int count = socket->read(buff, buff_size)) {
+        while (long count = socket->read(buff, buff_size)) {
             if (count < 0) {
                 switch (socket->get_last_err()) {
                 case Socket::Error::WOULDBLOCK:

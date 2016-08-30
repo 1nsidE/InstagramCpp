@@ -9,7 +9,7 @@
 
 namespace Socket{
 
-    enum class Error{WOULDBLOCK, INTERRUPTED, UNKNOWN};
+    enum class Error{WOULDBLOCK, INTERRUPTED, PIPE_BROKEN, UNKNOWN};
 
     class TCPSocket{
         friend class ConnectionListener;

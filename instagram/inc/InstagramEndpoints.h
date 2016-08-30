@@ -6,6 +6,7 @@
 #define HTTPSERVER_INSTAGRAMMETHODS_H
 
 namespace Instagram{
+    
     namespace Users{
         static const char* users = "/v1/users/";
         static const char* recent_media = "/media/recent";

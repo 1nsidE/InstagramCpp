@@ -22,14 +22,14 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     endif()
 
     if(DEFINED GNUTLS_INCLUDE)
-    include_directories(${GNUTLS_INCLUDE})
+        include_directories(${GNUTLS_INCLUDE})
     endif()
 
     add_definitions(-DHTTP_LIB_EXPORT)
 
     if(NOT GNUTLS_LIB_NAME AND GNUTLS_LIB)
         set(GNUTLS_LIB_NAME ${GNUTLS_LIB}\\libgnutls.dll.a)
-        else()
+    else()
         set(GNUTLS_LIB_NAME "gnutls")
     endif()
     target_link_libraries(httpcpp ${GNUTLS_LIB_NAME} "Ws2_32.lib")

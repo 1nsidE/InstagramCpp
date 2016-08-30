@@ -13,6 +13,8 @@ namespace Http {
 class EXPORT_HTTP HttpRequest : public HttpHeader {
 public:
     HttpRequest();
+    HttpRequest(const HttpUrl& url);
+    HttpRequest(HttpUrl&& url);
     HttpRequest(const HttpRequest& request);
     HttpRequest(HttpRequest&& request);
 

@@ -9,6 +9,8 @@ namespace Http {
 HttpRequest::HttpRequest() : HttpHeader {}, method(Http::Method::UNKNOWN) {}
 HttpRequest::HttpRequest(const HttpRequest& request) : HttpHeader { request }, method { request.method }, url { request.url } {}
 HttpRequest::HttpRequest(HttpRequest&& request) : HttpHeader { std::forward<HttpHeader>(request) }, method { request.method }, url { std::move(request.url) } {}
+HttpRequest::HttpRequest(const HttpUrl& url_) : HttpHeader{}, method{Http::Method::UNKNOWN}, url{url_}{}
+HttpRequest::HttpRequest(HttpUrl&& url_) :HttpHeader{}, method{Http::Method::UNKNOWN}, url{url_} {}
 
 HttpRequest::~HttpRequest() {}
 

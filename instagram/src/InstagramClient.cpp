@@ -45,12 +45,10 @@ AuthorizationToken InstagramClient::exchange_code(const std::string& code,
         const Http::HttpResponse response = http_client.post({ GET_AUTH_CODE }, form_data);
         if (response.get_code() == Http::Status::OK) {
             return parser.parse_auth_token(response.get_data());
-        }
-        else {
+        } else {
             return get_result(response);
         }
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -68,12 +66,10 @@ UserInfo InstagramClient::get_user_info(const std::string& user_id) {
         const Http::HttpResponse response = http_client << url;
         if (response.get_code() == Http::Status::OK) {
             return parser.parse_user_info(response.get_data());
-        }
-        else {
+        } else {
             return get_result(response);
         }
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -90,12 +86,10 @@ MediaEntries InstagramClient::get_recent_media(const std::string& user_id, unsig
         url[COUNT_ARG] = std::to_string(count);
 
         return get_media(url);
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
-
-}
+} 
 
 MediaEntries InstagramClient::get_recent_media(const std::string& min_id, const std::string& max_id, unsigned count) {
     return get_recent_media(SELF, min_id, max_id, count);
@@ -112,8 +106,7 @@ MediaEntries InstagramClient::get_recent_media(const std::string& user_id, const
         url[COUNT_ARG] = std::to_string(count);
 
         return get_media(url);
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -126,8 +119,7 @@ MediaEntries InstagramClient::get_liked_media() {
         url[AUTH_TOKEN_ARG] = auth_token;
 
         return get_media(url);
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -141,8 +133,7 @@ MediaEntries InstagramClient::get_liked_media(const std::string& max_id) {
         url[MAX_LIKE_ID] = max_id;
 
         return get_media(url);
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -152,8 +143,7 @@ MediaEntries InstagramClient::get_media(const Http::HttpUrl& url) {
 
     if (response.get_code() == Http::Status::OK) {
         return parser.parse_media_entries(response.get_data());
-    }
-    else {
+    } else {
         return get_result(response);
     }
 }
@@ -168,8 +158,7 @@ UsersInfo InstagramClient::search_users(const std::string& query, unsigned count
         url[COUNT_ARG] = std::to_string(count);
 
         return get_users_info(url);
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -180,8 +169,7 @@ UsersInfo InstagramClient::get_follows() {
         Http::HttpUrl url { Relationships::users, Relationships::follows };
         url[AUTH_TOKEN_ARG] = auth_token;
         return get_users_info(url);
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -192,8 +180,7 @@ UsersInfo InstagramClient::get_followed_by() {
         Http::HttpUrl url { Relationships::users, Relationships::followed_by };
         url[AUTH_TOKEN_ARG] = auth_token;
         return get_users_info(url);
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -204,8 +191,7 @@ UsersInfo InstagramClient::get_requested_by() {
         Http::HttpUrl url { Relationships::users, Relationships::requested_by };
         url[AUTH_TOKEN_ARG] = auth_token;
         return get_users_info(url);
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -217,12 +203,10 @@ UsersInfo InstagramClient::get_users_info(const Http::HttpUrl& url) {
 
         if (response.get_code() == Http::Status::OK) {
             return parser.parse_users_info(response.get_data());
-        }
-        else {
+        } else {
             return get_result(response);
         }
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -237,12 +221,10 @@ RelationshipInfo InstagramClient::get_relationship_info(const std::string& user_
 
         if (response.get_code() == Http::Status::OK) {
             return parser.parse_relationship_info(response.get_data());
-        }
-        else {
+        } else {
             return get_result(response);
         }
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -257,13 +239,10 @@ MediaEntry InstagramClient::get_media(const std::string& media_id) {
         const Http::HttpResponse response = http_client << url;
         if (response.get_code() == Http::Status::OK) {
             return parser.parse_media_entry(response.get_data());
-        }
-        else {
+        } else {
             return get_result(response);
         }
-
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -278,12 +257,10 @@ MediaEntry InstagramClient::get_media_short(const std::string& shortcode) {
         const Http::HttpResponse response = http_client << url;
         if (response.get_code() == Http::Status::OK) {
             return parser.parse_media_entry(response.get_data());
-        }
-        else {
+        } else {
             return get_result(response);
         }
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -299,8 +276,7 @@ MediaEntries InstagramClient::search_media(double lat, double lng, int distance)
         url[AUTH_TOKEN_ARG] = auth_token;
 
         return get_media(url);
-    }
-    catch (std::exception& err) {
+    } catch (std::exception& err) {
         return err.what();
     }
 }
@@ -315,12 +291,10 @@ CommentsInfo InstagramClient::get_comments(const std::string& media_id) {
         const Http::HttpResponse response = http_client << url;
         if (response.get_code() == Http::Status::OK) {
             return parser.parse_comments(response.get_data());
-        }
-        else {
+        } else {
             return get_result(response);
         }
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -337,12 +311,10 @@ BaseResult InstagramClient::comment(const std::string& media_id, const std::stri
         const Http::HttpResponse response = http_client.post(url, form_data);
         if (response.get_code() == Http::Status::OK) {
             return {};
-        }
-        else {
+        } else {
             return get_result(response);
         }
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -356,12 +328,10 @@ BaseResult InstagramClient::delete_comment(const std::string& media_id, const st
         const Http::HttpResponse response = http_client.del(url);
         if (response.get_code() == Http::Status::OK) {
             return {};
-        }
-        else {
+        } else {
             return get_result(response);
         }
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -374,8 +344,7 @@ UsersInfo InstagramClient::get_likes(const std::string& media_id) {
         url[AUTH_TOKEN_ARG] = auth_token;
 
         return get_users_info(url);
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -391,12 +360,10 @@ BaseResult InstagramClient::like(const std::string& media_id) {
         const Http::HttpResponse response = http_client.post(url, form_data);
         if (response.get_code() == Http::Status::OK) {
             return {};
-        }
-        else {
+        } else {
             return get_result(response);
         }
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -411,12 +378,10 @@ BaseResult InstagramClient::unlike(const std::string& media_id) {
         const Http::HttpResponse response = http_client.del(url);
         if (response.get_code() == Http::Status::OK) {
             return {};
-        }
-        else {
+        } else {
             return get_result(response);
         }
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -430,12 +395,10 @@ TagInfo InstagramClient::get_tag_info(const std::string& tag_name) {
         const Http::HttpResponse response = http_client << url;
         if (response.get_code() == Http::Status::OK) {
             return parser.parse_tag_info(response.get_data());
-        }
-        else {
+        } else {
             return get_result(response);
         }
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -450,12 +413,10 @@ TagsInfo InstagramClient::search_tags(const std::string& query) {
         const Http::HttpResponse response = http_client << url;
         if (response.get_code() == Http::Status::OK) {
             return parser.parse_tags_info(response.get_data());
-        }
-        else {
+        } else {
             return get_result(response);
         }
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 
@@ -471,12 +432,10 @@ MediaEntries InstagramClient::get_recent_media_tag(const std::string& tag_name) 
         const Http::HttpResponse response = http_client << url;
         if (response.get_code() == Http::Status::OK) {
             return parser.parse_media_entries(response.get_data());
-        }
-        else {
+        } else {
             return get_result(response);
         }
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -491,12 +450,10 @@ LocationInfo InstagramClient::get_location(const std::string& location_id) {
         const Http::HttpResponse response = http_client << url;
         if (response.get_code() == Http::Status::OK) {
             return parser.parse_location(response.get_data());
-        }
-        else {
+        } else {
             return get_result(response);
         }
-    }
-    catch (const std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -510,12 +467,10 @@ MediaEntries InstagramClient::get_media_loc(const std::string& location_id) {
 
         if (response.get_code() == Http::Status::OK) {
             return parser.parse_media_entries(response.get_data());
-        }
-        else {
+        } else {
             return get_result(response);
         }
-    }
-    catch (std::exception& err) {
+    } catch (std::exception& err) {
         return err.what();
     }
 }
@@ -536,8 +491,7 @@ LocationsInfo InstagramClient::search_locations(double lat, double lng, int dist
         } else {
             return get_result(response);
         }
-    }
-    catch (std::exception& err) {
+    } catch (std::exception& err) {
         return err.what();
     }
 }
