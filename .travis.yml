@@ -4,6 +4,7 @@ compiler:
 - gcc
 
 install:
+- mkdir -p ${HOME}/bin
 - if [ "${CC}" = "gcc" ]; then export TOOLSET="gcc"; ln -s `which g++-6` ${HOME}/bin/g++;
   ln -s `which gcc-6` ${HOME}/bin/gcc; fi
 
