@@ -34,9 +34,9 @@ public:
 private:
     HttpRequest get_standart_request();
     void send(const HttpRequest& http_request);
-    HttpResponse recieve(long timeout);
+    HttpResponse recieve(unsigned int timeout);
 
-    std::string read(long timeout);
+    std::string read(unsigned int timeout);
     std::string read_until(size_t len, long timeout);
 
     void connect();

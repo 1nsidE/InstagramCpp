@@ -33,7 +33,7 @@ namespace Instagram {
     }
 
     BaseResult::~BaseResult() {
-        if (err_msg != nullptr) {
+        if (err_msg) {
             delete err_msg;
             err_msg = nullptr;
         }

@@ -27,8 +27,8 @@ namespace Socket{
         std::string get_ip() const;
 
         virtual void make_non_blocking();
-        virtual bool wait_for_read(long timeout) const;
-        virtual bool wait_for_write(long timeout) const;
+        virtual bool wait_for_read(unsigned int timeout) const;
+        virtual bool wait_for_write(unsigned int timeout) const;
 
         virtual Error get_last_err() const;
         virtual std::string get_last_err_str() const;

@@ -1,9 +1,22 @@
 language: cpp
 
-dist: trusty
-
 compiler: 
 - gcc
+
+install:
+- if [ "${CC}" = "gcc" ]; then export TOOLSET="gcc"; ln -s `which g++-6` ${HOME}/bin/g++;
+  ln -s `which gcc-6` ${HOME}/bin/gcc; fi
+
+before_script:
+- mkdir build
+- cd build
+- cmake -G "Unix Makefiles" . ..
+
+script:
+- cmake --build .
+
+build: cmake --build .
+
 addons:
  apt:
   sources: 
@@ -15,16 +28,3 @@ addons:
   - gcc-6
   - g++-6
   - libgnutls-dev
-
-install:
-- if [ "$CXX" = "g++" ]; then export CXX="g++-6" CC="gcc-6"; fi
-
-before_script:
-- mkdir build
-- cd build
-- cmake -G "Unix Makefiles" . ..
-
-script:
-- cmake --build .
-
-build: cmake --build .

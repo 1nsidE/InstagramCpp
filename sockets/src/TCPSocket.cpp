@@ -196,7 +196,7 @@ void TCPSocket::make_non_blocking() {
     }
 }
 
-bool TCPSocket::wait_for_read(long timeout) const {
+bool TCPSocket::wait_for_read(unsigned int timeout) const {
     pollfd pfd;
 
     pfd.fd = sockfd;
@@ -206,7 +206,7 @@ bool TCPSocket::wait_for_read(long timeout) const {
     return result + 1;;
 }
 
-bool TCPSocket::wait_for_write(long timeout) const {
+bool TCPSocket::wait_for_write(unsigned int timeout) const {
     pollfd pfd;
 
     pfd.fd = sockfd;

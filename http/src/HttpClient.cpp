@@ -124,7 +124,7 @@ void HttpClient::send(const HttpRequest& http_request) {
     }
 }
 
-HttpResponse HttpClient::recieve(long timeout) {
+HttpResponse HttpClient::recieve(unsigned int timeout) {
     std::string response = read(timeout);
 
     HttpResponse http_response = HttpHeaderParser::parse_response(response);
@@ -156,7 +156,7 @@ HttpResponse HttpClient::recieve(long timeout) {
     return http_response;
 }
 
-std::string HttpClient::read(long timeout) {
+std::string HttpClient::read(unsigned int timeout) {
     std::string result {};
 
     if (socket->wait_for_read(timeout)) {

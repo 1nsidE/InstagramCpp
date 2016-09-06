@@ -10,7 +10,7 @@ using Argument = std::pair<std::string, std::string>;
 class EXPORT_HTTP HttpUrl{
 public:
     HttpUrl();
-    HttpUrl(const std::string& endpoint);
+    explicit HttpUrl(const std::string& endpoint);
     HttpUrl(std::initializer_list<std::string> endpoints);
     HttpUrl(std::initializer_list<const char*> endpoints);
     HttpUrl(const HttpUrl& url);
@@ -29,7 +29,6 @@ public:
     const std::string& get_end_point() const;
 
     const std::string& get_argument(const std::string& key) const;
-
     void add_argument(const std::string& key, const std::string& value);
     void add_argument(const std::initializer_list<Argument>& url);
     void add_argument(const Argument& argument);
