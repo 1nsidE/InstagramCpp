@@ -3,10 +3,11 @@
 //
 #include <limits>
 
-#include "TCPSocket.h"
 #include "SSLSocket.h"
-#include "HttpHeaderParser.h"
 #include "HttpClient.h"
+#include "FormData.h"
+#include "HttpRequest.h"
+#include "HttpResponse.h"
 
 #include "exceptions/HttpFailedToRecieve.h"
 #include "exceptions/HttpFailedToSend.h"
@@ -14,18 +15,11 @@
 
 namespace Http {
 
-HttpClient::HttpClient(const std::string &_host, HttpProtocol _protocol) : socket { nullptr }, host { _host }, protocol { _protocol }, connected { false } {    }
+HttpClient::HttpClient(){}
 
-HttpClient::HttpClient(HttpClient&& http_client) : socket { std::move(http_client.socket) }, host { std::move(http_client.host) }, protocol { http_client.protocol }, connected { http_client.connected } {
-    http_client.socket = nullptr;
-    http_client.connected = false;
-}
+HttpClient::HttpClient(HttpClient&& http_client) : m_hostToSocketMap {std::move(http_client.m_hostToSocketMap)} {}
 
-HttpClient::~HttpClient() {
-    if (socket != nullptr) {
-        delete socket;
-    }
-}
+HttpClient::~HttpClient() {}
 
 HttpResponse HttpClient::get(const HttpUrl& url) {
     HttpRequest http_request = get_standart_request();;
@@ -74,21 +68,16 @@ HttpRequest HttpClient::get_standart_request() {
     http_request[Header::USER_AGENT] = STANDART_USER_AGENT;
     http_request[Header::CONNECTION] = "keep-alive";
     http_request[Header::ACCEPT_ENCODING] = "*/*";
-    http_request[Header::HOST] = host;
 
     return http_request;
 }
 
 HttpResponse HttpClient::send_request(const HttpRequest& http_request) {
-    if (!connected) {
-        connect();
-    }
-
     send(http_request);
-    HttpResponse http_response = recieve(20);
+    HttpResponse http_response = receive(http_request.get_url(), 20);
 
     if (http_response[Header::CONNECTION] == "close") {
-        disconnect();
+        disconnect(http_request.get_url());
     }
 
     return http_response;
@@ -107,6 +96,8 @@ void HttpClient::send(const HttpRequest& http_request) {
     const char* request = str.c_str();
     const size_t length = str.length();
 
+    SocketPtr socket = get_socket(http_request.get_url());
+
     size_t written = 0;
     while (written < length) {
         long count = socket->write(request + written, length - written);
@@ -124,15 +115,15 @@ void HttpClient::send(const HttpRequest& http_request) {
     }
 }
 
-HttpResponse HttpClient::recieve(unsigned int timeout) {
-    std::string response = read(timeout);
+HttpResponse HttpClient::receive(const HttpUrl& url, unsigned int timeout) {
+    std::string response = read(url, timeout);
 
-    HttpResponse http_response = HttpHeaderParser::parse_response(response);
+    HttpResponse http_response = response;
     if (http_response.get_code() == Status::UNKNOWN) {
         int retry_count = 3;
         while (retry_count && http_response.get_code() == Status::UNKNOWN) {
-            response.append(read(timeout));
-            http_response = HttpHeaderParser::parse_response(response);
+            response.append(read(url, timeout));
+            http_response = response;
             --retry_count;
         }
     }
@@ -140,6 +131,7 @@ HttpResponse HttpClient::recieve(unsigned int timeout) {
     if (http_response.get_code() == Status::UNKNOWN) {
         return http_response;
     }
+    
     size_t content_len = http_response.content_len();
 
     if (content_len >= std::numeric_limits<unsigned int>::max()) {
@@ -148,7 +140,7 @@ HttpResponse HttpClient::recieve(unsigned int timeout) {
 
     size_t actual_content_len = http_response.data_len();
     while (content_len > actual_content_len) {
-        const std::string& data = read(timeout);
+        const std::string& data = read(url, timeout);
         actual_content_len += data.length();
         http_response.append_data(data);
     }
@@ -156,8 +148,10 @@ HttpResponse HttpClient::recieve(unsigned int timeout) {
     return http_response;
 }
 
-std::string HttpClient::read(unsigned int timeout) {
+std::string HttpClient::read(const HttpUrl& url, unsigned int timeout) {
     std::string result {};
+    
+    SocketPtr socket = get_socket(url);
 
     if (socket->wait_for_read(timeout)) {
         const static unsigned int buff_size = 1024;
@@ -184,30 +178,40 @@ std::string HttpClient::read(unsigned int timeout) {
     return result;
 }
 
-void HttpClient::connect() {
-    if (connected) {
-        disconnect();
-    }
-
-    switch (protocol) {
+HttpClient::SocketPtr HttpClient::connect(const HttpUrl& url) {
+    
+    const std::string& host = url.get_host();
+    
+    SocketPtr socket{};
+    switch (url.get_protocol()) {
     case HttpProtocol::HTTPS:
-        socket = new Socket::SSLSocket(host, "https");
+        socket = std::make_shared<Socket::SSLSocket>(host, "https");
         break;
     case HttpProtocol::HTTP:
-        socket = new Socket::TCPSocket(host, "http");
+        socket = std::make_shared<Socket::TCPSocket>(host, "http");
         break;
+    case HttpProtocol::UNKNOWN:
+        break;
+
     }
     socket->make_non_blocking();
-    connected = true;
+    return socket;
 }
 
-void HttpClient::disconnect() {
-    if (socket != nullptr) {
-        socket->close();
-        delete socket;
-        socket = nullptr;
+void HttpClient::disconnect(const HttpUrl& url) {
+    m_hostToSocketMap.erase(url.get_host());
+}
+
+HttpClient::SocketPtr HttpClient::get_socket(const HttpUrl& url){
+    const std::string& host = url.get_host();
+    
+    SocketPtr socket = m_hostToSocketMap[host];
+    if(!socket){
+        socket = connect(url);
+        m_hostToSocketMap[host] = socket;
     }
-    connected = false;
+    
+    return socket;
 }
 
 }

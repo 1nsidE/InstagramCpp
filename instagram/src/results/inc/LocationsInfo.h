@@ -5,42 +5,42 @@
 #include <vector>
 
 namespace Instagram{
-    #ifdef WIN32
-    INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM std::vector<Instagram::LocationInfo>;
-    #endif
+#ifdef WIN32
+INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM std::vector<Instagram::LocationInfo>;
+#endif
 
-    class EXPORT_INSTAGRAM LocationsInfo : public  BaseResult{
-    public:
-        using iterator = std::vector<LocationInfo>::iterator;
-        using const_iterator = std::vector<LocationInfo>::const_iterator;
+class EXPORT_INSTAGRAM LocationsInfo : public  BaseResult{
+public:
+    using iterator = std::vector<LocationInfo>::iterator;
+    using const_iterator = std::vector<LocationInfo>::const_iterator;
 
-        LocationsInfo();
-        LocationsInfo(const LocationsInfo& loc_info);
-        LocationsInfo(LocationsInfo&& loc_info);
-        LocationsInfo(const std::string& err_msg);
-        LocationsInfo(const char* er_msg);
+    LocationsInfo();
+    LocationsInfo(const LocationsInfo& loc_info);
+    LocationsInfo(LocationsInfo&& loc_info);
+    LocationsInfo(const std::string& err_msg);
+    LocationsInfo(const char* er_msg);
 
-        LocationsInfo& operator=(const LocationsInfo& loc_info);
-        LocationsInfo& operator=(LocationsInfo&& loc_info);
+    LocationsInfo& operator=(const LocationsInfo& loc_info);
+    LocationsInfo& operator=(LocationsInfo&& loc_info);
 
-        const std::vector<LocationInfo>& get_locations() const noexcept;
+    const std::vector<LocationInfo>& get_locations() const noexcept;
 
-        const LocationInfo& operator[](size_t n) const;
-        LocationInfo& operator[](size_t n);
+    const LocationInfo& operator[](size_t n) const;
+    LocationInfo& operator[](size_t n);
 
-        iterator begin();
-        iterator end();
+    iterator begin();
+    iterator end();
 
-        const_iterator begin() const;
-        const_iterator end() const;
+    const_iterator begin() const;
+    const_iterator end() const;
 
-        void add_location(const LocationInfo& loc_info);
-        void add_location(LocationInfo&& loc_info);
-        LocationsInfo& operator<<(const LocationInfo& loc_info);
-        LocationsInfo& operator<<(LocationInfo&& loc_info);
-    private:
-        std::vector<LocationInfo> locations;
-    };
+    void add_location(const LocationInfo& loc_info);
+    void add_location(LocationInfo&& loc_info);
+    LocationsInfo& operator<<(const LocationInfo& loc_info);
+    LocationsInfo& operator<<(LocationInfo&& loc_info);
+private:
+    std::vector<LocationInfo> locations;
+};
 
 }
 

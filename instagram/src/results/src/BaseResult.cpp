@@ -7,81 +7,67 @@
 
 namespace Instagram {
 
-    BaseResult::BaseResult() : err_msg(nullptr) {}
+BaseResult::BaseResult() {}
 
-    BaseResult::BaseResult(const char *_err_msg) {
-        if (_err_msg == nullptr) {
-            throw std::invalid_argument("err_msg cannot be null");
-        }
-
-        err_msg = new std::string{ _err_msg };
+BaseResult::BaseResult(const char *err_msg) {
+    if (err_msg == nullptr) {
+        throw std::invalid_argument("err_msg cannot be null");
     }
 
-    BaseResult::BaseResult(const std::string &_err_msg) {
-        err_msg = new std::string{ _err_msg };
+    m_errMsg = std::make_unique<std::string>(err_msg);
+}
+
+BaseResult::BaseResult(const std::string& err_msg) {
+    m_errMsg = std::make_unique<std::string>(std::string{err_msg});
+}
+
+BaseResult::BaseResult(BaseResult&& base_result) : m_errMsg{std::move(base_result.m_errMsg)} {}
+
+BaseResult::BaseResult(const BaseResult& base_result) {
+    if (base_result.m_errMsg) {
+        m_errMsg = std::make_unique<std::string>(*base_result.m_errMsg);
     }
+}
 
-    BaseResult::BaseResult(BaseResult&& base_result) : err_msg{ base_result.err_msg } {
-        base_result.err_msg = nullptr;
-    }
+BaseResult::~BaseResult() {}
 
-    BaseResult::BaseResult(const BaseResult& base_result) {
-        err_msg = nullptr;
-        if (base_result.err_msg != nullptr) {
-            err_msg = new std::string{ *base_result.err_msg };
-        }
-    }
-
-    BaseResult::~BaseResult() {
-        if (err_msg) {
-            delete err_msg;
-            err_msg = nullptr;
-        }
-    }
-
-    BaseResult& BaseResult::operator=(const BaseResult& base_result) {
-        if (this == &base_result) {
-            return *this;
-        }
-
-        if (err_msg != nullptr) {
-            delete err_msg;
-        }
-
-        err_msg = nullptr;
-        if (base_result.err_msg != nullptr) {
-            err_msg = new std::string{ *base_result.err_msg };
-        }
-
+BaseResult& BaseResult::operator=(const BaseResult& base_result) {
+    if (this == &base_result) {
         return *this;
     }
 
-    BaseResult& BaseResult::operator=(BaseResult&& base_result) {
-        if (this == &base_result) {
-            return *this;
-        }
+    if (m_errMsg) {
+        m_errMsg.reset();
+    }
 
-        if (err_msg != nullptr) {
-            delete err_msg;
-        }
+    if (base_result.m_errMsg) {
+        m_errMsg = std::make_unique<std::string>(*base_result.m_errMsg);
+    }
 
-        err_msg = base_result.err_msg;
-        base_result.err_msg = nullptr;
+    return *this;
+}
 
+BaseResult& BaseResult::operator=(BaseResult&& base_result) {
+    if (this == &base_result) {
         return *this;
     }
 
-    BaseResult::operator bool() const noexcept {
-        return is_succeed();
-    }
+    m_errMsg = std::move(base_result.m_errMsg);
 
-    const std::string& BaseResult::get_error_message() const noexcept {
-        const static std::string empty_error{ "" };
-        return err_msg ? *err_msg : empty_error;
-    }
+    return *this;
+}
 
-    bool BaseResult::is_succeed() const noexcept {
-        return err_msg == nullptr;
-    }
+BaseResult::operator bool() const noexcept {
+    return is_succeed();
+}
+
+const std::string& BaseResult::get_error_message() const noexcept {
+    const static std::string empty_error{ "" };
+    return m_errMsg ? *m_errMsg : empty_error;
+}
+
+bool BaseResult::is_succeed() const noexcept {
+    return m_errMsg == nullptr;
+}
 
 }

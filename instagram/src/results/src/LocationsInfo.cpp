@@ -2,81 +2,81 @@
 
 namespace Instagram {
 
-    LocationsInfo::LocationsInfo() : BaseResult{}, locations(0) {}
+LocationsInfo::LocationsInfo() : BaseResult{}, locations(0) {}
 
-    LocationsInfo::LocationsInfo(const LocationsInfo& info) : BaseResult{ info }, locations{ info.locations } {}
+LocationsInfo::LocationsInfo(const LocationsInfo& info) : BaseResult{ info }, locations{ info.locations } {}
 
-    LocationsInfo::LocationsInfo(LocationsInfo&& info) : BaseResult{ std::move(info) }, locations{ std::move(info.locations) } {}
+LocationsInfo::LocationsInfo(LocationsInfo&& info) : BaseResult{ std::move(info) }, locations{ std::move(info.locations) } {}
 
-    LocationsInfo::LocationsInfo(const std::string& err_msg) : BaseResult{ err_msg }, locations(0) {}
+LocationsInfo::LocationsInfo(const std::string& err_msg) : BaseResult{ err_msg }, locations(0) {}
 
-    LocationsInfo::LocationsInfo(const char* err_msg) : BaseResult{ err_msg }, locations(0) {}
+LocationsInfo::LocationsInfo(const char* err_msg) : BaseResult{ err_msg }, locations(0) {}
 
-    LocationsInfo& LocationsInfo::operator=(const LocationsInfo& info) {
-        if (this == &info) {
-            return *this;
-        }
-
-        BaseResult::operator=(info);
-
-        locations = info.locations;
+LocationsInfo& LocationsInfo::operator=(const LocationsInfo& info) {
+    if (this == &info) {
         return *this;
     }
 
-    LocationsInfo& LocationsInfo::operator=(LocationsInfo&& info) {
-        if (this == &info) {
-            return *this;
-        }
+    BaseResult::operator=(info);
 
-        BaseResult::operator=(std::move(info));
+    locations = info.locations;
+    return *this;
+}
 
-        locations = std::move(info.locations);
+LocationsInfo& LocationsInfo::operator=(LocationsInfo&& info) {
+    if (this == &info) {
         return *this;
     }
 
-    const std::vector<LocationInfo>& LocationsInfo::get_locations() const noexcept {
-        return locations;
-    }
+    BaseResult::operator=(std::move(info));
 
-    const LocationInfo& LocationsInfo::operator[](size_t n) const {
-        return locations[n];
-    }
+    locations = std::move(info.locations);
+    return *this;
+}
 
-    LocationInfo& LocationsInfo::operator[](size_t n) {
-        return locations[n];
-    }
+const std::vector<LocationInfo>& LocationsInfo::get_locations() const noexcept {
+    return locations;
+}
 
-    LocationsInfo::iterator LocationsInfo::begin() {
-        return locations.begin();
-    }
+const LocationInfo& LocationsInfo::operator[](size_t n) const {
+    return locations[n];
+}
 
-    LocationsInfo::iterator LocationsInfo::end() {
-        return locations.end();
-    }
+LocationInfo& LocationsInfo::operator[](size_t n) {
+    return locations[n];
+}
 
-    LocationsInfo::const_iterator LocationsInfo::begin() const {
-        return locations.begin();
-    }
+LocationsInfo::iterator LocationsInfo::begin() {
+    return locations.begin();
+}
 
-    LocationsInfo::const_iterator LocationsInfo::end() const {
-        return locations.end();
-    }
+LocationsInfo::iterator LocationsInfo::end() {
+    return locations.end();
+}
 
-    void LocationsInfo::add_location(const LocationInfo& loc) {
-        locations.push_back(loc);
-    }
+LocationsInfo::const_iterator LocationsInfo::begin() const {
+    return locations.begin();
+}
 
-    void LocationsInfo::add_location(LocationInfo&& loc) {
-        locations.push_back(std::move(loc));
-    }
+LocationsInfo::const_iterator LocationsInfo::end() const {
+    return locations.end();
+}
 
-    LocationsInfo& LocationsInfo::operator<<(const LocationInfo& loc) {
-        add_location(loc);
-        return *this;
-    }
+void LocationsInfo::add_location(const LocationInfo& loc) {
+    locations.push_back(loc);
+}
 
-    LocationsInfo& LocationsInfo::operator<<(LocationInfo&& loc) {
-        add_location(std::move(loc));
-        return *this;
-    }
+void LocationsInfo::add_location(LocationInfo&& loc) {
+    locations.push_back(std::move(loc));
+}
+
+LocationsInfo& LocationsInfo::operator<<(const LocationInfo& loc) {
+    add_location(loc);
+    return *this;
+}
+
+LocationsInfo& LocationsInfo::operator<<(LocationInfo&& loc) {
+    add_location(std::move(loc));
+    return *this;
+}
 }

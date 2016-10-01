@@ -2,82 +2,82 @@
 
 namespace Instagram {
 
-    LocationInfo::LocationInfo() : BaseResult{} {}
+LocationInfo::LocationInfo() : BaseResult{} {}
 
-    LocationInfo::LocationInfo(const LocationInfo& loc_info) : BaseResult{ loc_info }, id{ loc_info.id }, name{ loc_info.name }, lat{ loc_info.lat }, lng{ loc_info.lng } {}
+LocationInfo::LocationInfo(const LocationInfo& loc_info) : BaseResult{ loc_info }, id{ loc_info.id }, name{ loc_info.name }, lat{ loc_info.lat }, lng{ loc_info.lng } {}
 
-    LocationInfo::LocationInfo(LocationInfo&& loc_info) : BaseResult{ std::move(loc_info) }, id{ std::move(loc_info.id) }, name{ std::move(loc_info.name) }, lat{ loc_info.lat }, lng{ loc_info.lng } {
-        loc_info.lat = -1;
-        loc_info.lng = -1;
-    }
+LocationInfo::LocationInfo(LocationInfo&& loc_info) : BaseResult{ std::move(loc_info) }, id{ std::move(loc_info.id) }, name{ std::move(loc_info.name) }, lat{ loc_info.lat }, lng{ loc_info.lng } {
+    loc_info.lat = -1;
+    loc_info.lng = -1;
+}
 
-    LocationInfo::LocationInfo(const std::string& err_msg) : BaseResult{ err_msg } {}
+LocationInfo::LocationInfo(const std::string& err_msg) : BaseResult{ err_msg } {}
 
-    LocationInfo::LocationInfo(const char* err_msg) : BaseResult{ err_msg } {}
+LocationInfo::LocationInfo(const char* err_msg) : BaseResult{ err_msg } {}
 
-    LocationInfo& LocationInfo::operator=(const LocationInfo& loc_info) {
-        if (this == &loc_info) {
-            return *this;
-        }
-
-        BaseResult::operator=(loc_info);
-
-        id = loc_info.id;
-        name = loc_info.name;
-        lat = loc_info.lat;
-        lng = loc_info.lng;
-
+LocationInfo& LocationInfo::operator=(const LocationInfo& loc_info) {
+    if (this == &loc_info) {
         return *this;
     }
 
-    LocationInfo& LocationInfo::operator=(LocationInfo&& loc_info) {
-        if (this == &loc_info) {
-            return *this;
-        }
+    BaseResult::operator=(loc_info);
 
-        BaseResult::operator=(std::move(loc_info));
-        id = std::move(loc_info.id);
-        name = std::move(loc_info.name);
+    id = loc_info.id;
+    name = loc_info.name;
+    lat = loc_info.lat;
+    lng = loc_info.lng;
 
-        lat = loc_info.lat;
-        loc_info.lat = -1;
+    return *this;
+}
 
-        lng = loc_info.lng;
-        loc_info.lng = -1;
-
+LocationInfo& LocationInfo::operator=(LocationInfo&& loc_info) {
+    if (this == &loc_info) {
         return *this;
     }
 
-    const std::string& LocationInfo::get_id() const {
-        return id;
-    }
+    BaseResult::operator=(std::move(loc_info));
+    id = std::move(loc_info.id);
+    name = std::move(loc_info.name);
 
-    const std::string& LocationInfo::get_name() const {
-        return name;
-    }
+    lat = loc_info.lat;
+    loc_info.lat = -1;
 
-    double LocationInfo::get_latitude() const {
-        return lat;
-    }
+    lng = loc_info.lng;
+    loc_info.lng = -1;
 
-    double LocationInfo::get_longitude() const {
-        return lng;
-    }
+    return *this;
+}
 
-    void LocationInfo::set_id(const std::string& id_) {
-        id = id_;
-    }
+const std::string& LocationInfo::get_id() const {
+    return id;
+}
 
-    void LocationInfo::set_name(const std::string& name_) {
-        name = name_;
-    }
+const std::string& LocationInfo::get_name() const {
+    return name;
+}
 
-    void LocationInfo::set_latitude(double lat_) {
-        lat = lat_;
-    }
+double LocationInfo::get_latitude() const {
+    return lat;
+}
 
-    void LocationInfo::set_longitude(double lng_) {
-        lng = lng_;
-    }
+double LocationInfo::get_longitude() const {
+    return lng;
+}
+
+void LocationInfo::set_id(const std::string& id_) {
+    id = id_;
+}
+
+void LocationInfo::set_name(const std::string& name_) {
+    name = name_;
+}
+
+void LocationInfo::set_latitude(double lat_) {
+    lat = lat_;
+}
+
+void LocationInfo::set_longitude(double lng_) {
+    lng = lng_;
+}
 
 }

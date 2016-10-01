@@ -2,6 +2,7 @@
 #define HTTP_HEADER_H
 
 #include <unordered_map>
+#include <memory>
 #include "Http.h"
 
 namespace Http {
@@ -32,6 +33,9 @@ public:
     bool contain_header(Header header) const noexcept;
     size_t content_len() const;
 
+    void set_host(const std::string& host);
+    const std::string& get_host() const noexcept;
+
     virtual std::string get_string() const;
 protected:
     HttpHeader();
@@ -40,9 +44,13 @@ protected:
 
     HttpHeader& operator=(const HttpHeader& http_heade);
     HttpHeader& operator=(HttpHeader&& http_header);
+
+    void add_header(const std::string& header);
 private:
     HeadersMap headers_map {};
-    std::string* data = nullptr;
+
+    using DataPtr = std::unique_ptr<std::string>;
+    DataPtr data{};
 };
 
 }

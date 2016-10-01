@@ -4,7 +4,6 @@ set(HTTP_SOURCES
 FormData.cpp
 Http.cpp
 HttpClient.cpp
-HttpHeaderParser.cpp
 HttpHeader.cpp
 HttpRequest.cpp
 HttpResponse.cpp

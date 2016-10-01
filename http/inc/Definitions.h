@@ -25,6 +25,9 @@
 #endif
 
 #define HTTP_1_1 "HTTP/1.1"
+#define HTTP_PROTO "http"
+#define HTTPS_PROTO "https"
+#define HTTP_PROTO_DELIMETER "://"
 #define CRLF "\r\n"
 #define HEADER_SEPARATOR ": "
 #define ARG_START_DELIMETER '?'

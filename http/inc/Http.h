@@ -4,12 +4,13 @@
 #include <functional>
 #include <string>
 #include <cstring>
+#include <vector>
 #include "Definitions.h"
 
 namespace Http {
     
 enum class HttpProtocol {
-    HTTP, HTTPS
+    UNKNOWN, HTTP, HTTPS
 };
 
 enum class Method {
@@ -28,6 +29,7 @@ enum  Status {
 const char* to_string(Method method) noexcept;
 const char* to_string(Header header) noexcept;
 const char* to_string(Status status) noexcept;
+const char* to_string(HttpProtocol protocol) noexcept;
 
 std::string change_case(const char* str, bool to_upper = false);
 std::string change_case(const std::string& str, bool to_upper = false);
@@ -35,7 +37,8 @@ std::string change_case(const std::string& str, bool to_upper = false);
 Method from_str(const char* str);
 Method from_str(const std::string& str);
 
-    
+std::vector<std::string> tokenize(const std::string &str, const char delimeter, bool once = false);
+
 }
 
 #endif

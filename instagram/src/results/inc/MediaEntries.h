@@ -11,42 +11,42 @@ namespace Instagram{
     INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM std::vector<Instagram::MediaEntry>;
     #endif
 
-    class EXPORT_INSTAGRAM MediaEntries : public BaseResult{
-    public:
-        using iterator = std::vector<MediaEntry>::iterator;
-        using const_iterator = std::vector<MediaEntry>::const_iterator;
-        
-        MediaEntries();
-        MediaEntries(const char* err_msg);
-        MediaEntries(const std::string& err_msg);
-        MediaEntries(const MediaEntries& media_entries);
-        MediaEntries(MediaEntries&& media_entries);
+class EXPORT_INSTAGRAM MediaEntries : public BaseResult{
+public:
+    using iterator = std::vector<MediaEntry>::iterator;
+    using const_iterator = std::vector<MediaEntry>::const_iterator;
 
-        ~MediaEntries();
+    MediaEntries();
+    MediaEntries(const char* err_msg);
+    MediaEntries(const std::string& err_msg);
+    MediaEntries(const MediaEntries& media_entries);
+    MediaEntries(MediaEntries&& media_entries);
 
-        MediaEntries& operator=(const MediaEntries& media_entries);
-        MediaEntries& operator=(MediaEntries&& media_entries);
+    ~MediaEntries();
 
-        const std::vector<MediaEntry>& get_media_entries() const;
-        
-        MediaEntry& operator[](size_t n);
-        const MediaEntry& operator[](size_t n) const;
+    MediaEntries& operator=(const MediaEntries& media_entries);
+    MediaEntries& operator=(MediaEntries&& media_entries);
 
-        iterator begin();
-        iterator end();
+    const std::vector<MediaEntry>& get_media_entries() const;
 
-        const_iterator begin() const;
-        const_iterator end() const;
+    MediaEntry& operator[](size_t n);
+    const MediaEntry& operator[](size_t n) const;
 
-        MediaEntries& operator<<(const MediaEntry& media_entry);
-        MediaEntries& operator<<(MediaEntry&& media_entry);
+    iterator begin();
+    iterator end();
 
-        void add_media_entry(const MediaEntry& media_entry);
-        void add_media_entry(MediaEntry&& media_entry);
+    const_iterator begin() const;
+    const_iterator end() const;
 
-    private:
-        std::vector<MediaEntry> medias;
-    };
+    MediaEntries& operator<<(const MediaEntry& media_entry);
+    MediaEntries& operator<<(MediaEntry&& media_entry);
+
+    void add_media_entry(const MediaEntry& media_entry);
+    void add_media_entry(MediaEntry&& media_entry);
+
+private:
+    std::vector<MediaEntry> medias;
+};
 
 }
 

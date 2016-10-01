@@ -5,7 +5,12 @@
 
 namespace Instagram {
 
-InstagramClient::InstagramClient() : parser {}, http_client { INSTAGRAM_HOST, Http::HttpProtocol::HTTPS }, auth_token { "" } {}
+inline Http::HttpUrl get_standart_url(const std::string &str){
+    static const char* sm_instagramHost = "api.instagram.com";
+    return {sm_instagramHost, str, Http::HttpProtocol::HTTPS};
+}
+
+InstagramClient::InstagramClient() : parser {}, http_client {}, auth_token { "" } {}
 const std::string& InstagramClient::get_auth_token() const {
     return auth_token;
 }
@@ -42,7 +47,7 @@ AuthorizationToken InstagramClient::exchange_code(const std::string& code,
     form_data["grant_type"] = AUTH_CODE_GRANT_TYPE;
 
     try {
-        const Http::HttpResponse response = http_client.post({ GET_AUTH_CODE }, form_data);
+        const Http::HttpResponse response = http_client.post(get_standart_url(GET_AUTH_CODE), form_data);
         if (response.get_code() == Http::Status::OK) {
             return parser.parse_auth_token(response.get_data());
         } else {
@@ -60,7 +65,7 @@ UserInfo InstagramClient::get_user_info() {
 UserInfo InstagramClient::get_user_info(const std::string& user_id) {
     try {
         check_auth();
-        Http::HttpUrl url { Users::users + user_id };
+        Http::HttpUrl url = get_standart_url(Users::users + user_id);
         url[AUTH_TOKEN_ARG] = auth_token;
 
         const Http::HttpResponse response = http_client << url;
@@ -81,7 +86,7 @@ MediaEntries InstagramClient::get_recent_media(unsigned count) {
 MediaEntries InstagramClient::get_recent_media(const std::string& user_id, unsigned count) {
     try {
         check_auth();
-        Http::HttpUrl url { Users::users, user_id, Users::recent_media };
+        Http::HttpUrl url = get_standart_url(Users::users + user_id + Users::recent_media);
         url[AUTH_TOKEN_ARG] = auth_token;
         url[COUNT_ARG] = std::to_string(count);
 
@@ -99,7 +104,7 @@ MediaEntries InstagramClient::get_recent_media(const std::string& user_id, const
     try {
         check_auth();
 
-        Http::HttpUrl url { Users::users,user_id, Users::recent_media };
+        Http::HttpUrl url = get_standart_url(Users::users + user_id + Users::recent_media);
         url[AUTH_TOKEN_ARG] = auth_token;
         if (!min_id.empty()) url[MIN_ID_ARG] = min_id;
         if (!max_id.empty()) url[MAX_ID_ARG] = max_id;
@@ -115,7 +120,7 @@ MediaEntries InstagramClient::get_liked_media() {
     try {
         check_auth();
 
-        Http::HttpUrl url { Users::users, Users::self_liked };
+        Http::HttpUrl url = get_standart_url(std::string{Users::users} + Users::self_liked);
         url[AUTH_TOKEN_ARG] = auth_token;
 
         return get_media(url);
@@ -128,7 +133,7 @@ MediaEntries InstagramClient::get_liked_media(const std::string& max_id) {
     try {
         check_auth();
 
-        Http::HttpUrl url { Users::users, Users::self_liked };
+        Http::HttpUrl url = get_standart_url(std::string{Users::users} + Users::self_liked);
         url[AUTH_TOKEN_ARG] = auth_token;
         url[MAX_LIKE_ID] = max_id;
 
@@ -152,7 +157,7 @@ UsersInfo InstagramClient::search_users(const std::string& query, unsigned count
     try {
         check_auth();
 
-        Http::HttpUrl url { Users::users, Users::search };
+        Http::HttpUrl url = get_standart_url(std::string{Users::users} + Users::search);
         url[AUTH_TOKEN_ARG] = auth_token;
         url[QUERY_ARG] = query;
         url[COUNT_ARG] = std::to_string(count);
@@ -166,7 +171,7 @@ UsersInfo InstagramClient::search_users(const std::string& query, unsigned count
 UsersInfo InstagramClient::get_follows() {
     try {
         check_auth();
-        Http::HttpUrl url { Relationships::users, Relationships::follows };
+        Http::HttpUrl url = get_standart_url(std::string{Relationships::users} + Relationships::follows);
         url[AUTH_TOKEN_ARG] = auth_token;
         return get_users_info(url);
     } catch (const std::exception& err) {
@@ -177,7 +182,7 @@ UsersInfo InstagramClient::get_follows() {
 UsersInfo InstagramClient::get_followed_by() {
     try {
         check_auth();
-        Http::HttpUrl url { Relationships::users, Relationships::followed_by };
+        Http::HttpUrl url = get_standart_url(std::string{Relationships::users} + Relationships::followed_by);
         url[AUTH_TOKEN_ARG] = auth_token;
         return get_users_info(url);
     } catch (const std::exception& err) {
@@ -188,7 +193,7 @@ UsersInfo InstagramClient::get_followed_by() {
 UsersInfo InstagramClient::get_requested_by() {
     try {
         check_auth();
-        Http::HttpUrl url { Relationships::users, Relationships::requested_by };
+        Http::HttpUrl url = get_standart_url(std::string{Relationships::users} + Relationships::requested_by);
         url[AUTH_TOKEN_ARG] = auth_token;
         return get_users_info(url);
     } catch (const std::exception& err) {
@@ -214,7 +219,7 @@ UsersInfo InstagramClient::get_users_info(const Http::HttpUrl& url) {
 RelationshipInfo InstagramClient::get_relationship_info(const std::string& user_id) {
     try {
         check_auth();
-        Http::HttpUrl url { Relationships::users, user_id, Relationships::relationship };
+        Http::HttpUrl url = get_standart_url(Relationships::users + user_id + Relationships::relationship);
         url[AUTH_TOKEN_ARG] = auth_token;
 
         const Http::HttpResponse response = http_client << url;
@@ -233,7 +238,7 @@ MediaEntry InstagramClient::get_media(const std::string& media_id) {
     try {
         check_auth();
 
-        Http::HttpUrl url { Media::get_media, media_id };
+        Http::HttpUrl url  = get_standart_url(Media::get_media + media_id);
         url[AUTH_TOKEN_ARG] = auth_token;
 
         const Http::HttpResponse response = http_client << url;
@@ -251,7 +256,7 @@ MediaEntry InstagramClient::get_media_short(const std::string& shortcode) {
     try {
         check_auth();
 
-        Http::HttpUrl url { Media::get_media_shortcode, shortcode };
+        Http::HttpUrl url = get_standart_url(Media::get_media_shortcode + shortcode);
         url[AUTH_TOKEN_ARG] = auth_token;
 
         const Http::HttpResponse response = http_client << url;
@@ -269,14 +274,14 @@ MediaEntries InstagramClient::search_media(double lat, double lng, int distance)
     try {
         check_auth();
 
-        Http::HttpUrl url { Media::media_search };
+        Http::HttpUrl url = get_standart_url(Media::media_search);
         url[LAT_ARG] = std::to_string(lat);
         url[LNG_ARG] = std::to_string(lng);
         url[DST_ARG] = std::to_string(distance);
         url[AUTH_TOKEN_ARG] = auth_token;
 
         return get_media(url);
-    } catch (std::exception& err) {
+    } catch (const std::exception& err) {
         return err.what();
     }
 }
@@ -285,7 +290,7 @@ CommentsInfo InstagramClient::get_comments(const std::string& media_id) {
     try {
         check_auth();
 
-        Http::HttpUrl url { Comments::media, media_id, Comments::comments };
+        Http::HttpUrl url = get_standart_url(Comments::media + media_id + Comments::comments);
         url[AUTH_TOKEN_ARG] = auth_token;
 
         const Http::HttpResponse response = http_client << url;
@@ -303,7 +308,7 @@ BaseResult InstagramClient::comment(const std::string& media_id, const std::stri
     try {
         check_auth();
 
-        Http::HttpUrl url { Comments::media, media_id, Comments::comments };
+        Http::HttpUrl url = get_standart_url(Comments::media + media_id + Comments::comments);
         Http::FormData form_data {};
         form_data[AUTH_TOKEN_ARG] = auth_token;
         form_data[Comments::TEXT_ARG] = text;
@@ -323,7 +328,7 @@ BaseResult InstagramClient::delete_comment(const std::string& media_id, const st
     try {
         check_auth();
 
-        Http::HttpUrl url { Comments::media, media_id, Comments::comments, comment_id };
+        Http::HttpUrl url = get_standart_url(Comments::media + media_id + Comments::comments + comment_id);
         url[AUTH_TOKEN_ARG] = auth_token;
         const Http::HttpResponse response = http_client.del(url);
         if (response.get_code() == Http::Status::OK) {
@@ -340,7 +345,7 @@ UsersInfo InstagramClient::get_likes(const std::string& media_id) {
     try {
         check_auth();
 
-        Http::HttpUrl url { Likes::media, media_id, Likes::likes };
+        Http::HttpUrl url = get_standart_url(Likes::media + media_id + Likes::likes);
         url[AUTH_TOKEN_ARG] = auth_token;
 
         return get_users_info(url);
@@ -353,7 +358,7 @@ BaseResult InstagramClient::like(const std::string& media_id) {
     try {
         check_auth();
 
-        Http::HttpUrl url { Likes::media, media_id, Likes::likes };
+        Http::HttpUrl url = get_standart_url(Likes::media + media_id + Likes::likes);
         Http::FormData form_data {};
         form_data[AUTH_TOKEN_ARG] = auth_token;
 
@@ -372,7 +377,7 @@ BaseResult InstagramClient::unlike(const std::string& media_id) {
     try {
         check_auth();
 
-        Http::HttpUrl url { Likes::media, media_id, Likes::likes };
+        Http::HttpUrl url = get_standart_url(Likes::media + media_id + Likes::likes);
         url[AUTH_TOKEN_ARG] = auth_token;
 
         const Http::HttpResponse response = http_client.del(url);
@@ -389,7 +394,7 @@ BaseResult InstagramClient::unlike(const std::string& media_id) {
 TagInfo InstagramClient::get_tag_info(const std::string& tag_name) {
     try {
         check_auth();
-        Http::HttpUrl url { Tags::tags, tag_name };
+        Http::HttpUrl url = get_standart_url(Tags::tags + tag_name);
         url[AUTH_TOKEN_ARG] = auth_token;
 
         const Http::HttpResponse response = http_client << url;
@@ -406,7 +411,7 @@ TagInfo InstagramClient::get_tag_info(const std::string& tag_name) {
 TagsInfo InstagramClient::search_tags(const std::string& query) {
     try {
         check_auth();
-        Http::HttpUrl url { Tags::tags, Tags::tags_search };
+        Http::HttpUrl url = get_standart_url(std::string{Tags::tags} + Tags::tags_search);
         url[QUERY_ARG] = query;
         url[AUTH_TOKEN_ARG] = auth_token;
 
@@ -426,7 +431,7 @@ MediaEntries InstagramClient::get_recent_media_tag(const std::string& tag_name) 
     try {
         check_auth();
 
-        Http::HttpUrl url { Tags::tags, tag_name, Tags::recent_media };
+        Http::HttpUrl url = get_standart_url(Tags::tags + tag_name + Tags::recent_media);
         url[AUTH_TOKEN_ARG] = auth_token;
 
         const Http::HttpResponse response = http_client << url;
@@ -444,7 +449,7 @@ LocationInfo InstagramClient::get_location(const std::string& location_id) {
     try {
         check_auth();
 
-        Http::HttpUrl url { Locations::locations, location_id };
+        Http::HttpUrl url = get_standart_url(Locations::locations + location_id);
         url[AUTH_TOKEN_ARG] = auth_token;
 
         const Http::HttpResponse response = http_client << url;
@@ -462,7 +467,7 @@ MediaEntries InstagramClient::get_media_loc(const std::string& location_id) {
     try {
         check_auth();
 
-        Http::HttpUrl url { Locations::locations, location_id, Locations::recent_media };
+        Http::HttpUrl url = get_standart_url(Locations::locations + location_id + Locations::recent_media);
         Http::HttpResponse response = http_client << url;
 
         if (response.get_code() == Http::Status::OK) {
@@ -479,7 +484,7 @@ LocationsInfo InstagramClient::search_locations(double lat, double lng, int dist
     try {
         check_auth();
 
-        Http::HttpUrl url { Locations::locations, Locations::search };
+        Http::HttpUrl url = get_standart_url(std::string{Locations::locations} + Locations::search);
         url[LAT_ARG] = std::to_string(lat);
         url[LNG_ARG] = std::to_string(lng);
         url[DST_ARG] = std::to_string(distance);

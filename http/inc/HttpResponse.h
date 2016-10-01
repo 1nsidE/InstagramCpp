@@ -4,6 +4,8 @@
 #include "HttpHeader.h"
 
 namespace Http {
+    
+class HttpClient;    
 
 class EXPORT_HTTP HttpResponse : public HttpHeader {
 public:
@@ -15,6 +17,7 @@ public:
 
     HttpResponse& operator=(HttpResponse&& http_response);
     HttpResponse& operator=(const HttpResponse& http_response);
+    HttpResponse& operator=(const std::string& response);
 
     const std::string& get_status() const noexcept;
     int get_code() const noexcept;
@@ -23,6 +26,9 @@ public:
 
     virtual std::string get_string() const override;
 private:
+    friend HttpClient;
+    HttpResponse(const std::string& response);
+    void parse_response(const std::string& response);
     std::string status {};
     int code = -1;
 };

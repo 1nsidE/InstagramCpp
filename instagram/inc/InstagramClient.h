@@ -83,6 +83,7 @@ private:
     std::string get_result(const Http::HttpResponse& response);
 };
 
+
 }
 
 #endif

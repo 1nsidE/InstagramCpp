@@ -1,47 +1,41 @@
+#include <sstream>
 #include "HttpUrl.h"
-#include "Http.h"
 
 namespace Http {
 
-HttpUrl::HttpUrl() : arguments_map { nullptr }, end_point { "/" } {}
+HttpUrl::HttpUrl() {}
 
-HttpUrl::HttpUrl(const std::string& endpoint) : arguments_map { nullptr }, end_point { endpoint } {}
+HttpUrl::HttpUrl(const std::string& url){
+    parse(url);
+}
 
-HttpUrl::HttpUrl(std::initializer_list<std::string> endpoints) : arguments_map { nullptr } {
-    for (std::string str : endpoints) {
-        end_point += str;
+HttpUrl::HttpUrl(const std::string& host, const std::string& endpoint, HttpProtocol protocol) : m_host{host}, m_endpoint{endpoint}, m_protocol{protocol} {}
+
+HttpUrl::HttpUrl(const HttpUrl& url) : m_host{url.m_host}, m_endpoint {url.m_endpoint}, m_protocol{url.m_protocol}{
+    if(url.m_argumentsMapPtr){
+        m_argumentsMapPtr = std::make_unique<ArgumentsMap>(*url.m_argumentsMapPtr);
     }
 }
 
-HttpUrl::HttpUrl(std::initializer_list<const char*> endpoints) : arguments_map { nullptr } {
-    for (const char* str : endpoints) {
-        if (str == nullptr) {
-            throw std::invalid_argument("endpoint part cannot be nullptr");
-        }
-        end_point += str;
-    }
+HttpUrl::HttpUrl(HttpUrl&& url) : m_argumentsMapPtr {std::move(url.m_argumentsMapPtr)}, m_host{std::move(url.m_host)}, m_endpoint {std::move(url.m_endpoint)}, m_protocol{std::move(url.m_protocol)} {
+    url.m_protocol = HttpProtocol::UNKNOWN;
 }
 
-HttpUrl::HttpUrl(const HttpUrl& url) : arguments_map { url.arguments_map ? new std::map<std::string, std::string>(*url.arguments_map) : nullptr }, end_point { url.end_point } {}
-
-HttpUrl::HttpUrl(HttpUrl&& url) : arguments_map { url.arguments_map }, end_point { std::move(url.end_point) } {
-    url.arguments_map = nullptr;
-}
-
-HttpUrl::~HttpUrl() {
-    if (arguments_map) {
-        delete arguments_map;
-        arguments_map = nullptr;
-    }
-}
+HttpUrl::~HttpUrl() {}
 
 HttpUrl& HttpUrl::operator=(const HttpUrl& url) {
     if (this == &url) {
         return *this;
     }
 
-    arguments_map = url.arguments_map ? new std::map<std::string, std::string>(*url.arguments_map) : nullptr;
-    end_point = url.end_point;
+    m_argumentsMapPtr.reset();
+    if(url.m_argumentsMapPtr){
+        m_argumentsMapPtr = std::make_unique<ArgumentsMap>(*url.m_argumentsMapPtr);
+    }
+
+    m_protocol = url.m_protocol;
+    m_host = url.m_host;
+    m_endpoint = url.m_endpoint;
 
     return *this;
 }
@@ -51,77 +45,91 @@ HttpUrl& HttpUrl::operator=(HttpUrl&& url) {
         return *this;
     }
 
-    arguments_map = url.arguments_map;
-    url.arguments_map = nullptr;
-    end_point = std::move(url.end_point);
+    m_argumentsMapPtr = std::move(url.m_argumentsMapPtr);
+
+    m_protocol = std::move(url.m_protocol);
+    url.m_protocol = HttpProtocol::UNKNOWN;
+
+    m_host = std::move(url.m_host);
+    m_endpoint = std::move(url.m_endpoint);
 
     return *this;
 }
 
 const std::string& HttpUrl::operator[](const std::string& key) const {
-    const static std::string& empty_arg {
-        ""
-    };
-    return (arguments_map && arguments_map->count(key) ? arguments_map->at(key) : empty_arg);
+    const static std::string& empty_arg {""};
+    return (m_argumentsMapPtr && m_argumentsMapPtr->count(key) ? m_argumentsMapPtr->at(key) : empty_arg);
 }
 
-void HttpUrl::set_end_point(const std::string& _end_point) {
-    end_point = _end_point;
+void HttpUrl::set_endpoint(const std::string& endpoint) {
+    m_endpoint = endpoint;
 }
 
-std::string HttpUrl::get_end_point() {
-    return end_point;
+const std::string& HttpUrl::get_endpoint() const noexcept{
+    return m_endpoint;
 }
 
-const std::string& HttpUrl::get_end_point() const {
-    return end_point;
+void HttpUrl::set_host(const std::string& host){
+    m_host = host;
+}
+
+const std::string& HttpUrl::get_host() const noexcept{
+    return m_host;
+}
+
+void HttpUrl::set_protocol(HttpProtocol protocol){
+    m_protocol = protocol;
+}
+
+HttpProtocol HttpUrl::get_protocol() const noexcept{
+    return m_protocol;
 }
 
 std::string& HttpUrl::operator[](const std::string& key) {
-    if (!arguments_map) {
-        arguments_map = new std::map<std::string, std::string>();
+    if (!m_argumentsMapPtr) {
+        m_argumentsMapPtr = std::make_unique<ArgumentsMap>();
     }
-    return arguments_map->operator[](key);
+    return m_argumentsMapPtr->operator[](key);
 }
 
 const std::string& HttpUrl::get_argument(const std::string& key) const {
-    const static std::string empty_arg {
-        ""
-    };
-    return (arguments_map && arguments_map->count(key) ? arguments_map->at(key) : empty_arg);
+    const static std::string empty_arg {""};
+    return (m_argumentsMapPtr && m_argumentsMapPtr->count(key) ? m_argumentsMapPtr->at(key) : empty_arg);
 }
 
 void HttpUrl::add_argument(const std::string& key, const std::string& value) {
-    if (!arguments_map) {
-        arguments_map = new std::map<std::string, std::string> {};
+    if (!m_argumentsMapPtr) {
+        m_argumentsMapPtr = std::make_unique<ArgumentsMap>();
     }
-    arguments_map->insert({ key, value });
+    m_argumentsMapPtr->insert({ key, value });
 }
 
 void HttpUrl::add_argument(const std::initializer_list<Argument>& url) {
-    if (!arguments_map) {
-        arguments_map = new std::map<std::string, std::string> {};
+    if (!m_argumentsMapPtr) {
+        m_argumentsMapPtr = std::make_unique<ArgumentsMap>();
     }
+
     for (const Argument& argument : url) {
-        arguments_map->insert(argument);
+        m_argumentsMapPtr->insert(argument);
     }
 }
 
 void HttpUrl::add_argument(const Argument& argument) {
-    if (!arguments_map) {
-        arguments_map = new std::map<std::string, std::string> {};
+    if (!m_argumentsMapPtr) {
+        m_argumentsMapPtr = std::make_unique<ArgumentsMap>();
     }
-    arguments_map->insert(argument);
+
+    m_argumentsMapPtr->insert(argument);
 }
 
 std::string HttpUrl::get_arguments() const noexcept {
-    if (arguments_map == nullptr || arguments_map->empty()) {
+    if (m_argumentsMapPtr == nullptr || m_argumentsMapPtr->empty()) {
         return "";
     }
 
     std::string result {};
-    size_t i = arguments_map->size();
-    for (const auto& argument : *arguments_map) {
+    size_t i = m_argumentsMapPtr->size();
+    for (const auto& argument : *m_argumentsMapPtr) {
         result += argument.first + ARG_EQUAL + argument.second;
         if (--i) {
             result += ARG_DELIMETER;
@@ -132,18 +140,56 @@ std::string HttpUrl::get_arguments() const noexcept {
 }
 
 std::string HttpUrl::get_url() const {
-    if (arguments_map == nullptr || arguments_map->empty()) {
-        return end_point;
+    std::ostringstream os;
+    os << to_string(m_protocol) << HTTP_PROTO_DELIMETER << m_host << m_endpoint;
+    
+    std::string arguments = get_arguments();
+
+    if(!arguments.empty()) {
+        os << ARG_START_DELIMETER + arguments;
     }
-    else {
-        std::string result { end_point };
-        if (result[result.length() - 1] != '/') {
-            result += '/';
-        }
-        result += ARG_START_DELIMETER + get_arguments();
-        return result;
-    }
+    return os.str();
 }
 
+void HttpUrl::parse(const std::string &url) {
+    std::vector<std::string> urlAndArgs = tokenize(url, ARG_START_DELIMETER, true);
+    parse_url(urlAndArgs[0]);
+
+    if(urlAndArgs.size() > 1){
+        parse_arguments(urlAndArgs[1]);
+    }   
+}
+
+void HttpUrl::parse_url(const std::string& url){
+    size_t colonPos = url.find_first_of(':');
+
+    if(colonPos != std::string::npos){
+        std::string protocol = change_case(url.substr(0, colonPos));
+
+        if(protocol == "http"){
+            m_protocol = HttpProtocol::HTTP;
+        }else if(protocol == "https"){
+            m_protocol = HttpProtocol::HTTPS;
+        }
+        colonPos += 3;
+    }else{
+        colonPos = 0;
+    }
+
+    size_t hostEnd = url.find_first_of('/', colonPos);
+    m_host = change_case(url.substr(colonPos, hostEnd - colonPos));
+    m_endpoint = change_case(url.substr(hostEnd));
+}
+
+void HttpUrl::parse_arguments(const std::string args) {
+    std::vector<std::string> url_str = tokenize(args, ARG_DELIMETER);
+    for (std::string arg_pair : url_str) {
+        std::vector<std::string> args_vec = tokenize(arg_pair, ARG_EQUAL, true);
+        if (args_vec.size() != 2) {
+            throw std::runtime_error("invalid url format!");
+        }
+            add_argument(args_vec[0], args_vec[1]);
+        }
+    }
 }
 

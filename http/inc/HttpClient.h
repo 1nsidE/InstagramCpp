@@ -5,19 +5,23 @@
 #ifndef FOLLOGRAPH_HTTPSOCKET_H
 #define FOLLOGRAPH_HTTPSOCKET_H
 
+#include <memory>
+#include <unordered_map>
+
+#include "SSLSocket.h"
 #include "Http.h"
-#include "HttpResponse.h"
-#include "HttpRequest.h"
-#include "TCPSocket.h"
-#include "FormData.h"
 
 #define STANDART_USER_AGENT "http_cpp"
 
 namespace Http {
+class FormData;
+class HttpRequest;
+class HttpResponse;
+class HttpUrl;
 
 class EXPORT_HTTP HttpClient {
 public:
-    HttpClient(const std::string& _host, HttpProtocol _protocol);
+    HttpClient();
     HttpClient(HttpClient&) = delete;
     HttpClient(HttpClient&& http_socket);
     ~HttpClient();
@@ -31,21 +35,22 @@ public:
     HttpResponse send_request(const HttpRequest& http_request);
     HttpResponse operator<<(const HttpRequest& http_request);
     HttpResponse operator<<(const HttpUrl& url);
+
 private:
     HttpRequest get_standart_request();
     void send(const HttpRequest& http_request);
-    HttpResponse recieve(unsigned int timeout);
 
-    std::string read(unsigned int timeout);
+    HttpResponse receive(const HttpUrl& url, unsigned int timeout);
+    std::string read(const HttpUrl& url, unsigned int timeout);
     std::string read_until(size_t len, long timeout);
 
-    void connect();
-    void disconnect();
+    using SocketPtr = std::shared_ptr<Socket::TCPSocket>;
+    SocketPtr get_socket(const HttpUrl& url);
+    SocketPtr connect(const HttpUrl& url);
+    void disconnect(const HttpUrl& url);
 
-    Socket::TCPSocket *socket;
-    std::string host;
-    HttpProtocol protocol;
-    bool connected;
+    using HostToSocketMap = std::unordered_map<std::string, SocketPtr>;
+    HostToSocketMap m_hostToSocketMap{};
 };
 
 }

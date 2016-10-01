@@ -4,18 +4,15 @@ namespace Http {
 
 HttpHeader::HttpHeader() {}
 
-HttpHeader::HttpHeader(const HttpHeader& http_header) : headers_map(http_header.headers_map),
-    data { http_header.data == nullptr ? nullptr : new std::string{*http_header.data} } {}
-
-HttpHeader::HttpHeader(HttpHeader&& http_header) : headers_map(std::move(http_header.headers_map)), data { http_header.data } {
-    http_header.data = nullptr;
-}
-
-HttpHeader::~HttpHeader() {
-    if (data != nullptr) {
-        delete data;
+HttpHeader::HttpHeader(const HttpHeader& http_header) : headers_map(http_header.headers_map) {
+    if(http_header.data){
+        data = std::make_unique<std::string>(*http_header.data);
     }
 }
+
+HttpHeader::HttpHeader(HttpHeader&& http_header) : headers_map(std::move(http_header.headers_map)), data {std::move(http_header.data)} {}
+
+HttpHeader::~HttpHeader() {}
 
 HttpHeader& HttpHeader::operator=(const HttpHeader& http_header) {
     if (this == &http_header) {
@@ -23,14 +20,10 @@ HttpHeader& HttpHeader::operator=(const HttpHeader& http_header) {
     }
 
     headers_map = http_header.headers_map;
+    data.reset();
 
-    if (data != nullptr) {
-        delete data;
-        data = nullptr;
-    }
-
-    if (http_header.data != nullptr) {
-        data = new std::string { *http_header.data };
+    if (http_header.data) {
+        data = std::make_unique<std::string>(*http_header.data);
     }
 
     return *this;
@@ -42,8 +35,7 @@ HttpHeader& HttpHeader::operator=(HttpHeader&& http_header) {
     }
 
     headers_map = std::move(http_header.headers_map);
-    data = http_header.data;
-    http_header.data = nullptr;
+    data = std::move(http_header.data);
 
     return *this;
 }
@@ -90,53 +82,48 @@ void HttpHeader::add_header(const std::string& header, const std::string& val) {
 }
 
 void HttpHeader::set_data(const std::string &_data) {
-    if (data == nullptr) {
-        data = new std::string { _data };
-    }
-    else {
-        (*data) = _data;
-    }
+    data = std::make_unique<std::string>(_data);
 }
 
 const std::string& HttpHeader::get_data() const noexcept {
-    static const std::string empty_data {""};
-    return data ? *data : empty_data;
+    if(data){
+        return *data;
+    }else{
+        static const std::string empty_data {""};
+        return empty_data;    
+    }
 }
 
 void HttpHeader::append_data(const std::string &_data) {
-    if (data == nullptr) {
-        data = new std::string { _data };
-    }
-    else {
+    if (!data) {
+        data = std::make_unique<std::string>(_data);
+    } else {
         data->append(_data);
     }
 }
 
 void HttpHeader::append_data(const char *_data) {
-    if (_data == nullptr) {
+    if (!_data) {
         return;
-    }
-    if (data == nullptr) {
-        data = new std::string { _data };
-    }
-    else {
+    }else if (!data) {
+        data = std::make_unique<std::string>(_data);
+    } else {
         data->append(_data);
     }
 }
 
 void HttpHeader::append_data(const char *_data, const size_t len) {
-    if (_data == nullptr) {
-        throw std::invalid_argument("data cannot be nullptr");
+    if (!_data) {
+        return;
+    }else if (!data) {
+        data = std::make_unique<std::string>();
     }
-
-    if (data == nullptr) {
-        data = new std::string {};
-    }
+    
     data->append(_data, len);
 }
 
 size_t HttpHeader::data_len() const noexcept {
-    return (data == nullptr ? 0 : data->length());
+    return (!data ? 0 : data->length());
 }
 
 bool HttpHeader::contain_header(Http::Header header) const noexcept {
@@ -150,6 +137,21 @@ size_t HttpHeader::content_len() const {
     return it == headers_map.end() ? 0 : static_cast<size_t>(std::stoi(it->second));
 }
 
+void HttpHeader::set_host(const std::string& host){
+    headers_map[to_string(Header::HOST)] = host;
+}
+
+const std::string& HttpHeader::get_host() const noexcept{
+    const auto it = headers_map.find(to_string(Header::HOST));
+    
+    if(it != headers_map.end()){
+        return it->second;
+    }else{
+        static std::string empty_header{""};
+        return empty_header;
+    }
+}
+
 std::string HttpHeader::get_string() const {
     std::string result {};
 
@@ -158,11 +160,19 @@ std::string HttpHeader::get_string() const {
     }
     result.append(CRLF);
 
-    if (data != nullptr) {
+    if (data) {
         result.append(*data);
     }
 
     return result;
+}
+
+void HttpHeader::add_header(const std::string& header){
+    std::vector<std::string> tokens = tokenize(header, ':', true);
+    if (tokens.size() != 2) {
+        throw std::runtime_error("invalid header : " + header);
+    }
+    add_header(tokens[0], tokens[1]);
 }
 
 }
