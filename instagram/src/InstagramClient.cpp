@@ -6,8 +6,7 @@
 namespace Instagram {
 
 inline Http::HttpUrl get_standart_url(const std::string &str){
-    static const char* sm_instagramHost = "api.instagram.com";
-    return {sm_instagramHost, str, Http::HttpProtocol::HTTPS};
+    return {INSTAGRAM_HOST, str, Http::HttpProtocol::HTTPS};
 }
 
 InstagramClient::InstagramClient() : parser {}, http_client {}, auth_token { "" } {}
@@ -47,7 +46,7 @@ AuthorizationToken InstagramClient::exchange_code(const std::string& code,
     form_data["grant_type"] = AUTH_CODE_GRANT_TYPE;
 
     try {
-        const Http::HttpResponse response = http_client.post(get_standart_url(GET_AUTH_CODE), form_data);
+        const Http::HttpResponse response = http_client.post(get_standart_url(Auth::GET_AUTH_CODE), form_data);
         if (response.get_code() == Http::Status::OK) {
             return parser.parse_auth_token(response.get_data());
         } else {
@@ -309,8 +308,9 @@ BaseResult InstagramClient::comment(const std::string& media_id, const std::stri
         check_auth();
 
         Http::HttpUrl url = get_standart_url(Comments::media + media_id + Comments::comments);
+        url[AUTH_TOKEN_ARG] = auth_token;
+
         Http::FormData form_data {};
-        form_data[AUTH_TOKEN_ARG] = auth_token;
         form_data[Comments::TEXT_ARG] = text;
 
         const Http::HttpResponse response = http_client.post(url, form_data);

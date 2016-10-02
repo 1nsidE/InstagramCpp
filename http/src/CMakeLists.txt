@@ -38,6 +38,7 @@ elseif(CMAKE_COMPILER_IS_GNUCXX)
     if(NOT DEFINED GNUTLS_LIB_NAME)
         set(LIB_GNUTLS_LIB_NAME "gnutls")
     endif()
+    
     target_link_libraries(httpcpp ${GNUTLS_LIB_NAME})
 endif()
 

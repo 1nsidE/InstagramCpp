@@ -18,6 +18,8 @@ elseif(CMAKE_COMPILER_IS_GNUCXX)
     find_library(JSON_LIB_NAME NAMES "jsoncpp" "libjson" "libjsoncpp" PATHS ${JSON_LIB_DIR})
 endif()
 
+message("JsonCPP library path is: " ${JSON_LIB_NAME})
+
 set(INSTAGRAM_SOURCES 
     InstagramClient.cpp
     InstagramParser.cpp

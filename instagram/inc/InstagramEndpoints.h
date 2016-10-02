@@ -7,6 +7,10 @@
 
 namespace Instagram{
     
+    namespace Auth{
+        static const char* GET_AUTH_CODE = "/oauth/access_token";
+    }
+    
     namespace Users{
         static const char* users = "/v1/users/";
         static const char* recent_media = "/media/recent";

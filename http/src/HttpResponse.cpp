@@ -36,7 +36,6 @@ HttpResponse &HttpResponse::operator=(HttpResponse &&http_response) {
 }
 
 HttpResponse& HttpResponse::operator=(const std::string& response){
-    
     parse_response(response);
     return *this;
 }

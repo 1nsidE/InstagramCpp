@@ -319,4 +319,5 @@ std::string InstagramParser::get_error(const std::string& json) {
         return "Unknown error with code = " + std::to_string(code);
     }
 }
+
 }

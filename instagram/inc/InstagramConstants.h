@@ -3,9 +3,9 @@
 
 namespace Instagram{
 
+static const char* INSTAGRAM_HOST = "api.instagram.com";
 static const char* AUTH_CODE_GRANT_TYPE = "authorization_code";
 static const char* AUTH_TOKEN_ARG = "access_token";
-static const char* GET_AUTH_CODE = "/oauth/access_token";
 static const char* SELF = "self";
 static const char* QUERY_ARG = "q";
 static const char* LAT_ARG = "lat";

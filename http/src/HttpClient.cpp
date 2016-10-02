@@ -183,17 +183,19 @@ HttpClient::SocketPtr HttpClient::connect(const HttpUrl& url) {
     const std::string& host = url.get_host();
     
     SocketPtr socket{};
-    switch (url.get_protocol()) {
+    HttpProtocol httpProtocol = url.get_protocol();
+    switch (httpProtocol) {
     case HttpProtocol::HTTPS:
-        socket = std::make_shared<Socket::SSLSocket>(host, "https");
+        socket = std::make_shared<Socket::SSLSocket>(host, to_string(httpProtocol));
         break;
     case HttpProtocol::HTTP:
-        socket = std::make_shared<Socket::TCPSocket>(host, "http");
+        socket = std::make_shared<Socket::TCPSocket>(host, to_string(httpProtocol));
         break;
     case HttpProtocol::UNKNOWN:
         break;
 
     }
+    
     socket->make_non_blocking();
     return socket;
 }
