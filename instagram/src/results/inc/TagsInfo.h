@@ -6,11 +6,12 @@
 #include "ResultCollection.hpp"
 
 namespace Instagram{
-#ifdef WIN32
-INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM std::vector<Instagram::TagInfo>;
-#endif
 
 using TagsInfo = ResultCollection<TagInfo>;
+    
+#ifdef WIN32
+INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM TagsInfo;
+#endif
 
 }
 #endif

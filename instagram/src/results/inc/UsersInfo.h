@@ -5,11 +5,12 @@
 #include "ResultCollection.hpp"
 
 namespace Instagram{
-#ifdef WIN32
-INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM std::vector<Instagram::UserInfo>;
-#endif
 
 using UsersInfo = ResultCollection<UserInfo>;
+    
+#ifdef WIN32
+INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM UsersInfo;
+#endif
 
 }
 #endif

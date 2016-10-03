@@ -5,11 +5,12 @@
 #include "CommentInfo.h"
 
 namespace Instagram{
-#ifdef WIN32
-INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM std::vector<Instagram::CommentInfo>;
-#endif
 
 using CommentsInfo = ResultCollection<CommentInfo>;
+
+#ifdef WIN32
+INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM CommentsInfo;
+#endif
 
 }
 #endif
