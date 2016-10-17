@@ -26,8 +26,9 @@ public:
     void set_method(Http::Method _method);
     Http::Method get_method() const;
 
-    void set_url(const HttpUrl& url, Method method = Method::GET);
-    void set_url(HttpUrl&& url, Method method = Method::GET);
+    void set_url(const HttpUrl& url);
+    void set_url(HttpUrl&& url);
+
     const HttpUrl& get_url() const noexcept;
 
     virtual std::string get_string() const override;

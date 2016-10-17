@@ -41,9 +41,12 @@ HttpRequest& HttpRequest::operator=(HttpRequest&& http_request) {
         return *this;
     }
     HttpHeader::operator=(std::forward<HttpHeader>(http_request));
-
+    
+    m_method = http_request.m_method;
     http_request.m_method = Http::Method::UNKNOWN;
+    
     m_url = std::move(http_request.m_url);
+    
     return *this;
 }
 
@@ -67,15 +70,13 @@ std::string HttpRequest::get_string() const {
     return result;
 }
 
-void HttpRequest::set_url(const HttpUrl& url, Method method) {
-    m_method = method;
+void HttpRequest::set_url(const HttpUrl& url) {
     m_url = url;
     set_host(url.get_host());
 }
 
 
-void HttpRequest::set_url(HttpUrl&& url, Method method) {
-    m_method = method;
+void HttpRequest::set_url(HttpUrl&& url) {
     m_url = std::move(url);
     set_host(m_url.get_host());
 }
@@ -114,7 +115,6 @@ void HttpRequest::parse(const std::string& request){
     if ((pos = static_cast<size_t>(string_stream.tellg())) < request.length()) {
         set_data(request.substr(pos, request.length() - pos));
     }
-
 }
 
 }

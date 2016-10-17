@@ -97,6 +97,9 @@ void HttpClient::send(const HttpRequest& http_request) {
     const size_t length = str.length();
 
     SocketPtr socket = get_socket(http_request.get_url());
+    if(!socket){
+        return;
+    }
 
     size_t written = 0;
     while (written < length) {
@@ -152,6 +155,9 @@ std::string HttpClient::read(const HttpUrl& url, unsigned int timeout) {
     std::string result {};
     
     SocketPtr socket = get_socket(url);
+    if(!socket){
+        return "";
+    }
 
     if (socket->wait_for_read(timeout)) {
         const static unsigned int buff_size = 1024;
@@ -196,7 +202,9 @@ HttpClient::SocketPtr HttpClient::connect(const HttpUrl& url) {
 
     }
     
-    socket->make_non_blocking();
+    if(socket){
+        socket->make_non_blocking();
+    }
     return socket;
 }
 
