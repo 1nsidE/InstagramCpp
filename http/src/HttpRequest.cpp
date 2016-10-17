@@ -41,12 +41,12 @@ HttpRequest& HttpRequest::operator=(HttpRequest&& http_request) {
         return *this;
     }
     HttpHeader::operator=(std::forward<HttpHeader>(http_request));
-    
+
     m_method = http_request.m_method;
     http_request.m_method = Http::Method::UNKNOWN;
-    
+
     m_url = std::move(http_request.m_url);
-    
+
     return *this;
 }
 
