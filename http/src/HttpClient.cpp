@@ -22,7 +22,7 @@ HttpClient::HttpClient(HttpClient&& http_client) : m_hostToSocketMap {std::move(
 HttpClient::~HttpClient() {}
 
 HttpResponse HttpClient::get(const HttpUrl& url) {
-    HttpRequest http_request = get_standart_request();;
+    HttpRequest http_request = get_standart_request();
     http_request.set_method(Method::GET);
     http_request.set_url(url);
 
