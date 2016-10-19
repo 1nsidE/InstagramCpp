@@ -41,19 +41,19 @@ public:
         return *this;
     }
     
-    iterator begin(){
+    iterator begin() noexcept{
         return elements.begin();
     }
     
-    iterator end(){
+    iterator end() noexcept{
         return elements.end();
     }
     
-    const_iterator begin() const{
+    const_iterator begin() const noexcept{
         return elements.begin();
     }
     
-    const_iterator end() const{
+    const_iterator end() const noexcept{
         return elements.end();
     }
     
@@ -77,9 +77,13 @@ public:
         return elements[n];
     }
     
-    const ResultCollection<T>& operator<<(T&& element){
-        elements.emplace_back(std::forward<T>(element));
+    ResultCollection<T>& operator<<(T&& element){
+        elements.push_back(std::forward<T>(element));
         return *this;
+    }
+
+    ResultCollection<T>& operator<<(T& element){
+        elements.push_back(element);
     }
     
     void add_element(T&& element){

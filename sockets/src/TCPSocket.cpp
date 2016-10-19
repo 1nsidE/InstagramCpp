@@ -337,4 +337,5 @@ void TCPSocket::throw_error(const char* err_msg, int code) const {
     msg += get_last_err_str();
     throw std::runtime_error(err_msg);
 }
+
 }
