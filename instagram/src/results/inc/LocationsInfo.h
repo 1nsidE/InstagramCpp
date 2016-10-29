@@ -9,7 +9,7 @@ namespace Instagram{
 using LocationsInfo = ResultCollection<LocationInfo>;
     
 #ifdef WIN32
-INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM LocationsInfo;
+INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM  ResultCollection<LocationInfo>;
 #endif
 
 }

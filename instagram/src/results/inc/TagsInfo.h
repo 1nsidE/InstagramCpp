@@ -10,7 +10,7 @@ namespace Instagram{
 using TagsInfo = ResultCollection<TagInfo>;
     
 #ifdef WIN32
-INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM TagsInfo;
+INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM ResultCollection<TagInfo>;
 #endif
 
 }

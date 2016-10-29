@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <gnutls/gnutls.h>
 #include <gnutls/x509.h>
 #include "SSLSocket.h"
 
