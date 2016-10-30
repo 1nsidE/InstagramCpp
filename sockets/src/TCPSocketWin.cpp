@@ -16,19 +16,21 @@ void at_exit() {
     WSACleanup();
 }
 
-void init_wsa() {
-    static bool is_wsa_initialized = false;  //TODO: make thread safe
+int init_wsa() {
+    static bool is_wsa_initialized = false;
+    int result = 0;
     if (!is_wsa_initialized) {
         WSAData data{};
 
         int result = WSAStartup(MAKEWORD(2, 2), &data);
         if (result != 0) {
-            throw_error("Failed to initalize WSA : ", result);
+            return result;
         }
 
         std::atexit(at_exit);
         is_wsa_initialized = true;
     }
+    return result;
 }
 
 TCPSocket::TCPSocket(const std::string &host, const std::string &port) {
@@ -67,7 +69,10 @@ void TCPSocket::connect(const std::string& host, const std::string& port) {
 
     if (getaddrinfo(host.c_str(), port.c_str(), &hints, &res) != 0) {
         if (WSAGetLastError() == WSANOTINITIALISED) {
-            init_wsa();
+            int result = init_wsa();
+            if (!result) {
+                throw_error("Failed to initialize WSA : ", result);
+            }
         }
         
         if(getaddrinfo(host.c_str(), port.c_str(), &hints, &res) != 0){

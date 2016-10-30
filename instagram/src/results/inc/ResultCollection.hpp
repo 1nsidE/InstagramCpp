@@ -84,10 +84,11 @@ public:
 
     ResultCollection<T>& operator<<(T& element){
         elements.push_back(element);
+        return *this;
     }
     
     void add_element(T&& element){
-        elements.emplace_back(std::forward<T>(element));
+        elements.push_back(std::forward<T>(element));
     }
     
     void clear(){
