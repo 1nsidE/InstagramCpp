@@ -271,7 +271,7 @@ void TCPSocket::make_non_blocking() {
     }
 }
 
-bool TCPSocket::wait_for_read(long timeout) const {
+bool TCPSocket::wait_for_read(unsigned int timeout) const {
     fd_set readfs{};
     readfs.fd_count = 1;
     readfs.fd_array[0] = sockfd;
@@ -285,7 +285,7 @@ bool TCPSocket::wait_for_read(long timeout) const {
     return result == SOCKET_ERROR ? false : result;
 }
 
-bool TCPSocket::wait_for_write(long timeout) const {
+bool TCPSocket::wait_for_write(unsigned int timeout) const {
     fd_set writefs{};
     writefs.fd_count = 1;
     writefs.fd_array[0] = sockfd;

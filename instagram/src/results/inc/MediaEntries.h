@@ -9,7 +9,7 @@ namespace Instagram{
 using MediaEntries = ResultCollection<MediaEntry>;
     
 #ifdef WIN32
-INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM MediaEntries;
+INSTAGRAM_EXP_TMP template class EXPORT_INSTAGRAM ResultCollection<MediaEntry>;
 #endif
 
 }
