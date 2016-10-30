@@ -10,7 +10,7 @@
 namespace Socket{
 
     enum class Error{WOULDBLOCK, INTERRUPTED, PIPE_BROKEN, UNKNOWN};
-
+    
     class TCPSocket{
         friend class ConnectionListener;
     public:
@@ -40,12 +40,7 @@ namespace Socket{
         void connect(const std::string& host, const std::string& port);
         int last_err_code() const;
         [[noreturn]] void throw_error(const char* err_msg, int code) const;
-
-        #ifdef WIN32
-        void init_wsa();
-        #endif  
     };
-
 }
 
 #endif //FOLLOGRAPH_TCPSOCKET_H

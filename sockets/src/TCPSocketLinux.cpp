@@ -2,19 +2,12 @@
 // Created by inside on 4/23/16.
 //
 
-#ifdef __linux__
 #include <sys/socket.h>
 #include <unistd.h>
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <poll.h>
 #include <fcntl.h>
-#endif
-
-#ifdef WIN32
-#include <Ws2tcpip.h>
-#include <Winsock2.h>
-#endif
 
 #include <stdexcept>
 #include <cstring>
@@ -22,10 +15,6 @@
 #include "TCPSocket.h"
 
 namespace Socket {
-
-#ifdef WIN32
-    void at_exit();
-#endif
 
 TCPSocket::TCPSocket(const std::string &host, const std::string &port) {
    connect(host, port);
@@ -62,20 +51,7 @@ void TCPSocket::connect(const std::string& host, const std::string& port) {
     hints.ai_family = AF_UNSPEC;
 
     if (getaddrinfo(host.c_str(), port.c_str(), &hints, &res) != 0) {
-        #ifdef WIN32
-        if (WSAGetLastError() == WSANOTINITIALISED) {
-            init_wsa();
-        }
-        
-        if(getaddrinfo(host.c_str(), port.c_str(), &hints, &res) != 0){
-            throw_error("getaddrinfo() failed: ", last_err_code());
-        }
-
-        #endif
-
-        #ifdef __linux__
         throw_error("getaddrinfo() failed: ", last_err_code());
-        #endif
     }
 
     for (addrinfo* tmp_res = res; tmp_res != nullptr; tmp_res = res->ai_next) {
@@ -104,13 +80,7 @@ long TCPSocket::write(const void *data, size_t length) {
         throw std::runtime_error("not connected");
     }
 
-    #ifdef __linux__
     long count = send(sockfd, data, length, 0);
-    #endif
-
-    #ifdef WIN32
-    long count = send(sockfd, static_cast<const char*>(data), length, 0);
-    #endif
 
     return count;
 }
@@ -120,26 +90,14 @@ long TCPSocket::read(void *data, size_t length) {
         throw std::runtime_error("not_connected");
     }
 
-    #ifdef __linux__
     long count = recv(sockfd, data, length, 0);
-    #endif
-
-    #ifdef WIN32
-    long count = recv(sockfd, static_cast<char*>(data), length, 0);
-    #endif
 
     return count;
 }
 
 void TCPSocket::close() {
     if (sockfd != -1) {
-        #ifdef __linux__
         ::close(sockfd);
-        #endif
-
-        #ifdef WIN32
-        closesocket(sockfd);
-        #endif
     }
 }
 
@@ -172,7 +130,6 @@ std::string TCPSocket::get_ip() const {
     return "Invalid";
 }
 
-#ifdef __linux__
 void TCPSocket::make_non_blocking() {
     if (!is_blocking) {
         return;
@@ -238,99 +195,6 @@ std::string TCPSocket::get_last_err_str() const {
 int TCPSocket::last_err_code() const {
     return errno;
 }
-#endif
-
-#ifdef WIN32
-void TCPSocket::init_wsa() {
-    static bool is_wsa_initialized = false;  //TODO: make thread safe
-    if (!is_wsa_initialized) {
-        WSAData data{};
-
-        int result = WSAStartup(MAKEWORD(2, 2), &data);
-        if (result != 0) {
-            throw_error("Failed to initalize WSA : ", result);
-        }
-
-        std::atexit(at_exit);
-        is_wsa_initialized = true;
-    }
-}
-
-void TCPSocket::make_non_blocking() {
-    if (!is_blocking) {
-        return;
-    }
-
-    if (sockfd != -1) {
-        unsigned long yes{ 1 };
-        ioctlsocket(sockfd, FIONBIO, &yes);
-        is_blocking = false;
-    }
-    else {
-        throw std::runtime_error("not connected!");
-    }
-}
-
-bool TCPSocket::wait_for_read(unsigned int timeout) const {
-    fd_set readfs{};
-    readfs.fd_count = 1;
-    readfs.fd_array[0] = sockfd;
-
-    timeval time{};
-    time.tv_sec = timeout * 1000;
-    time.tv_usec = 0;
-
-    int result = select(0, &readfs, nullptr, nullptr, &time);
-
-    return result == SOCKET_ERROR ? false : result;
-}
-
-bool TCPSocket::wait_for_write(unsigned int timeout) const {
-    fd_set writefs{};
-    writefs.fd_count = 1;
-    writefs.fd_array[0] = sockfd;
-
-    timeval time{};
-    time.tv_sec = timeout * 1000;
-    time.tv_usec = 0;
-
-    int result = select(0, &writefs, nullptr, nullptr, &time);
-
-    return result == SOCKET_ERROR ? false : result;
-}
-
-Error TCPSocket::get_last_err() const {
-    int code = WSAGetLastError();
-    switch (code) {
-    case WSAEWOULDBLOCK:
-        return Error::WOULDBLOCK;
-    case WSAEINTR:
-        return Error::INTERRUPTED;
-    default:
-        return Error::UNKNOWN;
-
-    }
-}
-
-std::string TCPSocket::get_last_err_str() const {
-    int code = WSAGetLastError();
-    char* msg = nullptr;
-
-    if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr, code, 0, msg, 0, nullptr) == 0) {
-        return "Unknown Error";
-    }
-
-    return msg;
-}
-
-int TCPSocket::last_err_code() const {
-    return WSAGetLastError();
-}
-
-void at_exit() {
-    WSACleanup();
-}
-#endif
 
 void TCPSocket::throw_error(const char* err_msg, int code) const {
     std::string msg{ err_msg };
@@ -339,3 +203,4 @@ void TCPSocket::throw_error(const char* err_msg, int code) const {
 }
 
 }
+

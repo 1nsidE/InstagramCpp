@@ -105,8 +105,10 @@ MediaEntries InstagramClient::get_recent_media(const std::string& user_id, const
 
         Http::HttpUrl url = get_standart_url(Users::users + user_id + Users::recent_media);
         url[AUTH_TOKEN_ARG] = auth_token;
+        
         if (!min_id.empty()) url[MIN_ID_ARG] = min_id;
         if (!max_id.empty()) url[MAX_ID_ARG] = max_id;
+        
         url[COUNT_ARG] = std::to_string(count);
 
         return get_media(url);

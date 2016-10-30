@@ -8,9 +8,13 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()
 
 set(SOCKETS_SOURCES
-    SSLSocket.cpp 
-    TCPSocket.cpp
-    ConnectionListener.cpp
-)
+        SSLSocket.cpp 
+        ConnectionListener.cpp)
 
-add_library(sockets OBJECT ${SOCKETS_SOURCES})
+if(UNIX AND NOT APPLE)
+    set(TCP_SOCKET TCPSocketLinux.cpp)
+elseif(WIN32)
+    set(TCP_SOCKET TCPSocketWin.cpp)
+endif()
+
+add_library(sockets OBJECT ${SOCKETS_SOURCES} ${TCP_SOCKET})

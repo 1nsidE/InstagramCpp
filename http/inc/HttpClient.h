@@ -8,12 +8,14 @@
 #include <memory>
 #include <unordered_map>
 
-#include "SSLSocket.h"
 #include "Http.h"
 
-#define STANDART_USER_AGENT "http_cpp"
+namespace Socket{
+    class TCPSocket;
+}
 
 namespace Http {
+
 class FormData;
 class HttpRequest;
 class HttpResponse;

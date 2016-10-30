@@ -13,6 +13,8 @@
 #include "exceptions/HttpFailedToSend.h"
 #include "exceptions/HttpTooBigResponse.h"
 
+#define GENERAL_USER_AGENT "http_cpp"
+
 namespace Http {
 
 HttpClient::HttpClient(){
@@ -71,7 +73,7 @@ HttpResponse HttpClient::del(const HttpUrl& url) {
 
 HttpRequest HttpClient::get_standart_request() {
     HttpRequest http_request {};
-    http_request[Header::USER_AGENT] = STANDART_USER_AGENT;
+    http_request[Header::USER_AGENT] = GENERAL_USER_AGENT;
     http_request[Header::CONNECTION] = "keep-alive";
     http_request[Header::ACCEPT_ENCODING] = "*/*";
 
@@ -79,14 +81,22 @@ HttpRequest HttpClient::get_standart_request() {
 }
 
 HttpResponse HttpClient::send_request(const HttpRequest& http_request) {
-    send(http_request);
-    HttpResponse http_response = receive(http_request.get_url(), 20);
+    HttpResponse response{};
+    try{
+        send(http_request);
+        response = receive(http_request.get_url(), 20);
 
-    if (http_response[Header::CONNECTION] == "close") {
-        disconnect(http_request.get_url());
+        if (response[Header::CONNECTION] == "close") {
+            disconnect(http_request.get_url());
+        }
+    }catch(const std::exception& err){
+        std::string errMsg = "Internal client error : ";
+        response.set_status(errMsg + err.what(), -1);
+    }catch(...){
+        response.set_status("Unknown client error", -1);
     }
 
-    return http_response;
+    return response;
 }
 
 HttpResponse HttpClient::operator<<(const HttpRequest &http_request) {
@@ -120,6 +130,7 @@ void HttpClient::send(const HttpRequest& http_request) {
                 throw HttpFailedToSend(err_msg);
             }
         }
+
         written += static_cast<size_t>(count);
     }
 }

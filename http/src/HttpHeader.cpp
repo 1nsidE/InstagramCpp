@@ -123,7 +123,7 @@ void HttpHeader::append_data(const char *_data, const size_t len) {
 }
 
 size_t HttpHeader::data_len() const noexcept {
-    return (!data ? 0 : data->length());
+    return (data ? data->length() : 0);
 }
 
 bool HttpHeader::contain_header(Http::Header header) const noexcept {
