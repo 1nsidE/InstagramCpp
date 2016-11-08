@@ -26,5 +26,4 @@ before_script:
 - cd build
 - cmake -G "Unix Makefiles" . ..
 
-build: cmake --build .
-
+script: cmake --build .
