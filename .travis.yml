@@ -24,8 +24,9 @@ install:
 before_script:
 - mkdir build
 - cd build
-- cmake -G "Unix Makefiles" . ..
 - apt-get download libgnutls28-dev; dpkg -i --force-not-root --root=$HOME libgnutls28-dev.deb
+- ls ${HOME}
+- cmake -G "Unix Makefiles" -DGNUTLS_INCLUDE=${HOME}/usr/include/ -DGNUTLS_LIB=${HOME}/usr/lib/x86_64-linux-gnu/ . ..
 
-build: cmake -DGNUTLS_INCLUDE=${HOME}/usr/include/ -DGNUTLS_LIB=${HOME}/usr/lib/x86_64-linux-gnu/ --build .
+build: cmake --build .
 
