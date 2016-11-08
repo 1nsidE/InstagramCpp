@@ -24,10 +24,7 @@ install:
 before_script:
 - mkdir build
 - cd build
-- apt-get download libgnutls28-dev
-- ls
-- dpkg -i --force-not-root --root=. ./libgnutls28-dev_3.0.11-1ubuntu2.1_amd64.deb
-- cmake -G "Unix Makefiles" -DGNUTLS_INCLUDE=usr/include/ -DGNUTLS_LIB=usr/lib/x86_64-linux-gnu/ . ..
+- cmake -G "Unix Makefiles" . ..
 
 build: cmake --build .
 
