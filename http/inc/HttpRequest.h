@@ -31,7 +31,7 @@ public:
 
     const HttpUrl& get_url() const noexcept;
 
-    virtual std::string get_string() const override;
+    std::string get_string() const override;
 private:
     class HttpClient;
     friend HttpClient;

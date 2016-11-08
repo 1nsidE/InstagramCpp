@@ -23,10 +23,10 @@ addons:
  apt:
   sources: 
   - kalakris-cmake
-  - llvm-toolchain-precise
   - ubuntu-toolchain-r-test
   packages:
   - cmake
   - gcc-6
   - g++-6
   - libgnutls-dev
+  - libjsoncpp-dev

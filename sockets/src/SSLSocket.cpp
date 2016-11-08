@@ -25,8 +25,8 @@ namespace Socket {
 
             session = std::move(ssl_socket.session);
 
-            sockfd = ssl_socket.sockfd;
-            ssl_socket.sockfd = -1;
+            m_sockfd = ssl_socket.m_sockfd;
+            ssl_socket.m_sockfd = -1;
         }
         return *this;
     }
@@ -55,7 +55,7 @@ namespace Socket {
         check(gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, credentials));
 
         gnutls_session_set_verify_cert(session, hostname.c_str(), 0);
-        gnutls_transport_set_int(session, sockfd);
+        gnutls_transport_set_int(session, m_sockfd);
         gnutls_handshake_set_timeout(session, GNUTLS_DEFAULT_HANDSHAKE_TIMEOUT);
 
         do {

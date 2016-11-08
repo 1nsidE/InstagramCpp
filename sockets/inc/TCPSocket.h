@@ -33,10 +33,10 @@ namespace Socket{
         virtual Error get_last_err() const;
         virtual std::string get_last_err_str() const;
     protected:
-        int sockfd = -1;
-        bool is_blocking = true;
+        int m_sockfd = -1;
+        bool m_isBlocking = true;
     private:
-        TCPSocket(int _sockfd, bool is_blocking_);
+        TCPSocket(int sockfd, bool isBlocking);
         void connect(const std::string& host, const std::string& port);
         int last_err_code() const;
         [[noreturn]] void throw_error(const char* err_msg, int code) const;

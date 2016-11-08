@@ -90,7 +90,7 @@ void HttpRequest::parse(const std::string& request){
         return;
     }
 
-    std::istringstream string_stream(request);
+    std::istringstream string_stream{request};
     std::string line {};
 
     std::getline(string_stream, line);

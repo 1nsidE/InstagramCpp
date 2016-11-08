@@ -24,7 +24,7 @@ public:
     void set_status(Http::Status _status);
     void set_status(const std::string& status, int code);
 
-    virtual std::string get_string() const override;
+    std::string get_string() const override;
 private:
     friend HttpClient;
     HttpResponse(const std::string& response);

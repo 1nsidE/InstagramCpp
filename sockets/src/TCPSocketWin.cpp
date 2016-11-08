@@ -37,11 +37,11 @@ TCPSocket::TCPSocket(const std::string &host, const std::string &port) {
    connect(host, port);
 }
 
-TCPSocket::TCPSocket(int _sockfd, bool is_blocking_) : sockfd{ _sockfd }, is_blocking{ is_blocking_ } {}
+TCPSocket::TCPSocket(int sockfd, bool isBlocking) : m_sockfd{ sockfd }, m_isBlocking{ isBlocking } {}
 
-TCPSocket::TCPSocket(TCPSocket&& client_socket) : sockfd{ client_socket.sockfd }, is_blocking{ client_socket.is_blocking } {
-    client_socket.sockfd = -1;
-    client_socket.is_blocking = false;
+TCPSocket::TCPSocket(TCPSocket&& client_socket) : m_sockfd{ client_socket.m_sockfd }, m_isBlocking{ client_socket.m_isBlocking } {
+    client_socket.m_sockfd = -1;
+    client_socket.m_isBlocking = false;
 }
 
 TCPSocket::~TCPSocket() {
@@ -50,11 +50,11 @@ TCPSocket::~TCPSocket() {
 
 TCPSocket &TCPSocket::operator=(TCPSocket &&tcp_socket) {
     if (this != &tcp_socket) {
-        sockfd = tcp_socket.sockfd;
-        is_blocking = tcp_socket.is_blocking;
+        m_sockfd = tcp_socket.m_sockfd;
+        m_isBlocking = tcp_socket.m_isBlocking;
 
-        tcp_socket.sockfd = -1;
-        tcp_socket.is_blocking = false;
+        tcp_socket.m_sockfd = -1;
+        tcp_socket.m_isBlocking = false;
     }
     return *this;
 }
@@ -81,20 +81,20 @@ void TCPSocket::connect(const std::string& host, const std::string& port) {
     }
 
     for (addrinfo* tmp_res = res; tmp_res != nullptr; tmp_res = res->ai_next) {
-        sockfd = socket(tmp_res->ai_family, tmp_res->ai_socktype, tmp_res->ai_protocol);
+        m_sockfd = socket(tmp_res->ai_family, tmp_res->ai_socktype, tmp_res->ai_protocol);
 
-        if (sockfd == -1) {
+        if (m_sockfd == -1) {
             continue;
         }
 
-        if (::connect(sockfd, tmp_res->ai_addr, tmp_res->ai_addrlen) == -1) {
+        if (::connect(m_sockfd, tmp_res->ai_addr, tmp_res->ai_addrlen) == -1) {
             throw_error("connect() failed: ", last_err_code());
         }
 
         break;
     }
 
-    if (sockfd == -1) {
+    if (m_sockfd == -1) {
         throw_error("failed to craete socket : ", last_err_code());
     }
 
@@ -102,38 +102,38 @@ void TCPSocket::connect(const std::string& host, const std::string& port) {
 }
 
 long TCPSocket::write(const void *data, size_t length) {
-    if (sockfd == -1) {
+    if (m_sockfd == -1) {
         throw std::runtime_error("not connected");
     }
 
-    long count = send(sockfd, static_cast<const char*>(data), length, 0);
+    long count = send(m_sockfd, static_cast<const char*>(data), length, 0);
     return count;
 }
 
 long TCPSocket::read(void *data, size_t length) {
-    if (sockfd == -1) {
+    if (m_sockfd == -1) {
         throw std::runtime_error("not_connected");
     }
 
-    long count = recv(sockfd, static_cast<char*>(data), length, 0);
+    long count = recv(m_sockfd, static_cast<char*>(data), length, 0);
 
     return count;
 }
 
 void TCPSocket::close() {
-    if (sockfd != -1) {
-        closesocket(sockfd);
+    if (m_sockfd != -1) {
+        closesocket(m_sockfd);
     }
 }
 
 std::string TCPSocket::get_ip() const {
-    if (sockfd == -1) {
+    if (m_sockfd == -1) {
         return "";
     }
 
     struct sockaddr_storage addr;
     socklen_t addr_size = sizeof(sockaddr_storage);
-    int len = getpeername(sockfd, reinterpret_cast<sockaddr*>(&addr), &addr_size);
+    int len = getpeername(m_sockfd, reinterpret_cast<sockaddr*>(&addr), &addr_size);
 
     if (len != -1) {
         if (addr.ss_family == AF_INET) {
@@ -156,14 +156,14 @@ std::string TCPSocket::get_ip() const {
 }
 
 void TCPSocket::make_non_blocking() {
-    if (!is_blocking) {
+    if (!m_isBlocking) {
         return;
     }
 
-    if (sockfd != -1) {
+    if (m_sockfd != -1) {
         unsigned long yes{ 1 };
-        ioctlsocket(sockfd, FIONBIO, &yes);
-        is_blocking = false;
+        ioctlsocket(m_sockfd, FIONBIO, &yes);
+        m_isBlocking = false;
     }
     else {
         throw std::runtime_error("not connected!");
@@ -173,7 +173,7 @@ void TCPSocket::make_non_blocking() {
 bool TCPSocket::wait_for_read(unsigned int timeout) const {
     fd_set readfs{};
     readfs.fd_count = 1;
-    readfs.fd_array[0] = sockfd;
+    readfs.fd_array[0] = m_sockfd;
 
     timeval time{};
     time.tv_sec = timeout * 1000;
@@ -187,7 +187,7 @@ bool TCPSocket::wait_for_read(unsigned int timeout) const {
 bool TCPSocket::wait_for_write(unsigned int timeout) const {
     fd_set writefs{};
     writefs.fd_count = 1;
-    writefs.fd_array[0] = sockfd;
+    writefs.fd_array[0] = m_sockfd;
 
     timeval time{};
     time.tv_sec = timeout * 1000;

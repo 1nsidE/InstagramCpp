@@ -178,7 +178,9 @@ void HttpUrl::parse_url(const std::string& url){
 
     size_t hostEnd = url.find_first_of('/', colonPos);
     m_host = change_case(url.substr(colonPos, hostEnd - colonPos));
-    m_endpoint = change_case(url.substr(hostEnd));
+    if(hostEnd != std::string::npos){
+        m_endpoint = change_case(url.substr(hostEnd));
+    }
 }
 
 void HttpUrl::parse_arguments(const std::string args) {
