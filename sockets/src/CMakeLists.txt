@@ -1,10 +1,7 @@
 cmake_minimum_required(VERSION 2.8.8)
 
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    if(DEFINED GNUTLS_INCLUDE)
-        include_directories(${GNUTLS_INCLUDE})
-    endif()
-    
+if(DEFINED GNUTLS_INCLUDE)
+    include_directories(${GNUTLS_INCLUDE})
 endif()
 
 set(SOCKETS_SOURCES

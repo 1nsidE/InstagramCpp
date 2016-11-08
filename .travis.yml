@@ -28,5 +28,5 @@ addons:
   - cmake
   - gcc-6
   - g++-6
-  - libgnutls-dev
+  - libgnutls28-dev
   - libjsoncpp-dev
