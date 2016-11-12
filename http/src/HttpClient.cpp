@@ -13,8 +13,6 @@
 #include "exceptions/HttpFailedToSend.h"
 #include "exceptions/HttpTooBigResponse.h"
 
-#define GENERAL_USER_AGENT "http_cpp"
-
 namespace Http {
 
 HttpClient::HttpClient(){
@@ -30,7 +28,7 @@ HttpClient::~HttpClient() {
 }
 
 HttpResponse HttpClient::get(const HttpUrl& url) {
-    HttpRequest http_request = get_standart_request();
+    HttpRequest http_request = get_default_request();
     http_request.set_method(Method::GET);
     http_request.set_url(url);
 
@@ -38,7 +36,7 @@ HttpResponse HttpClient::get(const HttpUrl& url) {
 }
 
 HttpResponse HttpClient::post(const HttpUrl& url, const std::string& data, const std::string& content_type) {
-    HttpRequest http_request = get_standart_request();
+    HttpRequest http_request = get_default_request();
     http_request.set_method(Method::POST);
     http_request.set_url(url);
     http_request.set_data(data);
@@ -53,7 +51,7 @@ HttpResponse HttpClient::post(const HttpUrl& url, const FormData& form_data) {
 }
 
 HttpResponse HttpClient::post(const HttpUrl& url, const std::pair<std::string, std::string>& type_and_data) {
-    HttpRequest http_request = get_standart_request();
+    HttpRequest http_request = get_default_request();
     http_request.set_method(Method::POST);
     http_request.set_url(url);
     http_request[Header::CONTENT_TYPE] = type_and_data.first;
@@ -64,16 +62,16 @@ HttpResponse HttpClient::post(const HttpUrl& url, const std::pair<std::string, s
 }
 
 HttpResponse HttpClient::del(const HttpUrl& url) {
-    HttpRequest request = get_standart_request();
+    HttpRequest request = get_default_request();
     request.set_method(Method::DELETE);
     request.set_url(url);
 
     return send_request(request);
 }
 
-HttpRequest HttpClient::get_standart_request() {
+HttpRequest HttpClient::get_default_request() {
     HttpRequest http_request {};
-    http_request[Header::USER_AGENT] = GENERAL_USER_AGENT;
+    http_request[Header::USER_AGENT] = "http_client";
     http_request[Header::CONNECTION] = "keep-alive";
     http_request[Header::ACCEPT_ENCODING] = "*/*";
 

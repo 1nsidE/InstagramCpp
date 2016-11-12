@@ -39,7 +39,7 @@ public:
     HttpResponse operator<<(const HttpUrl& url);
 
 private:
-    HttpRequest get_standart_request();
+    HttpRequest get_default_request();
     void send(const HttpRequest& http_request);
 
     HttpResponse receive(const HttpUrl& url, unsigned int timeout);
