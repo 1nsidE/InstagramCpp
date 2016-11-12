@@ -14,9 +14,7 @@ add_library(httpcpp SHARED ${HTTP_SOURCES}
     $<TARGET_OBJECTS:sockets>
 )
 
-if(DEFINED GNUTLS_LIB)
-    find_library(GNUTLS_LIB_NAME NAMES "gnutls" "libgnutls" PATHS ${GNUTLS_LIB})
-endif()
+find_library(GNUTLS_LIB_NAME NAMES "gnutls" "libgnutls" HINTS ${GNUTLS_LIB})
 
 if(DEFINED GNUTLS_INCLUDE)
     include_directories(${GNUTLS_INCLUDE})
@@ -31,8 +29,8 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 
     target_link_libraries(httpcpp ${GNUTLS_LIB_NAME} "Ws2_32.lib")
 elseif(CMAKE_COMPILER_IS_GNUCXX)
-    if(NOT DEFINED GNUTLS_LIB_NAME)
-        set(LIB_GNUTLS_LIB_NAME "gnutls")
+    if(NOT GNUTLS_LIB_NAME)
+        set(GNUTLS_LIB_NAME "gnutls")
     endif()
     
     target_link_libraries(httpcpp ${GNUTLS_LIB_NAME})

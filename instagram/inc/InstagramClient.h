@@ -8,10 +8,8 @@
 
 #include "AuthorizationToken.h"
 #include "MediaEntries.h"
-#include "UserInfo.h"
 #include "UsersInfo.h"
 #include "RelationshipInfo.h"
-#include "TagInfo.h"
 #include "TagsInfo.h"
 #include "CommentsInfo.h"
 #include "LocationsInfo.h"
