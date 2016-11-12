@@ -117,12 +117,13 @@ MediaEntries InstagramClient::get_recent_media(const std::string& user_id, const
     }
 }
 
-MediaEntries InstagramClient::get_liked_media() {
+MediaEntries InstagramClient::get_liked_media(unsigned int count) {
     try {
         check_auth();
 
         Http::HttpUrl url = get_standart_url(std::string{Users::users} + Users::self_liked);
         url[AUTH_TOKEN_ARG] = auth_token;
+        url[COUNT_ARG] = std::to_string(count);
 
         return get_media(url);
     } catch (const std::exception& err) {
@@ -130,13 +131,14 @@ MediaEntries InstagramClient::get_liked_media() {
     }
 }
 
-MediaEntries InstagramClient::get_liked_media(const std::string& max_id) {
+MediaEntries InstagramClient::get_liked_media(const std::string& max_id, unsigned int count) {
     try {
         check_auth();
 
         Http::HttpUrl url = get_standart_url(std::string{Users::users} + Users::self_liked);
         url[AUTH_TOKEN_ARG] = auth_token;
         url[MAX_LIKE_ID] = max_id;
+        url[COUNT_ARG] = std::to_string(count);
 
         return get_media(url);
     } catch (const std::exception& err) {

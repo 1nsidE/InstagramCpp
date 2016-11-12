@@ -41,8 +41,8 @@ public:
     MediaEntries get_recent_media(const std::string& min_id, const std::string& max_id, unsigned count = 20);
     MediaEntries get_recent_media(const std::string& user_id, const std::string& min_id, const std::string& max_id, unsigned count = 20);
     MediaEntries get_recent_media(const std::string& user_id, unsigned count = 20);
-    MediaEntries get_liked_media();
-    MediaEntries get_liked_media(const std::string& max_id);
+    MediaEntries get_liked_media(unsigned int count = 20);
+    MediaEntries get_liked_media(const std::string& max_id, unsigned int count = 20);
     UsersInfo search_users(const std::string& query, unsigned count = 20);
 //Relationships
     UsersInfo get_follows();

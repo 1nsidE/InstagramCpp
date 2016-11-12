@@ -19,13 +19,9 @@ HttpClient::HttpClient(){
     m_hostToSocketMap.max_load_factor(0.75);
 }
 
-HttpClient::HttpClient(HttpClient&& http_client) : m_hostToSocketMap {std::move(http_client.m_hostToSocketMap)} {
-    m_hostToSocketMap.max_load_factor(0.75);
-}
+HttpClient::HttpClient(HttpClient&& http_client) : m_hostToSocketMap {std::move(http_client.m_hostToSocketMap)}{}
 
-HttpClient::~HttpClient() {
-    m_hostToSocketMap.max_load_factor(0.75);
-}
+HttpClient::~HttpClient() {}
 
 HttpResponse HttpClient::get(const HttpUrl& url) {
     HttpRequest http_request = get_default_request();
