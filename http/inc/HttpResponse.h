@@ -15,22 +15,24 @@ public:
 
     virtual ~HttpResponse();
 
-    HttpResponse& operator=(HttpResponse&& http_response);
-    HttpResponse& operator=(const HttpResponse& http_response);
+    HttpResponse& operator=(HttpResponse&& httpResponse);
+    HttpResponse& operator=(const HttpResponse& httpResponse);
     HttpResponse& operator=(const std::string& response);
 
-    const std::string& get_status() const noexcept;
-    int get_code() const noexcept;
-    void set_status(Http::Status _status);
-    void set_status(const std::string& status, int code);
+    const std::string& status() const noexcept;
+    int code() const noexcept;
+    
+    void setStatus(Http::Status status);
+    void setStatus(const std::string& status, int code);
 
-    std::string get_string() const override;
+    std::string getString() const override;
 private:
     friend HttpClient;
+
     HttpResponse(const std::string& response);
-    void parse_response(const std::string& response);
-    std::string status {};
-    int code = -1;
+    void parseResponse(const std::string& response);
+    std::string m_status{};
+    int m_code{-1};
 };
 
 }

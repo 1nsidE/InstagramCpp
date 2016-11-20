@@ -22,22 +22,22 @@ TCPSocket::TCPSocket(const std::string &host, const std::string &port) {
 
 TCPSocket::TCPSocket(int sockfd, bool isBlocking) : m_sockfd{ sockfd }, m_isBlocking{ isBlocking } {}
 
-TCPSocket::TCPSocket(TCPSocket&& client_socket) : m_sockfd{ client_socket.m_sockfd }, m_isBlocking{ client_socket.m_isBlocking } {
-    client_socket.m_sockfd = -1;
-    client_socket.m_isBlocking = false;
+TCPSocket::TCPSocket(TCPSocket&& tcpSocket) : m_sockfd{ tcpSocket.m_sockfd }, m_isBlocking{ tcpSocket.m_isBlocking } {
+    tcpSocket.m_sockfd = -1;
+    tcpSocket.m_isBlocking = false;
 }
 
 TCPSocket::~TCPSocket() {
     TCPSocket::close();
 }
 
-TCPSocket &TCPSocket::operator=(TCPSocket &&tcp_socket) {
-    if (this != &tcp_socket) {
-        m_sockfd = tcp_socket.m_sockfd;
-        m_isBlocking = tcp_socket.m_isBlocking;
+TCPSocket &TCPSocket::operator=(TCPSocket &&tcpSocket) {
+    if (this != &tcpSocket) {
+        m_sockfd = tcpSocket.m_sockfd;
+        m_isBlocking = tcpSocket.m_isBlocking;
 
-        tcp_socket.m_sockfd = -1;
-        tcp_socket.m_isBlocking = false;
+        tcpSocket.m_sockfd = -1;
+        tcpSocket.m_isBlocking = false;
     }
     return *this;
 }
@@ -51,7 +51,7 @@ void TCPSocket::connect(const std::string& host, const std::string& port) {
     hints.ai_family = AF_UNSPEC;
 
     if (getaddrinfo(host.c_str(), port.c_str(), &hints, &res) != 0) {
-        throw_error("getaddrinfo() failed: ", last_err_code());
+        throwError("getaddrinfo() failed: ", lastErrorCode());
     }
 
     for (addrinfo* tmp_res = res; tmp_res != nullptr; tmp_res = res->ai_next) {
@@ -62,14 +62,14 @@ void TCPSocket::connect(const std::string& host, const std::string& port) {
         }
 
         if (::connect(m_sockfd, tmp_res->ai_addr, tmp_res->ai_addrlen) == -1) {
-            throw_error("connect() failed: ", last_err_code());
+            throwError("connect() failed: ", lastErrorCode());
         }
 
         break;
     }
 
     if (m_sockfd == -1) {
-        throw_error("failed to craete socket : ", last_err_code());
+        throwError("failed to craete socket : ", lastErrorCode());
     }
 
     freeaddrinfo(res);
@@ -101,7 +101,7 @@ void TCPSocket::close() {
     }
 }
 
-std::string TCPSocket::get_ip() const {
+std::string TCPSocket::ip() const {
     if (m_sockfd == -1) {
         return "";
     }
@@ -130,7 +130,7 @@ std::string TCPSocket::get_ip() const {
     return "Invalid";
 }
 
-void TCPSocket::make_non_blocking() {
+void TCPSocket::makeNonBlocking() {
     if (!m_isBlocking) {
         return;
     }
@@ -138,12 +138,12 @@ void TCPSocket::make_non_blocking() {
     if (m_sockfd != -1) {
         int flags = fcntl(m_sockfd, F_GETFL, 0);
         if (flags < 0) {
-            throw_error("failed to get socket flags : ", last_err_code());
+            throwError("failed to get socket flags : ", lastErrorCode());
         }
 
         flags |= O_NONBLOCK;
         if (fcntl(m_sockfd, F_SETFL, flags) < 0) {
-            throw_error("failed to change socket to non-blocking mode : ", last_err_code());
+            throwError("failed to change socket to non-blocking mode : ", lastErrorCode());
         }
 
         m_isBlocking = false;
@@ -153,7 +153,7 @@ void TCPSocket::make_non_blocking() {
     }
 }
 
-bool TCPSocket::wait_for_read(unsigned int timeout) const {
+bool TCPSocket::waitForRead(unsigned int timeout) const {
     pollfd pfd;
 
     pfd.fd = m_sockfd;
@@ -163,7 +163,7 @@ bool TCPSocket::wait_for_read(unsigned int timeout) const {
     return result + 1;;
 }
 
-bool TCPSocket::wait_for_write(unsigned int timeout) const {
+bool TCPSocket::waitForWrite(unsigned int timeout) const {
     pollfd pfd;
 
     pfd.fd = m_sockfd;
@@ -174,8 +174,8 @@ bool TCPSocket::wait_for_write(unsigned int timeout) const {
 
 }
 
-Error TCPSocket::get_last_err() const {
-    switch (last_err_code()) {
+Error TCPSocket::lastError() const {
+    switch (lastErrorCode()) {
     case EWOULDBLOCK:
         return Error::WOULDBLOCK;
     case EINTR:
@@ -188,17 +188,17 @@ Error TCPSocket::get_last_err() const {
     }
 }
 
-std::string TCPSocket::get_last_err_str() const {
-    return gai_strerror(last_err_code());
+std::string TCPSocket::lastErrorString() const {
+    return gai_strerror(lastErrorCode());
 }
 
-int TCPSocket::last_err_code() const {
+int TCPSocket::lastErrorCode() const {
     return errno;
 }
 
-void TCPSocket::throw_error(const char* err_msg, int code) const {
-    std::string msg{ err_msg };
-    msg += get_last_err_str();
+void TCPSocket::throwError(const char* err_msg, int code) const {
+    std::string msg{err_msg};
+    msg += gai_strerror(code);
     throw std::runtime_error(err_msg);
 }
 

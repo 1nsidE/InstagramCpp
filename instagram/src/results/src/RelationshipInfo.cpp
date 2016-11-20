@@ -2,34 +2,40 @@
 
 namespace Instagram {
 
-RelationshipInfo::RelationshipInfo() : BaseResult{}, incoming_status{ "" }, outgoing_status{ "" } {}
+RelationshipInfo::RelationshipInfo() : BaseResult{} {}
 
-RelationshipInfo::RelationshipInfo(const std::string& incoming, const std::string& outgoing) : BaseResult{}, incoming_status{ incoming }, outgoing_status{ outgoing } {}
+RelationshipInfo::RelationshipInfo(const std::string& incoming, const std::string& outgoing) : 
+                                                                    BaseResult{}, m_incomingStatus{incoming}, 
+                                                                    m_outgoingStatus{outgoing} {}
 
-RelationshipInfo::RelationshipInfo(const RelationshipInfo& rel_info) : BaseResult{ rel_info }, incoming_status{ rel_info.incoming_status }, outgoing_status{ rel_info.outgoing_status } {}
+RelationshipInfo::RelationshipInfo(const RelationshipInfo& relInfo) : BaseResult{relInfo}, 
+                                                                    m_incomingStatus{relInfo.m_incomingStatus}, 
+                                                                    m_outgoingStatus{relInfo.m_outgoingStatus} {}
 
-RelationshipInfo::RelationshipInfo(RelationshipInfo&& rel_info) : BaseResult{ std::forward<BaseResult>(rel_info) }, incoming_status{ std::move(rel_info.incoming_status) }, outgoing_status{ std::move(rel_info.outgoing_status) } {}
+RelationshipInfo::RelationshipInfo(RelationshipInfo&& relInfo) : BaseResult{std::forward<BaseResult>(relInfo)}, 
+                                                                m_incomingStatus{std::move(relInfo.m_incomingStatus)}, 
+                                                                m_outgoingStatus{std::move(relInfo.m_outgoingStatus)} {}
 
-RelationshipInfo::RelationshipInfo(const char* err_msg) : BaseResult{ err_msg }, incoming_status{ "" }, outgoing_status{ "" } {}
+RelationshipInfo::RelationshipInfo(const char* errMsg) : BaseResult{errMsg}, m_incomingStatus{""}, m_outgoingStatus{""} {}
 
-RelationshipInfo::RelationshipInfo(const std::string& err_msg) : BaseResult{ err_msg }, incoming_status{ "" }, outgoing_status{ "" } {}
+RelationshipInfo::RelationshipInfo(const std::string& errMsg) : BaseResult{errMsg}, m_incomingStatus{""}, m_outgoingStatus{""} {}
 
 RelationshipInfo::~RelationshipInfo() {}
 
-const std::string& RelationshipInfo::get_incoming_status() const noexcept {
-    return incoming_status;
+const std::string& RelationshipInfo::incomingStatus() const noexcept {
+    return m_incomingStatus;
 }
 
-const std::string& RelationshipInfo::get_outgoing_status() const noexcept {
-    return outgoing_status;
+const std::string& RelationshipInfo::outgoingStatus() const noexcept {
+    return m_outgoingStatus;
 }
 
-void RelationshipInfo::set_incoming_status(const std::string& status) {
-    incoming_status = status;
+void RelationshipInfo::setIncomingStatus(const std::string& status) {
+    m_incomingStatus = status;
 }
 
-void RelationshipInfo::set_outgoing_status(const std::string& status) {
-    outgoing_status = status;
+void RelationshipInfo::setOutgoingStatus(const std::string& status) {
+    m_outgoingStatus = status;
 }
 
 }

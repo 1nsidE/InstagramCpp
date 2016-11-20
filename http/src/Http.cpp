@@ -5,21 +5,21 @@
 
 namespace Http {
 
-    std::string change_case(const char *str, bool to_upper) {
+    std::string changeCase(const char *str, bool toUpper) {
         std::string result{str};
 
-        std::transform(result.begin(), result.end(), result.begin(), to_upper ? ::toupper : ::tolower);
+        std::transform(result.begin(), result.end(), result.begin(), toUpper ? ::toupper : ::tolower);
         return result;
     }
 
-    std::string change_case(const std::string &str, bool to_upper) {
+    std::string changeCase(const std::string &str, bool toUpper) {
         std::string result{str};
-        std::transform(result.begin(), result.end(), result.begin(), to_upper ? ::toupper : ::tolower);
+        std::transform(result.begin(), result.end(), result.begin(), toUpper ? ::toupper : ::tolower);
 
         return result;
     }
 
-    const char *to_string(Method method) noexcept {
+    const char *toString(Method method) noexcept {
         switch (method) {
             case Method::POST:
                 return "POST";
@@ -38,7 +38,7 @@ namespace Http {
         }
     }
 
-    const char *to_string(Header header) noexcept {
+    const char *toString(Header header) noexcept {
         switch (header) {
             case Header::CONTENT_LENGTH:
                 return "content-length";
@@ -75,7 +75,7 @@ namespace Http {
         }
     }
 
-    const char *to_string(Status status) noexcept {
+    const char *toString(Status status) noexcept {
         switch (status) {
             case Status::OK:
                 return "OK";
@@ -96,7 +96,7 @@ namespace Http {
         }
     }
 
-    const char *to_string(HttpProtocol protocol) noexcept {
+    const char *toString(HttpProtocol protocol) noexcept {
         switch (protocol) {
             case HttpProtocol::HTTP:
                 return HTTP_PROTO;
@@ -124,7 +124,7 @@ namespace Http {
         }
     }
 
-    Method from_str(const char *str) {
+    Method fromStr(const char *str) {
         const static std::unordered_map<std::string, Method> map{
                 {"POST",   Method::POST},
                 {"GET",    Method::GET},
@@ -134,7 +134,7 @@ namespace Http {
                 {"DELETE", Method::DELETE}
         };
 
-        std::string method = change_case(str, true);
+        std::string method = changeCase(str, true);
         if (map.count(method)) {
             return map.at(method);
         } else {
@@ -142,8 +142,8 @@ namespace Http {
         }
     }
 
-    Method from_str(const std::string &str) {
-        return from_str(str.c_str());
+    Method fromStr(const std::string &str) {
+        return fromStr(str.c_str());
     }
 
     std::string trim(const std::string &str) {

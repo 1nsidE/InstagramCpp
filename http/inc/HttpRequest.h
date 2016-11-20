@@ -20,18 +20,18 @@ public:
 
     virtual ~HttpRequest();
     
-    HttpRequest& operator=(const HttpRequest& http_request);
-    HttpRequest& operator=(HttpRequest&& http_request);
+    HttpRequest& operator=(const HttpRequest& httpRequest);
+    HttpRequest& operator=(HttpRequest&& httpRequest);
 
-    void set_method(Http::Method _method);
-    Http::Method get_method() const;
+    void setMethod(Http::Method method);
+    Http::Method method() const;
 
-    void set_url(const HttpUrl& url);
-    void set_url(HttpUrl&& url);
+    void setUrl(const HttpUrl& url);
+    void setUrl(HttpUrl&& url);
 
-    const HttpUrl& get_url() const noexcept;
+    const HttpUrl& getUrl() const noexcept;
 
-    std::string get_string() const override;
+    std::string getString() const override;
 private:
     class HttpClient;
     friend HttpClient;

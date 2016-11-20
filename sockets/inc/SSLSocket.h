@@ -11,11 +11,11 @@ namespace Socket{
     class SSLSocket : public TCPSocket{
     public:
         SSLSocket(const std::string& hostname, const std::string& port);
-        SSLSocket(const SSLSocket& ssl_sock) = delete;
-        SSLSocket(SSLSocket&& ssl_sock);
+        SSLSocket(const SSLSocket& sslSocket) = delete;
+        SSLSocket(SSLSocket&& sslSocket);
 
         virtual ~SSLSocket();
-        virtual SSLSocket& operator=(SSLSocket&& ssl_socket);
+        virtual SSLSocket& operator=(SSLSocket&& sslSocket);
 
         long write(const void *data, size_t len) override;
         long read(void *buf, size_t len) override;
@@ -23,12 +23,12 @@ namespace Socket{
         void close() override;
     private:
         void init();
-        [[noreturn]] void  throw_error(const char* err_msg) const;
+        [[noreturn]] void  throwError(const char* errMsg) const;
         void connect(const std::string& hostname);
 
         inline void check(int result);
-        gnutls_session_t session{};
-        gnutls_certificate_credentials_t credentials;
+        gnutls_session_t m_session{};
+        gnutls_certificate_credentials_t m_credentials;
     };
 
 }

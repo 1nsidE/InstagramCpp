@@ -9,31 +9,31 @@ namespace Instagram{
 class EXPORT_INSTAGRAM CommentInfo : public BaseResult{
 public:
     CommentInfo();
-    CommentInfo(const std::string& text_, const std::string& id_, long created_time_, const UserInfo& user_info_);
-    CommentInfo(const CommentInfo& comment_info);
-    CommentInfo(CommentInfo&& comment_info);
-    CommentInfo(const std::string& err_msg);
-    CommentInfo(const char* err_msg);
+    CommentInfo(const std::string& text, const std::string& id, long createTime, const UserInfo& userInfo);
+    CommentInfo(const CommentInfo& commentInfo);
+    CommentInfo(CommentInfo&& commentInfo);
+    CommentInfo(const std::string& errMsg);
+    CommentInfo(const char* errMsg);
 
     ~CommentInfo();
 
-    CommentInfo& operator=(const CommentInfo& comment_info);
-    CommentInfo& operator=(CommentInfo&& comment_info);
+    CommentInfo& operator=(const CommentInfo& commentInfo);
+    CommentInfo& operator=(CommentInfo&& commentInfo);
 
-    const std::string& get_text() const noexcept;
-    const std::string& get_id() const noexcept;
-    long get_created_time() const noexcept;
-    const UserInfo& get_user_info() const noexcept;
+    const std::string& text() const noexcept;
+    const std::string& id() const noexcept;
+    long createTime() const noexcept;
+    const UserInfo& userInfo() const noexcept;
 
-    void set_text(const std::string& text_);
-    void set_id(const std::string& id_);
-    void set_created_time(long created_time_);
-    void set_user_info(const UserInfo& user_info_);
+    void setText(const std::string &text);
+    void setId(const std::string &id_);
+    void setCreateTime(long createdTime);
+    void setUserInfo(const UserInfo &userInfo);
 private:
-    std::string text{""};
-    std::string id {""};
-    long created_time = -1;
-    UserInfo user_info{};
+    std::string m_text{""};
+    std::string m_id {""};
+    long m_createTime = -1;
+    UserInfo m_userInfo{};
 };
 
 }

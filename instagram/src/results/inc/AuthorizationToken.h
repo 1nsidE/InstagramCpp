@@ -8,36 +8,36 @@ namespace Instagram{
 class EXPORT_INSTAGRAM AuthorizationToken : public BaseResult{
 public:
     AuthorizationToken();
-    AuthorizationToken(const char* err_msg);
-    AuthorizationToken(const std::string& err_msg);
+    AuthorizationToken(const char* errMsg);
+    AuthorizationToken(const std::string& errMsg);
     ~AuthorizationToken();
 
-    AuthorizationToken(AuthorizationToken& auth_token);
-    AuthorizationToken(AuthorizationToken&& auth_token);
+    AuthorizationToken(AuthorizationToken& authToken);
+    AuthorizationToken(AuthorizationToken&& authToken);
 
-    const std::string& get_auth_token() const noexcept ;
-    const std::string& get_id() const noexcept;
-    const std::string& get_user_name() const noexcept;
-    const std::string& get_user_bio() const noexcept;
-    const std::string& get_user_full_name() const noexcept;
-    const std::string& get_user_profpic_url() const noexcept;
-    const std::string& get_website() const noexcept;
+    const std::string& authToken() const noexcept ;
+    const std::string& id() const noexcept;
+    const std::string& username() const noexcept;
+    const std::string& bio() const noexcept;
+    const std::string& fullName() const noexcept;
+    const std::string& profilePictureUrl() const noexcept;
+    const std::string& website() const noexcept;
 
-    AuthorizationToken& set_auth_token(const std::string& _auth_token);
-    AuthorizationToken& set_id(const std::string& _id);
-    AuthorizationToken& set_user_name(const std::string& _user_name);
-    AuthorizationToken& set_user_bio(const std::string& _user_bio);
-    AuthorizationToken& set_user_full_name(const std::string& _user_full_name);
-    AuthorizationToken& set_user_profpic_url(const std::string& _user_profpic_url);
-    AuthorizationToken& set_website(const std::string& _website);
+    AuthorizationToken& setAuthToken(const std::string &authToken);
+    AuthorizationToken& setId(const std::string &id);
+    AuthorizationToken& setUsername(const std::string &username);
+    AuthorizationToken& setUserBio(const std::string &userBio);
+    AuthorizationToken& setFullName(const std::string &userFullName);
+    AuthorizationToken& setProfilePictureUrl(const std::string &userProfilePictureUrl);
+    AuthorizationToken& setWebsite(const std::string &website);
 private:
-    std::string auth_token;
-    std::string id;
-    std::string user_name;
-    std::string user_bio;
-    std::string user_full_name;
-    std::string profpic_url;
-    std::string website;
+    std::string m_authToken;
+    std::string m_id;
+    std::string m_username;
+    std::string m_bio;
+    std::string m_fullName;
+    std::string m_profilePicUrl;
+    std::string m_website;
 };
 
 }

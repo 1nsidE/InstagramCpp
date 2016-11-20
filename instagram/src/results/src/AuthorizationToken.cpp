@@ -6,92 +6,92 @@ AuthorizationToken::AuthorizationToken() {
 
 }
 
-AuthorizationToken::AuthorizationToken(const char* err_msg) : BaseResult(err_msg) {}
+AuthorizationToken::AuthorizationToken(const char* errMsg) : BaseResult{errMsg} {}
 
-AuthorizationToken::AuthorizationToken(const std::string& err_msg) : BaseResult{ err_msg } {}
+AuthorizationToken::AuthorizationToken(const std::string& errMsg) : BaseResult{errMsg} {}
 
 
-AuthorizationToken::AuthorizationToken(AuthorizationToken& token) : BaseResult{ token },
-                                                                    auth_token(token.auth_token),
-                                                                    id(token.id),
-                                                                    user_name(token.user_name),
-                                                                    user_bio(token.user_bio),
-                                                                    user_full_name(token.user_full_name),
-                                                                    profpic_url(token.profpic_url){}
+AuthorizationToken::AuthorizationToken(AuthorizationToken& token) : BaseResult{token},
+                                                                    m_authToken(token.m_authToken),
+                                                                    m_id(token.m_id),
+                                                                    m_username(token.m_username),
+                                                                    m_bio(token.m_bio),
+                                                                    m_fullName(token.m_fullName),
+                                                                    m_profilePicUrl(token.m_profilePicUrl),
+                                                                    m_website{token.m_website} {}
 
-AuthorizationToken::AuthorizationToken(AuthorizationToken&& token) : BaseResult{ std::forward<BaseResult>(token) },
-                                                                     auth_token(std::move(token.auth_token)),
-                                                                     id(std::move(token.id)),
-                                                                     user_name(std::move(token.user_name)),
-                                                                     user_bio(std::move(token.user_bio)),
-                                                                     user_full_name(std::move(token.user_full_name)),
-                                                                     profpic_url(std::move(token.profpic_url)){}
+AuthorizationToken::AuthorizationToken(AuthorizationToken&& token) : BaseResult{std::forward<BaseResult>(token)},
+                                                                    m_authToken(std::move(token.m_authToken)),
+                                                                    m_id(std::move(token.m_id)),
+                                                                    m_username(std::move(token.m_username)),
+                                                                    m_bio(std::move(token.m_bio)),
+                                                                    m_fullName(std::move(token.m_fullName)),
+                                                                    m_profilePicUrl(std::move(token.m_profilePicUrl)),
+                                                                    m_website{std::move(token.m_website)} {}
 
-AuthorizationToken::~AuthorizationToken() {
+AuthorizationToken::~AuthorizationToken() {}
 
+const std::string& AuthorizationToken::authToken() const noexcept {
+    return m_authToken;
 }
 
-const std::string& AuthorizationToken::get_auth_token() const noexcept {
-    return auth_token;
+const std::string& AuthorizationToken::id() const noexcept {
+    return m_id;
 }
 
-const std::string& AuthorizationToken::get_id() const noexcept {
-    return id;
+const std::string& AuthorizationToken::username() const noexcept {
+    return m_username;
 }
 
-const std::string& AuthorizationToken::get_user_name() const noexcept {
-    return user_name;
+const std::string& AuthorizationToken::bio() const noexcept {
+    return m_bio;
 }
 
-const std::string& AuthorizationToken::get_user_bio() const noexcept {
-    return user_bio;
+const std::string& AuthorizationToken::fullName() const noexcept {
+    return m_fullName;
 }
 
-const std::string& AuthorizationToken::get_user_full_name() const noexcept {
-    return user_full_name;
+const std::string& AuthorizationToken::profilePictureUrl() const noexcept {
+    return m_profilePicUrl;
 }
 
-const std::string& AuthorizationToken::get_user_profpic_url() const noexcept {
-    return profpic_url;
-}
-
-const std::string& AuthorizationToken::get_website() const noexcept {
-    return website;
+const std::string& AuthorizationToken::website() const noexcept {
+    return m_website;
 }
 
 
-AuthorizationToken& AuthorizationToken::set_auth_token(const std::string& _auth_token) {
-    auth_token = _auth_token;
+AuthorizationToken& AuthorizationToken::setAuthToken(const std::string &_m_authToken) {
+    m_authToken = _m_authToken;
     return *this;
 }
 
-AuthorizationToken& AuthorizationToken::set_id(const std::string& _id) {
-    id = _id;
+AuthorizationToken& AuthorizationToken::setId(const std::string &id) {
+    m_id = id;
     return *this;
 }
 
-AuthorizationToken& AuthorizationToken::set_user_name(const std::string& _user_name) {
-    user_name = _user_name;
+AuthorizationToken& AuthorizationToken::setUsername(const std::string &username) {
+    m_username = username;
     return *this;
 }
 
-AuthorizationToken& AuthorizationToken::set_user_bio(const std::string& _user_bio) {
-    user_bio = _user_bio;
+AuthorizationToken& AuthorizationToken::setUserBio(const std::string &bio) {
+    m_bio = bio;
     return *this;
 }
 
-AuthorizationToken& AuthorizationToken::set_user_full_name(const std::string& _user_full_name) {
-    user_full_name = _user_full_name;
+AuthorizationToken& AuthorizationToken::setFullName(const std::string &fullName) {
+    m_fullName = fullName;
     return *this;
 }
 
-AuthorizationToken& AuthorizationToken::set_user_profpic_url(const std::string& _profpic_url) {
-    profpic_url = _profpic_url;
+AuthorizationToken& AuthorizationToken::setProfilePictureUrl(const std::string &profilePicUrl) {
+    m_profilePicUrl = profilePicUrl;
     return *this;
 }
 
-AuthorizationToken& AuthorizationToken::set_website(const std::string& _website) {
-    website = _website;
+AuthorizationToken& AuthorizationToken::setWebsite(const std::string &website) {
+    m_website = website;
     return *this;
 }
 

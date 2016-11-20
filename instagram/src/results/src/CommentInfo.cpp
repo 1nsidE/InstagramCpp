@@ -8,88 +8,87 @@ namespace Instagram {
 
 CommentInfo::CommentInfo() : BaseResult{} {}
 
-CommentInfo::CommentInfo(const std::string& text_, const std::string& id_, long created_time_, const UserInfo& user_info_) : BaseResult{}, text{ text_ }, id{ id_ }, created_time{ created_time_ }, user_info{ user_info_ } {}
+CommentInfo::CommentInfo(const std::string& text, const std::string& id, long createTime, const UserInfo& userInfo) : BaseResult{}, m_text{text}, m_id{id}, m_createTime{createTime}, m_userInfo{userInfo} {}
 
-CommentInfo::CommentInfo(const CommentInfo& comment_info) : BaseResult{ comment_info }, text{ comment_info.text }, id{ comment_info.id }, created_time{ comment_info.created_time }, user_info{ comment_info.user_info } {}
+CommentInfo::CommentInfo(const CommentInfo& commentInfo) : BaseResult{commentInfo}, m_text{commentInfo.m_text}, m_id{commentInfo.m_id}, m_createTime{commentInfo.m_createTime}, m_userInfo{commentInfo.m_userInfo} {}
 
-CommentInfo::CommentInfo(CommentInfo&& comment_info) : BaseResult{ std::forward<BaseResult>(comment_info) },
-                                                       text{ std::move(comment_info.text) },
-                                                       id{ comment_info.id },
-                                                       created_time{ comment_info.created_time },
-                                                       user_info{ std::move(comment_info.user_info) } {
-    comment_info.id = -1;
-    comment_info.created_time = -1;
+CommentInfo::CommentInfo(CommentInfo&& commentInfo) : BaseResult{std::move(commentInfo)},
+                                                       m_text{std::move(commentInfo.m_text)},
+                                                       m_id{std::move(commentInfo.m_id)},
+                                                       m_createTime{commentInfo.m_createTime},
+                                                       m_userInfo{std::move(commentInfo.m_userInfo) } {
+    commentInfo.m_createTime = -1;
 }
 
-CommentInfo::CommentInfo(const std::string& err_msg) : BaseResult{ err_msg } {}
+CommentInfo::CommentInfo(const std::string& errMsg) : BaseResult{errMsg} {}
 
-CommentInfo::CommentInfo(const char* err_msg) : BaseResult{ err_msg } { }
+CommentInfo::CommentInfo(const char* errMsg) : BaseResult{errMsg} {}
 
 CommentInfo::~CommentInfo() {}
 
-CommentInfo& CommentInfo::operator=(const CommentInfo& comment_info) {
-    if (this == &comment_info) {
+CommentInfo& CommentInfo::operator=(const CommentInfo& commentInfo) {
+    if (this == &commentInfo) {
         return *this;
     }
 
-    BaseResult::operator=(comment_info);
+    BaseResult::operator=(commentInfo);
 
-    text = comment_info.text;
-    id = comment_info.id;
-    created_time = comment_info.created_time;
-    user_info = comment_info.user_info;
+    m_text = commentInfo.m_text;
+    m_id = commentInfo.m_id;
+    m_createTime = commentInfo.m_createTime;
+    m_userInfo = commentInfo.m_userInfo;
 
     return *this;
 }
 
-CommentInfo& CommentInfo::operator=(CommentInfo&& comment_info) {
-    if (this == &comment_info) {
+CommentInfo& CommentInfo::operator=(CommentInfo&& commentInfo) {
+    if (this == &commentInfo) {
         return *this;
     }
 
-    BaseResult::operator=(std::forward<BaseResult>(comment_info));
-    text = std::move(comment_info.text);
+    BaseResult::operator=(std::forward<BaseResult>(commentInfo));
+    m_text = std::move(commentInfo.m_text);
 
-    id = comment_info.id;
-    comment_info.id = -1;
+    m_id = commentInfo.m_id;
+    commentInfo.m_id = -1;
 
-    created_time = comment_info.created_time;
-    comment_info.created_time = -1;
+    m_createTime = commentInfo.m_createTime;
+    commentInfo.m_createTime = -1;
 
-    user_info = std::move(comment_info.user_info);
+    m_userInfo = std::move(commentInfo.m_userInfo);
     return *this;
 }
 
-const std::string& CommentInfo::get_text() const noexcept {
-    return text;
+const std::string& CommentInfo::text() const noexcept {
+    return m_text;
 }
 
-const std::string& CommentInfo::get_id() const noexcept {
-    return id;
+const std::string& CommentInfo::id() const noexcept {
+    return m_id;
 }
 
-long CommentInfo::get_created_time() const noexcept {
-    return created_time;
+long CommentInfo::createTime() const noexcept {
+    return m_createTime;
 }
 
-const UserInfo& CommentInfo::get_user_info() const noexcept {
-    return user_info;
+const UserInfo& CommentInfo::userInfo() const noexcept {
+    return m_userInfo;
 }
 
-void CommentInfo::set_text(const std::string& text_) {
-    text = text_;
+void CommentInfo::setText(const std::string &text) {
+    m_text = text;
 }
 
-void CommentInfo::set_id(const std::string&  id_) {
-    id = id_;
+void CommentInfo::setId(const std::string &id) {
+    m_id = id;
 }
 
-void CommentInfo::set_created_time(long create_time_) {
-    created_time = create_time_;
+void CommentInfo::setCreateTime(long create_time_) {
+    m_createTime = create_time_;
 }
 
-void CommentInfo::set_user_info(const UserInfo& user_info_) {
-    user_info = user_info_;
+void CommentInfo::setUserInfo(const UserInfo &userInfo) {
+    m_userInfo = userInfo;
 }
 
 }

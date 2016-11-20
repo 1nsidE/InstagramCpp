@@ -9,22 +9,22 @@ class EXPORT_INSTAGRAM RelationshipInfo : public BaseResult{
 public:
     RelationshipInfo();
     RelationshipInfo(const std::string& incoming, const std::string& outgoing);
-    RelationshipInfo(const RelationshipInfo& rel_info);
-    RelationshipInfo(RelationshipInfo&& rel_info);
+    RelationshipInfo(const RelationshipInfo& relInfo);
+    RelationshipInfo(RelationshipInfo&& relInfo);
 
-    RelationshipInfo(const char* err_msg);
-    RelationshipInfo(const std::string& err_msg);
+    RelationshipInfo(const char* errMsg);
+    RelationshipInfo(const std::string& errMsg);
 
     ~RelationshipInfo();
 
-    const std::string& get_incoming_status() const noexcept;
-    const std::string& get_outgoing_status() const noexcept;
+    const std::string& incomingStatus() const noexcept;
+    const std::string& outgoingStatus() const noexcept;
 
-    void set_incoming_status(const std::string& status);
-    void set_outgoing_status(const std::string& status);
+    void setIncomingStatus(const std::string& status);
+    void setOutgoingStatus(const std::string& status);
 private:
-    std::string incoming_status;
-    std::string outgoing_status;
+    std::string m_incomingStatus{};
+    std::string m_outgoingStatus{};
 };
 
 }

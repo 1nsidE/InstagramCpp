@@ -16,70 +16,70 @@ enum class MediaType{ UNKNOWN, IMAGE, VIDEO };
 class EXPORT_INSTAGRAM MediaEntry : public BaseResult{
 public:
     MediaEntry();
-    MediaEntry(const std::string& err);
-    MediaEntry(const char* err);
-    MediaEntry(const MediaEntry& media_entry);
-    MediaEntry(MediaEntry&& media_entry);
+    MediaEntry(const std::string& errMsg);
+    MediaEntry(const char* errMsg);
+    MediaEntry(const MediaEntry& mediaEntry);
+    MediaEntry(MediaEntry&& mediaEntry);
     ~MediaEntry();
 
-    MediaEntry& operator=(const MediaEntry& media_entry);
-    MediaEntry& operator=(MediaEntry&& media_entry);
+    MediaEntry& operator=(const MediaEntry& mediaEntry);
+    MediaEntry& operator=(MediaEntry&& mediaEntry);
 
-    MediaType get_type() const noexcept;
-    const std::string& get_link() const noexcept;
-    const std::string& get_id() const noexcept;
-    const std::string& get_caption() const noexcept;
-    const std::string& get_standart_resolution() const noexcept;
-    const std::string& get_thumbnail() const noexcept;
-    const std::string& get_low_resolution() const noexcept;
-    const std::string& get_filter() const noexcept;
+    MediaType type() const noexcept;
+    const std::string& link() const noexcept;
+    const std::string& id() const noexcept;
+    const std::string& caption() const noexcept;
+    const std::string& standartResolution() const noexcept;
+    const std::string& thumbnail() const noexcept;
+    const std::string& lowResolution() const noexcept;
+    const std::string& filter() const noexcept;
 
-    const std::string& get_video_low() const noexcept;
-    const std::string& get_video_standart() const noexcept;
+    const std::string& videoLowResolution() const noexcept;
+    const std::string& videoStandartResolution() const noexcept;
 
-    const std::vector<std::string>& get_tags() const noexcept;
-    const std::vector<std::string>& get_users_in_photo() const noexcept;
+    const std::vector<std::string>& tags() const noexcept;
+    const std::vector<std::string>& usersInPhoto() const noexcept;
 
-    int get_comments_count() const noexcept;
-    int get_like_count() const noexcept;
-    long get_created_time() const noexcept;
+    int commentsCount() const noexcept;
+    int likesCount() const noexcept;
+    long createTime() const noexcept;
 
-    void set_type(MediaType type);
-    void set_link(const std::string& link_);
-    void set_id(const std::string& id);
-    void set_caption(const std::string& caption);
-    void set_standart_resolution(const std::string& url);
-    void set_thumbnail(const std::string& url);
-    void set_low_resolution(const std::string& url);
-    void set_filter(const std::string& _filter);
+    void setType(MediaType type);
+    void setLink(const std::string& link);
+    void setId(const std::string& id);
+    void setCaption(const std::string& caption);
+    void setStandartResolution(const std::string& url);
+    void setThumbnail(const std::string& url);
+    void setLowResolution(const std::string& url);
+    void setFilter(const std::string& filter);
 
-    void set_video_low(const std::string& url);
-    void set_video_standart(const std::string& url);
+    void setVideoLowResolution(const std::string& url);
+    void setVideoStandartResolution(const std::string& url);
 
-    void set_comments_count(int count);
-    void set_like_count(int count);
-    void set_created_time(long time);
+    void setCommentsCount(int count);
+    void setLikeCount(int count);
+    void setCreateTime(long time);
 
-    void add_tag(const std::string& tag);
-    void add_user_in_photo(const std::string& user_id);
+    void addTag(const std::string& tag);
+    void addUser(const std::string& userId);
 private:
-    std::string link;
-    std::string id;
-    std::string caption;
-    std::string low_resolution;
-    std::string thumbnail;
-    std::string standart_resolution;
-    std::string filter;
+    std::string m_link{};
+    std::string m_id{};
+    std::string m_caption{};
+    std::string m_lowResolution{};
+    std::string m_thumbnail{};
+    std::string m_standartResolution{};
+    std::string m_filter{};
 
-    std::string video_low{};
-    std::string video_standart{};
+    std::string m_videoLow{};
+    std::string m_videoStandart{};
 
-    std::vector<std::string> tags;
-    std::vector<std::string> users_in_photo;
-    int comments_count = -1;
-    int likes_count = -1;
-    long created_time = -1;
-    MediaType media_type = MediaType::UNKNOWN;
+    std::vector<std::string> m_tags;
+    std::vector<std::string> m_users;
+    int m_commentsCount = -1;
+    int m_likesCount = -1;
+    long m_createTime = -1;
+    MediaType m_mediaType = MediaType::UNKNOWN;
 };
 
 }

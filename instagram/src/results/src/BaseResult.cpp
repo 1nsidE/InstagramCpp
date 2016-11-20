@@ -9,30 +9,30 @@ namespace Instagram {
 
 BaseResult::BaseResult() {}
 
-BaseResult::BaseResult(const char *err_msg) {
-    if (err_msg == nullptr) {
+BaseResult::BaseResult(const char *errMsg) {
+    if (errMsg == nullptr) {
         throw std::invalid_argument("err_msg cannot be null");
     }
 
-    m_errMsg = std::make_unique<std::string>(err_msg);
+    m_errMsg = std::make_unique<std::string>(errMsg);
 }
 
-BaseResult::BaseResult(const std::string& err_msg) {
-    m_errMsg = std::make_unique<std::string>(std::string{err_msg});
+BaseResult::BaseResult(const std::string& errMsg) {
+    m_errMsg = std::make_unique<std::string>(std::string{errMsg});
 }
 
-BaseResult::BaseResult(BaseResult&& base_result) : m_errMsg{std::move(base_result.m_errMsg)} {}
+BaseResult::BaseResult(BaseResult&& baseResult) : m_errMsg{std::move(baseResult.m_errMsg)} {}
 
-BaseResult::BaseResult(const BaseResult& base_result) {
-    if (base_result.m_errMsg) {
-        m_errMsg = std::make_unique<std::string>(*base_result.m_errMsg);
+BaseResult::BaseResult(const BaseResult& baseResult) {
+    if (baseResult.m_errMsg) {
+        m_errMsg = std::make_unique<std::string>(*baseResult.m_errMsg);
     }
 }
 
 BaseResult::~BaseResult() {}
 
-BaseResult& BaseResult::operator=(const BaseResult& base_result) {
-    if (this == &base_result) {
+BaseResult& BaseResult::operator=(const BaseResult& baseResult) {
+    if (this == &baseResult) {
         return *this;
     }
 
@@ -40,33 +40,33 @@ BaseResult& BaseResult::operator=(const BaseResult& base_result) {
         m_errMsg.reset();
     }
 
-    if (base_result.m_errMsg) {
-        m_errMsg = std::make_unique<std::string>(*base_result.m_errMsg);
+    if (baseResult.m_errMsg) {
+        m_errMsg = std::make_unique<std::string>(*baseResult.m_errMsg);
     }
 
     return *this;
 }
 
-BaseResult& BaseResult::operator=(BaseResult&& base_result) {
-    if (this == &base_result) {
+BaseResult& BaseResult::operator=(BaseResult&& baseResult) {
+    if (this == &baseResult) {
         return *this;
     }
 
-    m_errMsg = std::move(base_result.m_errMsg);
+    m_errMsg = std::move(baseResult.m_errMsg);
 
     return *this;
 }
 
 BaseResult::operator bool() const noexcept {
-    return is_succeed();
+    return succeed();
 }
 
-const std::string& BaseResult::get_error_message() const noexcept {
-    const static std::string empty_error{ "" };
-    return m_errMsg ? *m_errMsg : empty_error;
+const std::string& BaseResult::errorMessage() const noexcept {
+    const static std::string emptyError{""};
+    return m_errMsg ? *m_errMsg : emptyError;
 }
 
-bool BaseResult::is_succeed() const noexcept {
+bool BaseResult::succeed() const noexcept {
     return m_errMsg == nullptr;
 }
 

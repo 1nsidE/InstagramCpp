@@ -26,7 +26,7 @@ message("JsonCPP library path is: " ${JSON_LIB_NAME})
 
 set(INSTAGRAM_SOURCES 
     InstagramClient.cpp
-    InstagramParser.cpp
+    InstagramParsers.cpp
 )
 
 add_library(instagramcpp SHARED ${INSTAGRAM_SOURCES}

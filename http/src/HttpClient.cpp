@@ -24,89 +24,89 @@ HttpClient::HttpClient(HttpClient&& http_client) : m_hostToSocketMap {std::move(
 HttpClient::~HttpClient() {}
 
 HttpResponse HttpClient::get(const HttpUrl& url) {
-    HttpRequest http_request = get_default_request();
-    http_request.set_method(Method::GET);
-    http_request.set_url(url);
+    HttpRequest httpRequest = getDefaultRequest();
+    httpRequest.setMethod(Method::GET);
+    httpRequest.setUrl(url);
 
-    return send_request(http_request);
+    return sendRequest(httpRequest);
 }
 
 HttpResponse HttpClient::post(const HttpUrl& url, const std::string& data, const std::string& content_type) {
-    HttpRequest http_request = get_default_request();
-    http_request.set_method(Method::POST);
-    http_request.set_url(url);
-    http_request.set_data(data);
-    http_request[Header::CONTENT_TYPE] = content_type;
-    http_request[Header::CONTENT_LENGTH] = std::to_string(data.size());
+    HttpRequest httpRequest = getDefaultRequest();
+    httpRequest.setMethod(Method::POST);
+    httpRequest.setUrl(url);
+    httpRequest.setData(data);
+    httpRequest[Header::CONTENT_TYPE] = content_type;
+    httpRequest[Header::CONTENT_LENGTH] = std::to_string(data.size());
 
-    return send_request(http_request);
+    return sendRequest(httpRequest);
 }
 
 HttpResponse HttpClient::post(const HttpUrl& url, const FormData& form_data) {
-    return post(url, form_data.get_string(), form_data.get_content_type());
+    return post(url, form_data.getString(), form_data.contentType());
 }
 
 HttpResponse HttpClient::post(const HttpUrl& url, const std::pair<std::string, std::string>& type_and_data) {
-    HttpRequest http_request = get_default_request();
-    http_request.set_method(Method::POST);
-    http_request.set_url(url);
-    http_request[Header::CONTENT_TYPE] = type_and_data.first;
-    http_request.set_data(type_and_data.second);
-    http_request[Header::CONTENT_LENGTH] = std::to_string(type_and_data.second.size());
+    HttpRequest httpRequest = getDefaultRequest();
+    httpRequest.setMethod(Method::POST);
+    httpRequest.setUrl(url);
+    httpRequest[Header::CONTENT_TYPE] = type_and_data.first;
+    httpRequest.setData(type_and_data.second);
+    httpRequest[Header::CONTENT_LENGTH] = std::to_string(type_and_data.second.size());
 
-    return send_request(http_request);
+    return sendRequest(httpRequest);
 }
 
 HttpResponse HttpClient::del(const HttpUrl& url) {
-    HttpRequest request = get_default_request();
-    request.set_method(Method::DELETE);
-    request.set_url(url);
+    HttpRequest request = getDefaultRequest();
+    request.setMethod(Method::DELETE);
+    request.setUrl(url);
 
-    return send_request(request);
+    return sendRequest(request);
 }
 
-HttpRequest HttpClient::get_default_request() {
-    HttpRequest http_request {};
-    http_request[Header::USER_AGENT] = "http_client";
-    http_request[Header::CONNECTION] = "keep-alive";
-    http_request[Header::ACCEPT_ENCODING] = "*/*";
+HttpRequest HttpClient::getDefaultRequest() {
+    HttpRequest httpRequest {};
+    httpRequest[Header::USER_AGENT] = "http_client";
+    httpRequest[Header::CONNECTION] = "keep-alive";
+    httpRequest[Header::ACCEPT_ENCODING] = "*/*";
 
-    return http_request;
+    return httpRequest;
 }
 
-HttpResponse HttpClient::send_request(const HttpRequest& http_request) {
+HttpResponse HttpClient::sendRequest(const HttpRequest& httpRequest) {
     HttpResponse response{};
     try{
-        send(http_request);
-        response = receive(http_request.get_url(), 20);
+        send(httpRequest);
+        response = receive(httpRequest.getUrl(), 20);
 
         if (response[Header::CONNECTION] == "close") {
-            disconnect(http_request.get_url());
+            disconnect(httpRequest.getUrl());
         }
     }catch(const std::exception& err){
         std::string errMsg = "Internal client error : ";
-        response.set_status(errMsg + err.what(), -1);
+        response.setStatus(errMsg + err.what(), -1);
     }catch(...){
-        response.set_status("Unknown client error", -1);
+        response.setStatus("Unknown client error", -1);
     }
 
     return response;
 }
 
-HttpResponse HttpClient::operator<<(const HttpRequest &http_request) {
-    return send_request(http_request);
+HttpResponse HttpClient::operator<<(const HttpRequest &httpRequest) {
+    return sendRequest(httpRequest);
 }
 
 HttpResponse HttpClient::operator<<(const HttpUrl& url) {
     return get(url);
 }
 
-void HttpClient::send(const HttpRequest& http_request) {
-    const std::string& str = http_request.get_string();
+void HttpClient::send(const HttpRequest& httpRequest) {
+    const std::string& str = httpRequest.getString();
     const char* request = str.c_str();
     const size_t length = str.length();
 
-    SocketPtr socket = get_socket(http_request.get_url());
+    SocketPtr socket = getSocket(httpRequest.getUrl());
     if(!socket){
         return;
     }
@@ -115,13 +115,13 @@ void HttpClient::send(const HttpRequest& http_request) {
     while (written < length) {
         long count = socket->write(request + written, length - written);
         if (count < 0) {
-            switch (socket->get_last_err()) {
+            switch (socket->lastError()) {
             case Socket::Error::INTERRUPTED:
                 continue;
             default:
-                std::string err_msg = "Failed to send data : ";
-                err_msg += socket->get_last_err_str();
-                throw HttpFailedToSend(err_msg);
+                std::string errMsg = "Failed to send data : ";
+                errMsg += socket->lastErrorString();
+                throw HttpFailedToSend(errMsg);
             }
         }
 
@@ -132,63 +132,63 @@ void HttpClient::send(const HttpRequest& http_request) {
 HttpResponse HttpClient::receive(const HttpUrl& url, unsigned int timeout) {
     std::string response = read(url, timeout);
 
-    HttpResponse http_response = response;
-    if (http_response.get_code() == Status::UNKNOWN) {
+    HttpResponse httpResponse = response;
+    if (httpResponse.code() == Status::UNKNOWN) {
         int retry_count = 3;
-        while (retry_count && http_response.get_code() == Status::UNKNOWN) {
+        while (retry_count && httpResponse.code() == Status::UNKNOWN) {
             response.append(read(url, timeout));
-            http_response = response;
+            httpResponse = response;
             --retry_count;
         }
     }
 
-    if (http_response.get_code() == Status::UNKNOWN) {
-        return http_response;
+    if (httpResponse.code() == Status::UNKNOWN) {
+        return httpResponse;
     }
     
-    size_t content_len = http_response.content_len();
+    size_t contentLen = httpResponse.contentLen();
 
-    if (content_len >= std::numeric_limits<unsigned int>::max()) {
+    if (contentLen >= std::numeric_limits<unsigned int>::max()) {
         throw HttpTooBigResponse { "server response is too big!" };
     }
 
-    size_t actual_content_len = http_response.data_len();
-    while (content_len > actual_content_len) {
+    size_t actual_contentLen = httpResponse.dataLen();
+    while (contentLen > actual_contentLen) {
         const std::string& data = read(url, timeout);
-        actual_content_len += data.length();
-        http_response.append_data(data);
+        actual_contentLen += data.length();
+        httpResponse.appendData(data);
     }
 
-    return http_response;
+    return httpResponse;
 }
 
 std::string HttpClient::read(const HttpUrl& url, unsigned int timeout) {
     std::string result {};
     
-    SocketPtr socket = get_socket(url);
+    SocketPtr socket = getSocket(url);
     if(!socket){
         return "";
     }
 
-    if (socket->wait_for_read(timeout)) {
-        const static unsigned int buff_size = 1024;
-        char buff[buff_size] = {};
-        while (long count = socket->read(buff, buff_size)) {
+    if (socket->waitForRead(timeout)) {
+        const static unsigned int buffSize = 1024;
+        char buff[buffSize] = {};
+        while (long count = socket->read(buff, buffSize)) {
             if (count < 0) {
-                switch (socket->get_last_err()) {
+                switch (socket->lastError()) {
                 case Socket::Error::WOULDBLOCK:
                     return result;
                 case Socket::Error::INTERRUPTED:
                     continue;
                 default:
-                    std::string err_msg = "Failed to recieve data : ";
-                    err_msg += socket->get_last_err_str();
-                    throw HttpFailedToRecieve(err_msg);
+                    std::string errMsg = "Failed to recieve data : ";
+                    errMsg += socket->lastErrorString();
+                    throw HttpFailedToRecieve(errMsg);
                 }
             }
 
             result.append(buff, static_cast<size_t>(count));
-            std::memset(buff, 0, buff_size);
+            std::memset(buff, 0, buffSize);
         }
     }
 
@@ -197,16 +197,16 @@ std::string HttpClient::read(const HttpUrl& url, unsigned int timeout) {
 
 HttpClient::SocketPtr HttpClient::connect(const HttpUrl& url) {
     
-    const std::string& host = url.get_host();
+    const std::string& host = url.host();
     
     SocketPtr socket{};
-    HttpProtocol httpProtocol = url.get_protocol();
+    HttpProtocol httpProtocol = url.protocol();
     switch (httpProtocol) {
     case HttpProtocol::HTTPS:
-        socket = std::make_shared<Socket::SSLSocket>(host, to_string(httpProtocol));
+        socket = std::make_shared<Socket::SSLSocket>(host, toString(httpProtocol));
         break;
     case HttpProtocol::HTTP:
-        socket = std::make_shared<Socket::TCPSocket>(host, to_string(httpProtocol));
+        socket = std::make_shared<Socket::TCPSocket>(host, toString(httpProtocol));
         break;
     case HttpProtocol::UNKNOWN:
         break;
@@ -214,17 +214,17 @@ HttpClient::SocketPtr HttpClient::connect(const HttpUrl& url) {
     }
     
     if(socket){
-        socket->make_non_blocking();
+        socket->makeNonBlocking();
     }
     return socket;
 }
 
 void HttpClient::disconnect(const HttpUrl& url) {
-    m_hostToSocketMap.erase(url.get_host());
+    m_hostToSocketMap.erase(url.host());
 }
 
-HttpClient::SocketPtr HttpClient::get_socket(const HttpUrl& url){
-    const std::string& host = url.get_host();
+HttpClient::SocketPtr HttpClient::getSocket(const HttpUrl& url){
+    const std::string& host = url.host();
     
     SocketPtr socket = m_hostToSocketMap[host];
     if(!socket){

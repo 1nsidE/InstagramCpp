@@ -29,25 +29,25 @@ public:
     ~HttpClient();
 
     HttpResponse get(const HttpUrl& url);
-    HttpResponse post(const HttpUrl& url, const std::string& data, const std::string& content_type);
-    HttpResponse post(const HttpUrl& url, const std::pair<std::string, std::string>& type_and_data);
+    HttpResponse post(const HttpUrl& url, const std::string& data, const std::string& contentType);
+    HttpResponse post(const HttpUrl& url, const std::pair<std::string, std::string>& typeAndData);
     HttpResponse post(const HttpUrl& url, const FormData& form_data);
     HttpResponse del(const HttpUrl& url);
 
-    HttpResponse send_request(const HttpRequest& http_request);
-    HttpResponse operator<<(const HttpRequest& http_request);
+    HttpResponse sendRequest(const HttpRequest& httpRequest);
+    HttpResponse operator<<(const HttpRequest& httpRequest);
     HttpResponse operator<<(const HttpUrl& url);
 
 private:
-    HttpRequest get_default_request();
-    void send(const HttpRequest& http_request);
+    HttpRequest getDefaultRequest();
+    void send(const HttpRequest& httpRequest);
 
     HttpResponse receive(const HttpUrl& url, unsigned int timeout);
     std::string read(const HttpUrl& url, unsigned int timeout);
     std::string read_until(size_t len, long timeout);
 
     using SocketPtr = std::shared_ptr<Socket::TCPSocket>;
-    SocketPtr get_socket(const HttpUrl& url);
+    SocketPtr getSocket(const HttpUrl& url);
     SocketPtr connect(const HttpUrl& url);
     void disconnect(const HttpUrl& url);
 

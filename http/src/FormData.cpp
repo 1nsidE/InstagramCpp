@@ -7,43 +7,43 @@
 
 namespace Http {
 
-FormData::FormData(const std::string &_boundary) : boundary(_boundary) {}
+FormData::FormData(const std::string &boundary) : m_boundary{boundary} {}
 
-FormData::FormData(const FormData& form_data) : data { form_data.data }, boundary { form_data.boundary } {}
+FormData::FormData(const FormData& formData) : m_data{formData.m_data}, m_boundary{formData.m_boundary} {}
 
-FormData::FormData(FormData&& form_data) : data { std::move(form_data.data) }, boundary { std::move(form_data.boundary) } {}
+FormData::FormData(FormData&& formData) : m_data{std::move(formData.m_data)}, m_boundary{std::move(formData.m_boundary)} {}
 
-void FormData::add_pair(const std::string &name, const std::string &value) {
-    data[name] = value;
+void FormData::addPair(const std::string &name, const std::string &value) {
+    m_data[name] = value;
 }
 
 const std::string& FormData::operator[](const std::string& key) const {
-    const static std::string empty_name = "";
-    return data.count(key) ? data.at(key) : empty_name;
+    const static std::string emptyName = "";
+    return m_data.count(key) ? m_data.at(key) : emptyName;
 }
 
 std::string& FormData::operator[](const std::string& key) {
-    return data[key];
+    return m_data[key];
 }
 
-const std::string FormData::get_string() const {
-    if (data.size() == 0) {
+const std::string FormData::getString() const {
+    if (m_data.size() == 0) {
         return "";
     }
     std::string result{};
 
-    for (const auto &p : data) {
-        result.append("--").append(boundary).append(CRLF);
+    for (const auto &p : m_data) {
+        result.append("--").append(m_boundary).append(CRLF);
         result.append(CONTENT_DISP).append("\"").append(p.first).append("\"").append(CRLF).append(CRLF);
         result.append(p.second).append(CRLF);
     }
-    result.append("--").append(boundary).append("--");
+    result.append("--").append(m_boundary).append("--");
     return result;
 }
 
-std::string FormData::get_content_type() const {
-    std::string content_type { CONTENT_TYPE };
-    content_type.append(boundary);
+std::string FormData::contentType() const {
+    std::string content_type {CONTENT_TYPE};
+    content_type.append(m_boundary);
     return content_type;
 }
 

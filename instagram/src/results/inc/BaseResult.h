@@ -9,21 +9,21 @@ namespace  Instagram{
 class EXPORT_INSTAGRAM BaseResult{
 public:
     BaseResult();
-    BaseResult(const char* err_msg);
-    BaseResult(const std::string& err_msg);
+    BaseResult(const char* errMsg);
+    BaseResult(const std::string& errMsg);
 
-    BaseResult(const BaseResult& base_result);
-    BaseResult(BaseResult&& base_result);
+    BaseResult(const BaseResult& baseResult);
+    BaseResult(BaseResult&& baseResult);
 
     virtual ~BaseResult();
 
-    BaseResult& operator=(const BaseResult& base_result);
-    BaseResult& operator=(BaseResult&& base_result);
+    BaseResult& operator=(const BaseResult& baseResult);
+    BaseResult& operator=(BaseResult&& baseResult);
 
     explicit operator bool() const noexcept;
 
-    const std::string& get_error_message() const noexcept;
-    bool is_succeed() const noexcept;
+    const std::string& errorMessage() const noexcept;
+    bool succeed() const noexcept;
 private:
     using ErrPtr = std::unique_ptr<std::string>;
     ErrPtr m_errMsg;

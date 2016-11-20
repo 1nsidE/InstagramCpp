@@ -12,11 +12,11 @@ HttpRequest::HttpRequest(const HttpRequest& request) : HttpHeader {request}, m_m
 HttpRequest::HttpRequest(HttpRequest&& request) : HttpHeader {std::move(request)}, m_method {request.m_method}, m_url{std::move(request.m_url)} {}
 
 HttpRequest::HttpRequest(const HttpUrl& url, Method method) : HttpHeader{}, m_method{method}, m_url{url}{
-    set_host(url.get_host());
+    setHost(url.host());
 }
 
 HttpRequest::HttpRequest(HttpUrl &&url, Method method) : HttpHeader{}, m_method{method}, m_url{std::move(url)} {
-    set_host(url.get_host());
+    setHost(url.host());
 }
 
 HttpRequest::HttpRequest(const std::string& request){
@@ -50,38 +50,38 @@ HttpRequest& HttpRequest::operator=(HttpRequest&& http_request) {
     return *this;
 }
 
-void HttpRequest::set_method(Http::Method method) {
+void HttpRequest::setMethod(Http::Method method) {
     m_method = method;
 }
 
-Http::Method HttpRequest::get_method() const {
+Http::Method HttpRequest::method() const {
     return m_method;
 }
 
-std::string HttpRequest::get_string() const {
+std::string HttpRequest::getString() const {
     if (m_method == Http::Method::UNKNOWN) {
         return "";
     }
 
-    std::string result { to_string(m_method) };
-    result += " " + m_url.get_endpoint() + ARG_START_DELIMETER + m_url.get_arguments() + " " + HTTP_1_1 + CRLF;
+    std::string result { toString(m_method) };
+    result += " " + m_url.endpoint() + ARG_START_DELIMETER + m_url.arguments() + " " + HTTP_1_1 + CRLF;
 
-    result += HttpHeader::get_string();
+    result += HttpHeader::getString();
     return result;
 }
 
-void HttpRequest::set_url(const HttpUrl& url) {
+void HttpRequest::setUrl(const HttpUrl& url) {
     m_url = url;
-    set_host(url.get_host());
+    setHost(url.host());
 }
 
 
-void HttpRequest::set_url(HttpUrl&& url) {
+void HttpRequest::setUrl(HttpUrl&& url) {
     m_url = std::move(url);
-    set_host(m_url.get_host());
+    setHost(m_url.host());
 }
 
-const HttpUrl& HttpRequest::get_url() const noexcept {
+const HttpUrl& HttpRequest::getUrl() const noexcept {
     return m_url;
 }
 
@@ -99,21 +99,21 @@ void HttpRequest::parse(const std::string& request){
         throw std::runtime_error({ "invalid request header: " + line });
     }
     
-    set_method(from_str(tokens[0]));
+    setMethod(fromStr(tokens[0]));
 
     HttpUrl url{tokens[1]};
-    set_url(std::move(url));
+    setUrl(std::move(url));
 
     while (std::getline(string_stream, line)) {
         if (!line.compare("\r")) {
             break;
         }
-        add_header(line);
+        addHeader(line);
     }
     
     size_t pos{0};
     if ((pos = static_cast<size_t>(string_stream.tellg())) < request.length()) {
-        set_data(request.substr(pos, request.length() - pos));
+        setData(request.substr(pos, request.length() - pos));
     }
 }
 

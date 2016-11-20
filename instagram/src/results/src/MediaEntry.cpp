@@ -8,228 +8,232 @@ namespace Instagram {
 
 MediaEntry::MediaEntry() : BaseResult{} {}
 
-MediaEntry::MediaEntry(const std::string& err) : BaseResult{ err } {}
+MediaEntry::MediaEntry(const std::string& errMsg) : BaseResult{errMsg} {}
 
-MediaEntry::MediaEntry(const char* err) : BaseResult{ err } {}
+MediaEntry::MediaEntry(const char* errMsg) : BaseResult{errMsg} {}
 
-MediaEntry::MediaEntry(const MediaEntry &media_entry) : BaseResult{ media_entry },
-                                                        link{ media_entry.link },
-                                                        id{ media_entry.id },
-                                                        caption{ media_entry.caption },
-                                                        low_resolution{ media_entry.low_resolution },
-                                                        thumbnail{ media_entry.thumbnail },
-                                                        standart_resolution{ media_entry.standart_resolution },
-                                                        filter{ media_entry.filter },
-                                                        video_low{ media_entry.video_low },
-                                                        video_standart{ media_entry.video_standart },
-                                                        tags{ media_entry.tags },
-                                                        users_in_photo{ media_entry.users_in_photo },
-                                                        comments_count{ media_entry.comments_count },
-                                                        likes_count{ media_entry.likes_count },
-                                                        created_time{ media_entry.created_time },
-                                                        media_type{ media_entry.media_type } {}
+MediaEntry::MediaEntry(const MediaEntry &mediaEntry) : BaseResult{mediaEntry},
+                                                        m_link{mediaEntry.m_link},
+                                                        m_id{mediaEntry.m_id},
+                                                        m_caption{mediaEntry.m_caption},
+                                                        m_lowResolution{mediaEntry.m_lowResolution},
+                                                        m_thumbnail{mediaEntry.m_thumbnail},
+                                                        m_standartResolution{mediaEntry.m_standartResolution},
+                                                        m_filter{mediaEntry.m_filter},
+                                                        m_videoLow{mediaEntry.m_videoLow},
+                                                        m_videoStandart{mediaEntry.m_videoStandart},
+                                                        m_tags{mediaEntry.m_tags},
+                                                        m_users{mediaEntry.m_users},
+                                                        m_commentsCount{mediaEntry.m_commentsCount},
+                                                        m_likesCount{mediaEntry.m_likesCount},
+                                                        m_createTime{mediaEntry.m_createTime},
+                                                        m_mediaType{mediaEntry.m_mediaType} {}
 
-MediaEntry::MediaEntry(MediaEntry &&media_entry) : BaseResult{ std::move(media_entry) },
-                                                   link{ std::move(media_entry.link) },
-                                                   id{ std::move(media_entry.id) },
-                                                   caption{ std::move(media_entry.caption) },
-                                                   low_resolution{ std::move(media_entry.low_resolution) },
-                                                   thumbnail{ std::move(media_entry.thumbnail) },
-                                                   standart_resolution{ std::move(media_entry.standart_resolution) },
-                                                   filter{ std::move(media_entry.filter) },
-                                                   video_low{ media_entry.video_low },
-                                                   video_standart{ media_entry.video_standart },
-                                                   tags(std::move(media_entry.tags)),
-                                                   users_in_photo{ std::move(media_entry.users_in_photo) },
-                                                   comments_count(media_entry.comments_count),
-                                                   likes_count(media_entry.likes_count),
-                                                   created_time(media_entry.created_time),
-                                                   media_type{ media_entry.media_type } {
-    media_entry.comments_count = -1;
-    media_entry.likes_count = -1;
-    media_entry.created_time = -1;
-    media_entry.media_type = MediaType::UNKNOWN;
+MediaEntry::MediaEntry(MediaEntry &&mediaEntry) : BaseResult{std::move(mediaEntry)},
+                                                   m_link{std::move(mediaEntry.m_link)},
+                                                   m_id{std::move(mediaEntry.m_id)},
+                                                   m_caption{std::move(mediaEntry.m_caption)},
+                                                   m_lowResolution{std::move(mediaEntry.m_lowResolution)},
+                                                   m_thumbnail{std::move(mediaEntry.m_thumbnail)},
+                                                   m_standartResolution{std::move(mediaEntry.m_standartResolution)},
+                                                   m_filter{std::move(mediaEntry.m_filter)},
+                                                   m_videoLow{mediaEntry.m_videoLow},
+                                                   m_videoStandart{mediaEntry.m_videoStandart},
+                                                   m_tags(std::move(mediaEntry.m_tags)),
+                                                   m_users{std::move(mediaEntry.m_users)},
+                                                   m_commentsCount(mediaEntry.m_commentsCount),
+                                                   m_likesCount(mediaEntry.m_likesCount),
+                                                   m_createTime(mediaEntry.m_createTime),
+                                                   m_mediaType{mediaEntry.m_mediaType} {
+    mediaEntry.m_commentsCount = -1;
+    mediaEntry.m_likesCount = -1;
+    mediaEntry.m_createTime = -1;
+    mediaEntry.m_mediaType = MediaType::UNKNOWN;
 }
 
 MediaEntry::~MediaEntry() {}
 
-MediaEntry& MediaEntry::operator=(const MediaEntry& media_entry) {
-    if (this == &media_entry) return *this;
+MediaEntry& MediaEntry::operator=(const MediaEntry& mediaEntry) {
+    if (this == &mediaEntry){
+        return *this;
+    }
 
-    BaseResult::operator=(media_entry);
+    BaseResult::operator=(mediaEntry);
 
-    link = media_entry.link;
-    id = media_entry.id;
-    caption = media_entry.caption;
-    low_resolution = media_entry.low_resolution;
-    thumbnail = media_entry.thumbnail;
-    standart_resolution = media_entry.standart_resolution;
-    filter = media_entry.filter;
-    video_low = media_entry.video_low;
-    video_standart = media_entry.video_standart;
+    m_link = mediaEntry.m_link;
+    m_id = mediaEntry.m_id;
+    m_caption = mediaEntry.m_caption;
+    m_lowResolution = mediaEntry.m_lowResolution;
+    m_thumbnail = mediaEntry.m_thumbnail;
+    m_standartResolution = mediaEntry.m_standartResolution;
+    m_filter = mediaEntry.m_filter;
+    m_videoLow = mediaEntry.m_videoLow;
+    m_videoStandart = mediaEntry.m_videoStandart;
 
-    tags = media_entry.tags;
-    users_in_photo = media_entry.users_in_photo;
+    m_tags = mediaEntry.m_tags;
+    m_users = mediaEntry.m_users;
 
-    comments_count = media_entry.comments_count;
-    likes_count = media_entry.likes_count;
-    created_time = media_entry.created_time;
-    media_type = media_entry.media_type;
-
-    return *this;
-}
-
-MediaEntry& MediaEntry::operator=(MediaEntry&& media_entry) {
-    if (this == &media_entry) return *this;
-
-    BaseResult::operator=(std::move(media_entry));
-
-    link = std::move(media_entry.link);
-    id = std::move(media_entry.id);
-    caption = std::move(media_entry.caption);
-    low_resolution = std::move(media_entry.low_resolution);
-    thumbnail = std::move(media_entry.thumbnail);
-    standart_resolution = std::move(media_entry.standart_resolution);
-    filter = std::move(media_entry.filter);
-    video_low = std::move(media_entry.video_low);
-    video_standart = std::move(media_entry.video_standart);
-
-    tags = std::move(media_entry.tags);
-    users_in_photo = std::move(media_entry.users_in_photo);
-
-    comments_count = media_entry.comments_count;
-    media_entry.comments_count = -1;
-
-    likes_count = media_entry.likes_count;
-    media_entry.likes_count = -1;
-
-    created_time = media_entry.created_time;
-    media_entry.created_time = -1;
-
-    media_type = media_entry.media_type;
-    media_entry.media_type = MediaType::UNKNOWN;
+    m_commentsCount = mediaEntry.m_commentsCount;
+    m_likesCount = mediaEntry.m_likesCount;
+    m_createTime = mediaEntry.m_createTime;
+    m_mediaType = mediaEntry.m_mediaType;
 
     return *this;
 }
 
-MediaType MediaEntry::get_type() const noexcept {
-    return media_type;
+MediaEntry& MediaEntry::operator=(MediaEntry&& mediaEntry) {
+    if (this == &mediaEntry){
+        return *this;
+    }
+
+    BaseResult::operator=(std::move(mediaEntry));
+
+    m_link = std::move(mediaEntry.m_link);
+    m_id = std::move(mediaEntry.m_id);
+    m_caption = std::move(mediaEntry.m_caption);
+    m_lowResolution = std::move(mediaEntry.m_lowResolution);
+    m_thumbnail = std::move(mediaEntry.m_thumbnail);
+    m_standartResolution = std::move(mediaEntry.m_standartResolution);
+    m_filter = std::move(mediaEntry.m_filter);
+    m_videoLow = std::move(mediaEntry.m_videoLow);
+    m_videoStandart = std::move(mediaEntry.m_videoStandart);
+
+    m_tags = std::move(mediaEntry.m_tags);
+    m_users = std::move(mediaEntry.m_users);
+
+    m_commentsCount = mediaEntry.m_commentsCount;
+    mediaEntry.m_commentsCount = -1;
+
+    m_likesCount = mediaEntry.m_likesCount;
+    mediaEntry.m_likesCount = -1;
+
+    m_createTime = mediaEntry.m_createTime;
+    mediaEntry.m_createTime = -1;
+
+    m_mediaType = mediaEntry.m_mediaType;
+    mediaEntry.m_mediaType = MediaType::UNKNOWN;
+
+    return *this;
 }
 
-const std::string& MediaEntry::get_link() const noexcept {
-    return link;
+MediaType MediaEntry::type() const noexcept {
+    return m_mediaType;
 }
 
-const std::string& MediaEntry::get_id() const noexcept {
-    return id;
+const std::string& MediaEntry::link() const noexcept {
+    return m_link;
 }
 
-const std::string& MediaEntry::get_caption() const noexcept {
-    return caption;
+const std::string& MediaEntry::id() const noexcept {
+    return m_id;
 }
 
-const std::vector<std::string>& MediaEntry::get_tags() const noexcept {
-    return tags;
+const std::string& MediaEntry::caption() const noexcept {
+    return m_caption;
 }
 
-const std::vector<std::string>& MediaEntry::get_users_in_photo() const noexcept {
-    return users_in_photo;
+const std::vector<std::string>& MediaEntry::tags() const noexcept {
+    return m_tags;
 }
 
-int MediaEntry::get_comments_count() const  noexcept {
-    return comments_count;
+const std::vector<std::string>& MediaEntry::usersInPhoto() const noexcept {
+    return m_users;
 }
 
-int MediaEntry::get_like_count() const noexcept {
-    return likes_count;
+int MediaEntry::commentsCount() const  noexcept {
+    return m_commentsCount;
 }
 
-long MediaEntry::get_created_time() const noexcept {
-    return created_time;
+int MediaEntry::likesCount() const noexcept {
+    return m_likesCount;
 }
 
-const std::string& MediaEntry::get_standart_resolution() const noexcept {
-    return standart_resolution;
+long MediaEntry::createTime() const noexcept {
+    return m_createTime;
 }
 
-const std::string& MediaEntry::get_thumbnail() const noexcept {
-    return thumbnail;
+const std::string& MediaEntry::standartResolution() const noexcept {
+    return m_standartResolution;
 }
 
-const std::string& MediaEntry::get_low_resolution() const noexcept {
-    return low_resolution;
+const std::string& MediaEntry::thumbnail() const noexcept {
+    return m_thumbnail;
 }
 
-const std::string& MediaEntry::get_filter() const noexcept {
-    return filter;
+const std::string& MediaEntry::lowResolution() const noexcept {
+    return m_lowResolution;
 }
 
-const std::string& MediaEntry::get_video_low() const noexcept {
-    return video_low;
+const std::string& MediaEntry::filter() const noexcept {
+    return m_filter;
 }
 
-const std::string& MediaEntry::get_video_standart() const noexcept {
-    return video_standart;
+const std::string& MediaEntry::videoLowResolution() const noexcept {
+    return m_videoLow;
 }
 
-void MediaEntry::set_type(MediaType type) {
-    media_type = type;
+const std::string& MediaEntry::videoStandartResolution() const noexcept {
+    return m_videoStandart;
 }
 
-void MediaEntry::set_link(const std::string& _link) {
-    link = _link;
+void MediaEntry::setType(MediaType type) {
+    m_mediaType = type;
 }
 
-void MediaEntry::set_id(const std::string& _id) {
-    id = _id;
+void MediaEntry::setLink(const std::string& _m_link) {
+    m_link = _m_link;
 }
 
-void MediaEntry::set_caption(const std::string& _caption) {
-    caption = _caption;
+void MediaEntry::setId(const std::string& id) {
+    m_id = id;
 }
 
-void MediaEntry::add_tag(const std::string &tag) {
-    tags.push_back(tag);
+void MediaEntry::setCaption(const std::string& caption) {
+    m_caption = caption;
 }
 
-void MediaEntry::set_comments_count(int count) {
-    comments_count = count;
+void MediaEntry::addTag(const std::string &tag) {
+    m_tags.push_back(tag);
 }
 
-void MediaEntry::set_like_count(int count) {
-    likes_count = count;
+void MediaEntry::setCommentsCount(int count) {
+    m_commentsCount = count;
 }
 
-void MediaEntry::set_created_time(long time) {
-    created_time = time;
+void MediaEntry::setLikeCount(int count) {
+    m_likesCount = count;
 }
 
-void MediaEntry::set_standart_resolution(const std::string& url) {
-    standart_resolution = url;
+void MediaEntry::setCreateTime(long time) {
+    m_createTime = time;
 }
 
-void MediaEntry::set_thumbnail(const std::string& url) {
-    thumbnail = url;
+void MediaEntry::setStandartResolution(const std::string& url) {
+    m_standartResolution = url;
 }
 
-void MediaEntry::set_low_resolution(const std::string& url) {
-    low_resolution = url;
+void MediaEntry::setThumbnail(const std::string& url) {
+    m_thumbnail = url;
 }
 
-void MediaEntry::set_filter(const std::string& _filter) {
-    filter = _filter;
+void MediaEntry::setLowResolution(const std::string& url) {
+    m_lowResolution = url;
 }
 
-void MediaEntry::set_video_low(const std::string& url) {
-    video_low = url;
+void MediaEntry::setFilter(const std::string& _m_filter) {
+    m_filter = _m_filter;
 }
 
-void MediaEntry::set_video_standart(const std::string& url) {
-    video_standart = url;
+void MediaEntry::setVideoLowResolution(const std::string& url) {
+    m_videoLow = url;
 }
 
-void MediaEntry::add_user_in_photo(const std::string& user) {
-    users_in_photo.push_back(user);
+void MediaEntry::setVideoStandartResolution(const std::string& url) {
+    m_videoStandart = url;
+}
+
+void MediaEntry::addUser(const std::string& user) {
+    m_users.push_back(user);
 }
 
 }

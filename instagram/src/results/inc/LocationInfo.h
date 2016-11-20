@@ -8,28 +8,28 @@ namespace Instagram{
 class EXPORT_INSTAGRAM LocationInfo : public BaseResult{
 public:
     LocationInfo();
-    LocationInfo(const LocationInfo& loc_info);
-    LocationInfo(LocationInfo&& loc_info);
-    LocationInfo(const std::string& err_msg);
-    LocationInfo(const char* err_msg);
+    LocationInfo(const LocationInfo& locInfo);
+    LocationInfo(LocationInfo&& locInfo);
+    LocationInfo(const std::string& errMsg);
+    LocationInfo(const char* errMsg);
 
-    LocationInfo& operator=(const LocationInfo& loc_info);
-    LocationInfo& operator=(LocationInfo&& loc_info);
+    LocationInfo& operator=(const LocationInfo& locInfo);
+    LocationInfo& operator=(LocationInfo&& locInfo);
 
-    const std::string& get_id() const;
-    const std::string& get_name() const;
-    double get_latitude() const;
-    double get_longitude() const;
+    const std::string& id() const;
+    const std::string& name() const;
+    double latitude() const;
+    double longitude() const;
 
-    void set_id(const std::string& id_);
-    void set_name(const std::string& name_);
-    void set_latitude(double lat_);
-    void set_longitude(double lng_);
+    void setId(const std::string &id);
+    void setName(const std::string &name);
+    void setLatitude(double lat);
+    void setLongitude(double lng);
 private:
-    std::string id{""};
-    std::string name{""};
-    double lat{-1};
-    double lng{-1};
+    std::string m_id{""};
+    std::string m_name{""};
+    double m_lat{-1};
+    double m_lng{-1};
 };
 
 }

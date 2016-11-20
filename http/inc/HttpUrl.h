@@ -26,26 +26,26 @@ public:
     const std::string& operator[](const std::string& key) const;
     std::string& operator[](const std::string& key);
 
-    void set_endpoint(const std::string& endpoint);
-    const std::string& get_endpoint() const noexcept;
+    const std::string& endpoint() const noexcept;
+    void setEndpoint(const std::string& endpoint);
 
-    void set_host(const std::string& host);
-    const std::string& get_host() const noexcept;
+    const std::string& host() const noexcept;
+    void setHost(const std::string& host);
 
-    void set_protocol(HttpProtocol protocol);
-    HttpProtocol get_protocol() const noexcept;
+    HttpProtocol protocol() const noexcept;
+    void setProtocol(HttpProtocol protocol);
 
-    std::string get_arguments() const noexcept;
-    const std::string& get_argument(const std::string& key) const;
-    void add_argument(const std::string& key, const std::string& value);
-    void add_argument(const std::initializer_list<Argument>& url);
-    void add_argument(const Argument& argument);
+    std::string arguments() const noexcept;
+    const std::string& argument(const std::string& key) const;
+    void addArgument(const std::string& key, const std::string& value);
+    void addArgument(const std::initializer_list<Argument>& url);
+    void addArgument(const Argument& argument);
 
-    std::string get_url() const;
+    std::string url() const;
 private:
     void parse(const std::string& url);
-    void parse_url(const std::string& url);
-    void parse_arguments(const std::string args);
+    void parseUrl(const std::string& url);
+    void parseArguments(const std::string args);
     
     using ArgumentsMap = std::map<std::string, std::string>;
     using ArgumentsMapPtr = std::unique_ptr<ArgumentsMap>;

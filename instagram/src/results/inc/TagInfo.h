@@ -8,25 +8,25 @@ namespace Instagram{
 class EXPORT_INSTAGRAM TagInfo : public BaseResult{
 public:
     TagInfo();
-    TagInfo(const std::string& name_, int count_);
-    TagInfo(const char* err_msg);
-    TagInfo(const std::string& err_msg);
-    TagInfo(const TagInfo& tag_info);
-    TagInfo(TagInfo&& tag_info);
+    TagInfo(const std::string& name, int count);
+    TagInfo(const char* errMsg);
+    TagInfo(const std::string& errMsg);
+    TagInfo(const TagInfo& tagInfo);
+    TagInfo(TagInfo&& tagInfo);
 
     ~TagInfo();
 
-    TagInfo& operator=(const TagInfo& tag_info);
-    TagInfo& operator=(TagInfo&& tag_info);
+    TagInfo& operator=(const TagInfo& tagInfo);
+    TagInfo& operator=(TagInfo&& tagInfo);
 
-    const std::string& get_name() const noexcept;
-    int get_count() const noexcept;
+    const std::string& name() const noexcept;
+    int count() const noexcept;
 
-    void set_name(const std::string& name_);
-    void set_count(int count_);
+    void setName(const std::string& name);
+    void setCount(int count);
 private:
-    std::string name{""};
-    int count = -1;
+    std::string m_name{""};
+    int m_count{-1};
 };
 
 }

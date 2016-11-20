@@ -4,61 +4,61 @@ namespace Instagram {
 
 TagInfo::TagInfo() : BaseResult{} {}
 
-TagInfo::TagInfo(const char* err_msg) : BaseResult{ err_msg } {}
+TagInfo::TagInfo(const char* errMsg) : BaseResult{errMsg} {}
 
-TagInfo::TagInfo(const std::string& err_msg) : BaseResult{ err_msg } {}
+TagInfo::TagInfo(const std::string& errMsg) : BaseResult{errMsg} {}
 
-TagInfo::TagInfo(const std::string& name_, int count_) : BaseResult{}, name{ name_ }, count{ count_ } {}
+TagInfo::TagInfo(const std::string& name, int count) : BaseResult{}, m_name{name}, m_count{count} {}
 
-TagInfo::TagInfo(const TagInfo& tag_info) : BaseResult{ tag_info }, name{ tag_info.name }, count{ tag_info.count } {}
+TagInfo::TagInfo(const TagInfo& tagInfo) : BaseResult{tagInfo}, m_name{tagInfo.m_name}, m_count{tagInfo.m_count} {}
 
-TagInfo::TagInfo(TagInfo&& tag_info) : BaseResult{ std::forward<BaseResult>(tag_info) }, name{ std::move(tag_info.name) }, count{ tag_info.count } {
-    tag_info.count = -1;
+TagInfo::TagInfo(TagInfo&& tagInfo) : BaseResult{std::forward<BaseResult>(tagInfo)}, m_name{std::move(tagInfo.m_name)}, m_count{tagInfo.m_count} {
+    tagInfo.m_count = -1;
 }
 
 TagInfo::~TagInfo() {}
 
-TagInfo& TagInfo::operator=(const TagInfo& tag_info) {
-    if (this == &tag_info) {
+TagInfo& TagInfo::operator=(const TagInfo& tagInfo) {
+    if (this == &tagInfo) {
         return *this;
-    }
+   }
 
-    BaseResult::operator=(tag_info);
+    BaseResult::operator=(tagInfo);
 
-    name = tag_info.name;
-    count = tag_info.count;
+    m_name = tagInfo.m_name;
+    m_count = tagInfo.m_count;
 
     return *this;
 }
 
-TagInfo& TagInfo::operator=(TagInfo&& tag_info) {
-    if (this == &tag_info) {
+TagInfo& TagInfo::operator=(TagInfo&& tagInfo) {
+    if (this == &tagInfo) {
         return *this;
-    }
+   }
 
-    BaseResult::operator=(std::forward<BaseResult>(tag_info));
+    BaseResult::operator=(std::forward<BaseResult>(tagInfo));
 
-    name = std::move(tag_info.name);
-    count = tag_info.count;
-    tag_info.count = -1;
+    m_name = std::move(tagInfo.m_name);
+    m_count = tagInfo.m_count;
+    tagInfo.m_count = -1;
 
     return *this;
 }
 
-const std::string& TagInfo::get_name() const noexcept {
-    return name;
+const std::string& TagInfo::name() const noexcept {
+    return m_name;
 }
 
-int TagInfo::get_count() const noexcept {
-    return count;
+int TagInfo::count() const noexcept {
+    return m_count;
 }
 
-void TagInfo::set_name(const std::string& name_) {
-    name = name_;
+void TagInfo::setName(const std::string& name) {
+    m_name = name;
 }
 
-void TagInfo::set_count(int count_) {
-    count = count_;
+void TagInfo::setCount(int count) {
+    m_count = count;
 }
 
 }

@@ -15,31 +15,31 @@ namespace Socket{
         friend class ConnectionListener;
     public:
         TCPSocket(const std::string& host, const std::string& port);
-        TCPSocket(const TCPSocket& tcp_socket) = delete;
-        TCPSocket(TCPSocket&& tcp_socket);
+        TCPSocket(const TCPSocket& tcpSocket) = delete;
+        TCPSocket(TCPSocket&& tcpSocket);
         virtual ~TCPSocket();
 
-        virtual TCPSocket& operator=(TCPSocket&& tcp_socket);
+        virtual TCPSocket& operator=(TCPSocket&& tcpSocket);
 
         virtual long write(const void *data, size_t length);
         virtual long read(void *data, size_t length);
         virtual void close();
-        std::string get_ip() const;
+        std::string ip() const;
 
-        virtual void make_non_blocking();
-        virtual bool wait_for_read(unsigned int timeout) const;
-        virtual bool wait_for_write(unsigned int timeout) const;
+        virtual void makeNonBlocking();
+        virtual bool waitForRead(unsigned int timeout) const;
+        virtual bool waitForWrite(unsigned int timeout) const;
 
-        virtual Error get_last_err() const;
-        virtual std::string get_last_err_str() const;
+        virtual Error lastError() const;
+        virtual std::string lastErrorString() const;
     protected:
         int m_sockfd = -1;
         bool m_isBlocking = true;
     private:
         TCPSocket(int sockfd, bool isBlocking);
         void connect(const std::string& host, const std::string& port);
-        int last_err_code() const;
-        [[noreturn]] void throw_error(const char* err_msg, int code) const;
+        int lastErrorCode() const;
+        [[noreturn]] void throwError(const char* errMsg, int code) const;
     };
 }
 

@@ -33,15 +33,25 @@ int init_wsa() {
     return result;
 }
 
+std::string errorString(int code){
+    char* msg = nullptr;
+
+    if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr, code, 0, &msg, 0, nullptr) == 0) {
+        return "Unknown Error";
+    }
+
+    return msg;
+}
+
 TCPSocket::TCPSocket(const std::string &host, const std::string &port) {
    connect(host, port);
 }
 
 TCPSocket::TCPSocket(int sockfd, bool isBlocking) : m_sockfd{ sockfd }, m_isBlocking{ isBlocking } {}
 
-TCPSocket::TCPSocket(TCPSocket&& client_socket) : m_sockfd{ client_socket.m_sockfd }, m_isBlocking{ client_socket.m_isBlocking } {
-    client_socket.m_sockfd = -1;
-    client_socket.m_isBlocking = false;
+TCPSocket::TCPSocket(TCPSocket&& tcpSocket) : m_sockfd{ tcpSocket.m_sockfd }, m_isBlocking{ tcpSocket.m_isBlocking } {
+    tcpSocket.m_sockfd = -1;
+    tcpSocket.m_isBlocking = false;
 }
 
 TCPSocket::~TCPSocket() {
@@ -71,12 +81,12 @@ void TCPSocket::connect(const std::string& host, const std::string& port) {
         if (WSAGetLastError() == WSANOTINITIALISED) {
             int result = init_wsa();
             if (!result) {
-                throw_error("Failed to initialize WSA : ", result);
+                throwError("Failed to initialize WSA : ", result);
             }
         }
         
         if(getaddrinfo(host.c_str(), port.c_str(), &hints, &res) != 0){
-            throw_error("getaddrinfo() failed: ", last_err_code());
+            throwError("getaddrinfo() failed: ", lastErrorCode());
         }
     }
 
@@ -88,14 +98,14 @@ void TCPSocket::connect(const std::string& host, const std::string& port) {
         }
 
         if (::connect(m_sockfd, tmp_res->ai_addr, tmp_res->ai_addrlen) == -1) {
-            throw_error("connect() failed: ", last_err_code());
+            throwError("connect() failed: ", lastErrorCode());
         }
 
         break;
     }
 
     if (m_sockfd == -1) {
-        throw_error("failed to craete socket : ", last_err_code());
+        throwError("failed to craete socket : ", lastErrorCode());
     }
 
     freeaddrinfo(res);
@@ -126,7 +136,7 @@ void TCPSocket::close() {
     }
 }
 
-std::string TCPSocket::get_ip() const {
+std::string TCPSocket::getIp() const {
     if (m_sockfd == -1) {
         return "";
     }
@@ -155,7 +165,7 @@ std::string TCPSocket::get_ip() const {
     return "Invalid";
 }
 
-void TCPSocket::make_non_blocking() {
+void TCPSocket::makeNonBlocking() {
     if (!m_isBlocking) {
         return;
     }
@@ -170,7 +180,7 @@ void TCPSocket::make_non_blocking() {
     }
 }
 
-bool TCPSocket::wait_for_read(unsigned int timeout) const {
+bool TCPSocket::waitForRead(unsigned int timeout) const {
     fd_set readfs{};
     readfs.fd_count = 1;
     readfs.fd_array[0] = m_sockfd;
@@ -184,7 +194,7 @@ bool TCPSocket::wait_for_read(unsigned int timeout) const {
     return result == SOCKET_ERROR ? false : result;
 }
 
-bool TCPSocket::wait_for_write(unsigned int timeout) const {
+bool TCPSocket::waitForWrite(unsigned int timeout) const {
     fd_set writefs{};
     writefs.fd_count = 1;
     writefs.fd_array[0] = m_sockfd;
@@ -198,8 +208,8 @@ bool TCPSocket::wait_for_write(unsigned int timeout) const {
     return result == SOCKET_ERROR ? false : result;
 }
 
-Error TCPSocket::get_last_err() const {
-    int code = WSAGetLastError();
+Error TCPSocket::lastError() const {
+    int code = lastErrorCode();
     switch (code) {
     case WSAEWOULDBLOCK:
         return Error::WOULDBLOCK;
@@ -211,24 +221,18 @@ Error TCPSocket::get_last_err() const {
     }
 }
 
-std::string TCPSocket::get_last_err_str() const {
-    int code = WSAGetLastError();
-    char* msg = nullptr;
-
-    if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr, code, 0, msg, 0, nullptr) == 0) {
-        return "Unknown Error";
-    }
-
-    return msg;
+std::string TCPSocket::lastErrorString() const {
+    int code = lastErrorCode();
+    return errorString(code);
 }
 
-int TCPSocket::last_err_code() const {
+int TCPSocket::lastErrorCode() const {
     return WSAGetLastError();
 }
 
-void TCPSocket::throw_error(const char* err_msg, int code) const {
+void TCPSocket::throwError(const char* err_msg, int code) const {
     std::string msg{ err_msg };
-    msg += get_last_err_str();
+    msg += errorString(code);
     throw std::runtime_error(err_msg);
 }
 

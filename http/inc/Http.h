@@ -26,16 +26,16 @@ enum  Status {
     UNKNOWN = -1, OK = 200, MOVED = 302, BAD_REQUEST = 400, UNAUTHORIZED = 401, FORBIDDEN = 403, NOT_FOUND = 404, INTERNAL_SERVER_ERROR = 500
 };
 
-const char* to_string(Method method) noexcept;
-const char* to_string(Header header) noexcept;
-const char* to_string(Status status) noexcept;
-const char* to_string(HttpProtocol protocol) noexcept;
+const char* toString(Method method) noexcept;
+const char* toString(Header header) noexcept;
+const char* toString(Status status) noexcept;
+const char* toString(HttpProtocol protocol) noexcept;
 
-std::string change_case(const char* str, bool to_upper = false);
-std::string change_case(const std::string& str, bool to_upper = false);
+std::string changeCase(const char* str, bool to_upper = false);
+std::string changeCase(const std::string& str, bool to_upper = false);
 
-Method from_str(const char* str);
-Method from_str(const std::string& str);
+Method fromStr(const char* str);
+Method fromStr(const std::string& str);
 
 std::vector<std::string> tokenize(const std::string &str, const char delimeter, bool once = false);
 

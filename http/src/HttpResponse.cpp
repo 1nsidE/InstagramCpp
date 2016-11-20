@@ -6,93 +6,93 @@ namespace Http {
 HttpResponse::HttpResponse() : HttpHeader {} {}
 
 HttpResponse::HttpResponse(const std::string& response) : HttpHeader{} {
-    parse_response(response);
+    parseResponse(response);
 }
 
-HttpResponse::HttpResponse(const HttpResponse& response) : HttpHeader { response }, status { response.status }, code { response.code } {}
-HttpResponse::HttpResponse(HttpResponse&& response) : HttpHeader { std::forward<HttpHeader>(response) }, status { std::move(response.status) }, code { response.code } {
-    response.code = -1;
+HttpResponse::HttpResponse(const HttpResponse& response) : HttpHeader { response }, m_status { response.m_status }, m_code { response.m_code } {}
+HttpResponse::HttpResponse(HttpResponse&& response) : HttpHeader { std::forward<HttpHeader>(response) }, m_status { std::move(response.m_status) }, m_code { response.m_code } {
+    response.m_code = -1;
 }
 
 HttpResponse::~HttpResponse() {}
 
-HttpResponse &HttpResponse::operator=(const HttpResponse& http_response) {
-    if (this != &http_response) {
-        HttpHeader::operator=(http_response);
-        status = http_response.status;
+HttpResponse &HttpResponse::operator=(const HttpResponse& httpResponse) {
+    if (this != &httpResponse) {
+        HttpHeader::operator=(httpResponse);
+        m_status = httpResponse.m_status;
     }
     return *this;
 }
 
-HttpResponse &HttpResponse::operator=(HttpResponse &&http_response) {
-    if (this != &http_response) {
-        HttpHeader::operator=(std::forward<HttpHeader>(http_response));
-        status = std::move(http_response.status);
+HttpResponse &HttpResponse::operator=(HttpResponse &&httpResponse) {
+    if (this != &httpResponse) {
+        HttpHeader::operator=(std::forward<HttpHeader>(httpResponse));
+        m_status = std::move(httpResponse.m_status);
 
-        code = http_response.code;
-        http_response.code = -1;
+        m_code = httpResponse.m_code;
+        httpResponse.m_code = -1;
     }
     return *this;
 }
 
 HttpResponse& HttpResponse::operator=(const std::string& response){
-    parse_response(response);
+    parseResponse(response);
     return *this;
 }
 
-void HttpResponse::set_status(Http::Status _status) {
-    status = to_string(_status);
-    code = static_cast<int>(_status);
+void HttpResponse::setStatus(Http::Status status) {
+    m_status = toString(status);
+    m_code = static_cast<int>(status);
 }
 
-void HttpResponse::set_status(const std::string& status_, int code_) {
-    status = status_;
-    code = code_;
+void HttpResponse::setStatus(const std::string& status, int code) {
+    m_status = status;
+    m_code = code;
 }
 
-std::string HttpResponse::get_string() const {
+std::string HttpResponse::getString() const {
     std::string result("");
-    result.append(HTTP_1_1).append(" ").append(status).append(" ").append(std::to_string(code)).append(CRLF);
+    result.append(HTTP_1_1).append(" ").append(m_status).append(" ").append(std::to_string(m_code)).append(CRLF);
 
-    result.append(HttpHeader::get_string());
+    result.append(HttpHeader::getString());
     return result;
 }
 
-const std::string& HttpResponse::get_status() const noexcept {
-    return status;
+const std::string& HttpResponse::status() const noexcept {
+    return m_status;
 }
 
-int HttpResponse::get_code() const noexcept {
-    return code;
+int HttpResponse::code() const noexcept {
+    return m_code;
 }
 
-void HttpResponse::parse_response(const std::string& response){
+void HttpResponse::parseResponse(const std::string& response){
     if (response.empty()) {
         return;
     }
 
-    std::istringstream string_stream(response);
+    std::istringstream stringStream(response);
     std::string line {};
 
-    std::getline(string_stream, line);
+    std::getline(stringStream, line);
     std::vector<std::string> tokens = tokenize(line, ' ');
 
     if (tokens.size() < 3) {
         return;
     }
 
-    set_status(tokens[2], std::stoi(tokens[1]));
+    setStatus(tokens[2], std::stoi(tokens[1]));
 
-    while (std::getline(string_stream, line)) {
+    while (std::getline(stringStream, line)) {
         if (!line.compare("\r")) {
             break;
         }
-        add_header(line);
+        addHeader(line);
     }
  
     size_t pos;
-    if ((pos = static_cast<size_t>(string_stream.tellg())) < response.length()) {
-        set_data(response.substr(pos, response.length() - pos));
+    if ((pos = static_cast<size_t>(stringStream.tellg())) < response.length()) {
+        setData(response.substr(pos, response.length() - pos));
     }
 }
 
