@@ -43,6 +43,7 @@ namespace Socket {
                 throwError(gnutls_strerror(result));
             }
 
+            std::atexit(atExitSsl);
             is_initialized = true;
         }
     }
@@ -68,7 +69,7 @@ namespace Socket {
         if (result < 0) {
             throwError(gnutls_strerror(result));
         }
-        std::atexit(atExitSsl);
+
     }
 
     inline void SSLSocket::check(int result) {

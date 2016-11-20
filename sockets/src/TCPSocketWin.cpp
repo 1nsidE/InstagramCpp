@@ -12,7 +12,7 @@
 
 namespace Socket {
 
-void at_exit() {
+void atExit() {
     WSACleanup();
 }
 
@@ -27,7 +27,7 @@ int init_wsa() {
             return result;
         }
 
-        std::atexit(at_exit);
+        std::atexit(atExit);
         is_wsa_initialized = true;
     }
     return result;
