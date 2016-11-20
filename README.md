@@ -21,7 +21,7 @@ int main(){
     ***/
 
     Instagram::InstagramClient instClient{};
-    Instagram::AuthorizationToken authToken = instClient.exchangeCode(code, clientId, clientSecret, redirectUri);
+    Instagram::AuthorizationToken authToken = instClient.authenticate(code, clientId, clientSecret, redirectUri);
 
     if(!authToken){
         std::cerr << "Failed to retrieve authorization token, reason : " << authToken.errorMessage() << std::endl;
@@ -29,8 +29,6 @@ int main(){
     }
     
     std::cout << "User with name : " << authToken.username() << " authenticated" << std::endl;
-
-    instClient.setAuthToken(authToken.authToken());
     
     Instagram::MediaEntries mediaEntries = instClient.getRecentMedia();
     if(!mediaEntries){

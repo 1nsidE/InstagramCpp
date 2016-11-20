@@ -12,7 +12,7 @@ AuthorizationToken::AuthorizationToken(const std::string& errMsg) : BaseResult{e
 
 
 AuthorizationToken::AuthorizationToken(AuthorizationToken& token) : BaseResult{token},
-                                                                    m_authToken(token.m_authToken),
+                                                                    m_token(token.m_token),
                                                                     m_id(token.m_id),
                                                                     m_username(token.m_username),
                                                                     m_bio(token.m_bio),
@@ -21,7 +21,7 @@ AuthorizationToken::AuthorizationToken(AuthorizationToken& token) : BaseResult{t
                                                                     m_website{token.m_website} {}
 
 AuthorizationToken::AuthorizationToken(AuthorizationToken&& token) : BaseResult{std::forward<BaseResult>(token)},
-                                                                    m_authToken(std::move(token.m_authToken)),
+                                                                    m_token(std::move(token.m_token)),
                                                                     m_id(std::move(token.m_id)),
                                                                     m_username(std::move(token.m_username)),
                                                                     m_bio(std::move(token.m_bio)),
@@ -31,8 +31,8 @@ AuthorizationToken::AuthorizationToken(AuthorizationToken&& token) : BaseResult{
 
 AuthorizationToken::~AuthorizationToken() {}
 
-const std::string& AuthorizationToken::authToken() const noexcept {
-    return m_authToken;
+const std::string& AuthorizationToken::token() const noexcept {
+    return m_token;
 }
 
 const std::string& AuthorizationToken::id() const noexcept {
@@ -60,8 +60,8 @@ const std::string& AuthorizationToken::website() const noexcept {
 }
 
 
-AuthorizationToken& AuthorizationToken::setAuthToken(const std::string &_m_authToken) {
-    m_authToken = _m_authToken;
+AuthorizationToken& AuthorizationToken::setAuthToken(const std::string &token) {
+    m_token = token;
     return *this;
 }
 

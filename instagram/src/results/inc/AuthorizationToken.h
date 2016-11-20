@@ -15,7 +15,7 @@ public:
     AuthorizationToken(AuthorizationToken& authToken);
     AuthorizationToken(AuthorizationToken&& authToken);
 
-    const std::string& authToken() const noexcept ;
+    const std::string& token() const noexcept ;
     const std::string& id() const noexcept;
     const std::string& username() const noexcept;
     const std::string& bio() const noexcept;
@@ -31,7 +31,7 @@ public:
     AuthorizationToken& setProfilePictureUrl(const std::string &userProfilePictureUrl);
     AuthorizationToken& setWebsite(const std::string &website);
 private:
-    std::string m_authToken;
+    std::string m_token;
     std::string m_id;
     std::string m_username;
     std::string m_bio;

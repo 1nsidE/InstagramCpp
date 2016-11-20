@@ -29,7 +29,7 @@ public:
     const std::string& getAuthToken() const;
 
 //API's
-    AuthorizationToken exchangeCode(const std::string& code,
+    AuthorizationToken authenticate(const std::string& code,
                                      const std::string& clientId,
                                      const std::string& clientSecret,
                                      const std::string& redirectUri);

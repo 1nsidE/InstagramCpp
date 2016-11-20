@@ -34,7 +34,7 @@ std::string InstagramClient::getResult(const Http::HttpResponse& response) {
     }
 }
 
-AuthorizationToken InstagramClient::exchangeCode(const std::string& code,
+AuthorizationToken InstagramClient::authenticate(const std::string& code,
         const std::string& clientId,
         const std::string& clientSecret,
         const std::string& redirectUri) {
@@ -49,7 +49,10 @@ AuthorizationToken InstagramClient::exchangeCode(const std::string& code,
     try {
         const Http::HttpResponse response = m_httpClient.post(getStandartUrl(Auth::GET_AUTH_CODE), form_data);
         if (response.code() == Http::Status::OK) {
-            return parseAuthToken(response.data());
+            AuthorizationToken authToken = parseAuthToken(response.data());
+            setAuthToken(authToken.token());
+
+            return authToken;
         } else {
             return getResult(response);
         }
