@@ -13,11 +13,11 @@ public:
     using iterator = typename std::vector<T>::iterator;
     using const_iterator = typename std::vector<T>::const_iterator;
 
-    ResultCollection() : BaseResult{}, elements(0){}
-    ResultCollection(const ResultCollection<T>& resultCollection) : BaseResult{resultCollection}, elements{resultCollection.elements}{}
-    ResultCollection(ResultCollection<T>&& resultCollection) : BaseResult{resultCollection}, elements{std::move(resultCollection.elements)}{}
-    ResultCollection(const char* errMsg) : BaseResult{errMsg}, elements(0){}
-    ResultCollection(const std::string& errMsg) : BaseResult{errMsg}, elements(0){}
+    ResultCollection() : BaseResult{}, m_elements(0){}
+    ResultCollection(const ResultCollection<T>& resultCollection) : BaseResult{resultCollection}, m_elements{resultCollection.m_elements}{}
+    ResultCollection(ResultCollection<T>&& resultCollection) : BaseResult{resultCollection}, m_elements{std::move(resultCollection.m_elements)}{}
+    ResultCollection(const char* errMsg) : BaseResult{errMsg}, m_elements(0){}
+    ResultCollection(const std::string& errMsg) : BaseResult{errMsg}, m_elements(0){}
     
     ResultCollection<T>& operator=(const ResultCollection<T>& resultCollection){
         if(this == &resultCollection){
@@ -25,7 +25,7 @@ public:
         }
         
         BaseResult::operator=(resultCollection);
-        elements = resultCollection.elements;
+        m_elements = resultCollection.m_elements;
         
         return *this;
     }
@@ -36,67 +36,71 @@ public:
         }
         
         BaseResult::operator=(resultCollection);
-        elements = resultCollection.elements;
+        m_elements = resultCollection.m_elements;
         
         return *this;
     }
     
     iterator begin() noexcept{
-        return elements.begin();
+        return m_elements.begin();
     }
     
     iterator end() noexcept{
-        return elements.end();
+        return m_elements.end();
     }
     
     const_iterator begin() const noexcept{
-        return elements.begin();
+        return m_elements.begin();
     }
     
     const_iterator end() const noexcept{
-        return elements.end();
+        return m_elements.end();
     }
     
-    const std::vector<T>& get_elements() const noexcept{
-        return elements;
+    const std::vector<T>& elements() const noexcept{
+        return m_elements;
     }
     
     const T& get(size_t n) const {
-        return elements[n];
+        return m_elements[n];
     }
     
     T& get(size_t n){
-        return elements[n];
+        return m_elements[n];
     }
     
     const T& operator[](size_t n) const {
-        return elements[n];
+        return m_elements[n];
     }
     
     T& operator[](size_t n){
-        return elements[n];
+        return m_elements[n];
     }
     
     ResultCollection<T>& operator<<(T&& element){
-        elements.push_back(std::forward<T>(element));
+        m_elements.push_back(std::forward<T>(element));
         return *this;
     }
 
     ResultCollection<T>& operator<<(T& element){
-        elements.push_back(element);
+        m_elements.push_back(element);
         return *this;
     }
     
-    void add_element(T&& element){
-        elements.push_back(std::forward<T>(element));
+    void addElement(T&& element){
+        m_elements.push_back(std::forward<T>(element));
+    }
+
+    size_t size() const noexcept{
+        return m_elements.size();
     }
     
     void clear(){
-        elements.clear();
+        m_elements.clear();
     }
     
 private:
-    std::vector<T> elements;
+    std::vector<T> m_elements;
 };
 
 }
