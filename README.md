@@ -48,7 +48,7 @@ int main(){
 
 Dependencies:
 ----------------
-JsonCpp - https://github.com/open-source-parsers/jsoncpp
+RapidJSON - https://github.com/miloyip/rapidjson
 
 GnuTLS - https://www.gnutls.org
 
@@ -72,8 +72,6 @@ Experimental Windows builds is supported. To build under Windows you need to pro
 
 Tested only with Visual Studio 2015.
 
-    cmake -G "Visual Studio 14 [Win64]" . -DJSON_LIB_DIR=<PATH_TO_JSONCPP_LIB_FILE> -DJSON_INCLUDE_DIR=<PATH_TO_JSONCPP_HEADERS> -GNUTLS_LIB=<PATH_TO_GNUTLS_LIB_FILE> -DGNUTLS_INCLUDE=<PATH_TO_GNUTLS_HEADERS>
+    cmake -G "Visual Studio 14 [Win64]" . -DRAPIDJSON_INCLUDE=<PATH_TO_JSONCPP_LIB_FILE> -GNUTLS_LIB=<PATH_TO_GNUTLS_LIB_FILE> -DGNUTLS_INCLUDE=<PATH_TO_GNUTLS_HEADERS>
 
 This will create Visual Studio project.
-
-

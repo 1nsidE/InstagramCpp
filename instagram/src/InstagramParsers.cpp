@@ -1,48 +1,115 @@
-#include <json/json.h>
+#include <rapidjson/document.h>
 #include "InstagramParsers.h"
+
+using namespace rapidjson;
 
 namespace Instagram {
 
-MediaEntry getMediaEntry(const Json::Value& media);
-UserInfo getUserInfo(const Json::Value& info);
-CommentInfo getCommentInfo(const Json::Value& comment);
-LocationInfo getLocation(const Json::Value& locations);
+class ValueWrapper{
+public:
+    ValueWrapper(const Value& value) : m_ref{value} {}
+    ValueWrapper(const ValueWrapper& valueWrapper) = delete;
+    ValueWrapper(ValueWrapper&& valueWrapper) : m_ref{std::move(valueWrapper.m_ref)} {}
+
+    inline ValueWrapper operator[](const char* value){
+        return m_ref.HasMember(value) ? ValueWrapper{m_ref[value]} : ValueWrapper{Value{}};
+    }
+
+    inline std::string getString(const char* value) const{
+        if(m_ref.HasMember(value)){
+            const Value& tempValue = m_ref[value];
+            if(tempValue.IsString()){
+                return tempValue.GetString();
+            }
+        }
+        return "";
+    }
+
+    inline std::string getString() const{
+        return m_ref.IsString() ? m_ref.GetString() : "";
+    }
+
+    inline int getInt(const char* value) const{
+        if(m_ref.HasMember(value)){
+            const Value& tempValue = m_ref[value];
+            if(tempValue.IsInt()){
+                return tempValue.GetInt();
+            }
+        }
+        return -1;
+    }
+
+    inline int getInt() const{
+        return m_ref.IsInt() ? m_ref.GetInt() : -1;
+    }
+
+    inline double getDouble(const char* value) const{
+        if(m_ref.HasMember(value)){
+            const Value& tempValue = m_ref[value];
+            if(tempValue.IsDouble()){
+                return tempValue.GetDouble();
+            }
+        }
+        return -1.0;
+    }
+
+    inline bool isArray() const{
+        return m_ref.IsArray();
+    }
+
+    inline Value::ConstArray getArray() const{
+        return m_ref.GetArray();
+    }
+
+    inline bool isNull() const{
+        return m_ref.IsNull();
+    }
+
+    inline bool hasMember(const char* member){
+        return m_ref.HasMember(member);
+    }
+
+private:
+    const Value& m_ref;
+};
+
+MediaEntry getMediaEntry(ValueWrapper media);
+UserInfo getUserInfo(ValueWrapper info);
+CommentInfo getCommentInfo(ValueWrapper comment);
+LocationInfo getLocation(ValueWrapper locations);
 
 AuthorizationToken parseAuthToken(const std::string& json) {
     AuthorizationToken token{};
-    
-    Json::Reader reader;
-    Json::Value root;
-    if (!reader.parse(json, root, false)) {
-        return "Failed to parse response";
 
+    Document document;
+    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("access_token")) {
+        return "Failed to parse access token";
     }
 
-    token.setAuthToken(root["access_token"].asString());
+    token.setAuthToken(document["access_token"].GetString());
 
-    const Json::Value& user = root["user"];
-    token.setId(user["id"].asString());
-    token.setUsername(user["username"].asString());
-    token.setUserBio(user["bio"].asString());
-    token.setFullName(user["full_name"].asString());
-    token.setProfilePictureUrl(user["profile_picture"].asString());
-    token.setWebsite(user["website"].asString());
+    ValueWrapper user{document["user"]};
+    token.setId(user.getString("id"));
+    token.setUsername(user.getString("username"));
+    token.setUserBio(user.getString("bio"));
+    token.setFullName(user.getString("full_name"));
+    token.setProfilePictureUrl(user.getString("profile_picture"));
+    token.setWebsite(user.getString("website"));
 
     return token;
 }
 
 MediaEntries parseMediaEntries(const std::string& json) {
-    Json::Reader reader{};
-    Json::Value root{};
+    Document document{};
 
-    if (!reader.parse(json, root, false)) {
+    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
         return "Failed to parse media entries";
     };
 
-    const Json::Value& data = root["data"];
+    ValueWrapper data{document["data"]};
     MediaEntries result{};
     if (data.isArray()) {
-        for (const auto& media : data) {
+        for (const auto& media : data.getArray()) {
             result << getMediaEntry(media);
         }
     }
@@ -50,188 +117,175 @@ MediaEntries parseMediaEntries(const std::string& json) {
 }
 
 MediaEntry parseMediaEntry(const std::string& json) {
-    Json::Reader reader;
-    Json::Value root;
-    
-    if (!reader.parse(json, root, false)) {
+    Document document;
+
+    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
         return "Failed to parse media entry";
     }
 
-    const Json::Value& data = root["data"];
-    return getMediaEntry(data);
+    return getMediaEntry(document["data"]);
 }
 
-MediaEntry getMediaEntry(const Json::Value& media) {
+MediaEntry getMediaEntry(ValueWrapper media) {
     MediaEntry entry{};
 
-    const Json::Value& tags = media["tags"];
+    const ValueWrapper tags{media["tags"]};
     if (tags.isArray()) {
-        for (const auto& tag : tags) {
-            entry.addTag(tag.asString());
+        for (const auto& tag : tags.getArray()) {
+            entry.addTag(tag.GetString());
         }
     }
 
-    const Json::Value& users_in_photo = media["users_in_photo"];
-    if (users_in_photo.isArray()) {
-        for (const auto& user : users_in_photo) {
-            entry.addUser(user.asString());
+    const ValueWrapper usersInPhoto{media["users_in_photo"]};
+    if (usersInPhoto.isArray()) {
+        for (const auto& user : usersInPhoto.getArray()) {
+            entry.addUser(user.GetString());
         }
     }
 
-    const Json::Value& type = media["type"];
+    const ValueWrapper type{media["type"]};
     if (!type.isNull()) {
-        const std::string type_str = type.asString();
+        const std::string type_str = type.getString();
         if (type_str == "image") {
             entry.setType(MediaType::IMAGE);
-        } else {
+        } else if(type_str == "video") {
             entry.setType(MediaType::VIDEO);
-            const Json::Value& videos = media["videos"];
-            entry.setVideoLowResolution(videos["low_resolution"].asString());
-            entry.setVideoStandartResolution(videos["standart_resolution"].asString());
+            ValueWrapper videos{media["videos"]};
+            entry.setVideoLowResolution(videos.getString("low_resolution"));
+            entry.setVideoStandartResolution(videos.getString("standart_resolution"));
         }
     }
 
-    const Json::Value& create_time = media["created_time"];
-    long created_time = create_time.isNull() ? -1 : std::stol(create_time.asString());
+    const ValueWrapper create_time{media["created_time"]};
+    long created_time = create_time.isNull() ? -1 : std::stol(create_time.getString());
     entry.setCreateTime(created_time);
 
-    const Json::Value& link = media["link"];
-    entry.setLink(link.asString());
+    const ValueWrapper link{media["link"]};
+    entry.setLink(link.getString());
 
-    const Json::Value& caption = media["caption"];
-    entry.setCaption(caption["text"].asString());
+    const ValueWrapper caption{media["caption"]};
+    entry.setCaption(caption.getString("text"));
 
-    const Json::Value& images = media["images"];
+    {
+        ValueWrapper images{media["images"]};
 
-    const Json::Value& low_resolution = images["low_resolution"];
-    entry.setLowResolution(low_resolution["url"].asString());
+        ValueWrapper low_resolution = images["low_resolution"];
+        entry.setLowResolution(low_resolution.getString("url"));
 
-    const Json::Value& thumbnail = images["thumbnail"];
-    entry.setThumbnail(thumbnail["url"].asString());
+        ValueWrapper thumbnail{images["thumbnail"]};
+        entry.setThumbnail(thumbnail.getString("url"));
 
-    const Json::Value& standart_resolution = images["standard_resolution"];
-    entry.setStandartResolution(standart_resolution["url"].asString());
+        ValueWrapper standart_resolution{images["standard_resolution"]};
+        entry.setStandartResolution(standart_resolution.getString("url"));
+    }
 
-    const Json::Value& comments = media["comments"];
-    int comments_count = comments.isNull() ? -1 : comments["count"].asInt();
+    const ValueWrapper comments{media["comments"]};
+    entry.setCommentsCount(comments.getInt("count"));
 
-    entry.setCommentsCount(comments_count);
+    const ValueWrapper likes = media["likes"];
+    entry.setLikeCount(likes.getInt("count"));
 
-    const Json::Value& filter = media["filter"];
-    entry.setFilter(filter.asString());
-
-    const Json::Value& likes = media["likes"];
-    int likes_count = likes.isNull() ? -1 : likes["count"].asInt();
-    entry.setLikeCount(likes_count);
-
-    const Json::Value& id = media["id"];
-    entry.setId(id.asString());
+    entry.setFilter(media.getString("filter"));
+    entry.setId(media.getString("id"));
 
     return entry;
 }
 
 UserInfo parseUserInfo(const std::string& json) {
-    Json::Reader reader{};
-    Json::Value root{};
+    Document document{};
+    Value value{};
 
-    if (!reader.parse(json, root, false)) {
+    if (document.Parse(json.c_str()).HasParseError() | !document.HasMember("data")) {
         return "Failed to parse user info";
     }
 
-    const Json::Value& data = root["data"];
-    return getUserInfo(data);
+    return getUserInfo(document["data"]);
 }
 
 UsersInfo parseUsersInfo(const std::string& json) {
-    Json::Reader reader{};
-    Json::Value root;
-    if (!reader.parse(json, root, false)) {
+    Document document{};
+    Value value;
+    if (document.Parse(json.c_str()).HasParseError() | !document.HasMember("data")) {
         return "Failed to parse users info";
     }
 
-    const Json::Value& data = root["data"];
+    ValueWrapper data{document["data"]};
     UsersInfo users_info{};
-    for (const Json::Value& user_info : data) {
-        users_info << getUserInfo(user_info);
+    if(data.isArray()){
+        for (const Value& userInfo : data.getArray()) {
+            users_info << getUserInfo(userInfo);
+        }
     }
-
     return users_info;
 }
 
-UserInfo getUserInfo(const Json::Value &info) {
-    UserInfo user_info{};
+UserInfo getUserInfo(ValueWrapper info) {
+    UserInfo userInfo{};
 
-    user_info.setId(info["id"].asString());
-    user_info.setUsername(info["username"].asString());
-    user_info.setProfilePictureUrl(info["profile_picture"].asString());
+    userInfo.setId(info.getString("id"));
+    userInfo.setUsername(info.getString("username"));
+    userInfo.setProfilePictureUrl(info.getString("profile_picture"));
 
-    const Json::Value& fullname = info["full_name"];
-    if (fullname.isNull()) {
-        user_info.setName(info["first_name"].asString());
-    }
-    else {
-        user_info.setName(fullname.asString());
+    if (info.hasMember("first_name")) {
+        userInfo.setName(info.getString("first_name"));
+    } else if(info.hasMember("full_name")) {
+        userInfo.setName(info.getString("full_name"));
     }
 
-    user_info.setLastName(info["last_name"].asString());
-    user_info.setBio(info["bio"].asString());
-    user_info.setWebsite(info["website"].asString());
+    userInfo.setLastName(info.getString("last_name"));
+    userInfo.setBio(info.getString("bio"));
+    userInfo.setWebsite(info.getString("website"));
 
-    const Json::Value& counts = info["counts"];
-    if (!counts.isNull()) {
-        const Json::Value &followed_by = counts["followed_by"];
-        user_info.setFollowedBy(followed_by.isNull() ? -1 : followed_by.asInt());
-
-        const Json::Value &follows = counts["follows"];
-        user_info.setFollows(follows.isNull() ? -1 : follows.asInt());
-
-        const Json::Value &media_count = counts["media"];
-        user_info.setMediaCount(counts.isNull() ? -1 : media_count.asInt());
+    if (info.hasMember("counts")) {
+        ValueWrapper counts{info["counts"]};
+        userInfo.setFollowedBy(counts.getInt("followed_by"));
+        userInfo.setFollows(counts.getInt("follows"));
+        userInfo.setMediaCount(counts.getInt("media"));
     }
 
-    return user_info;
+    return userInfo;
 }
 
 RelationshipInfo parseRelationshipInfo(const std::string& json) {
-    Json::Reader reader{};
-    Json::Value root{};
-    if (!reader.parse(json, root, false)) {
+    Document document{};
+    Value value{};
+    if (document.Parse(json.c_str()).HasParseError() | !document.HasMember("data")) {
         return "Failed to parse relationship info";
     }
 
-    const Json::Value& data = root["data"];
-    RelationshipInfo rel_info{ data["incoming_status"].asString(), data["outgoing_status"].asString() };
+    ValueWrapper data{document["data"]};
+    RelationshipInfo rel_info{ data.getString("incoming_status"), data.getString("outgoing_status") };
 
     return rel_info;
 }
 
 TagInfo parseTagInfo(const std::string& json) {
-    Json::Reader reader{};
-    Json::Value root{};
+    Document document{};
+    Value value{};
 
-    if (!reader.parse(json, root, false)) {
+    if (document.Parse(json.c_str()).HasParseError() | !document.HasMember("data")) {
         return "Failed to parse tag info";
     }
 
-    const Json::Value& data = root["data"];
-    TagInfo tag_info(data["name"].asString(), data["media_count"].asInt());
+    ValueWrapper data{document["data"]};
+    TagInfo tag_info(data.getString("name"), data.getInt("media_count"));
 
     return tag_info;
 }
 
 TagsInfo parseTagsInfo(const std::string& json) {
-    Json::Reader reader{};
-    Json::Value root{};
+    Document document{};
+    Value value{};
 
-    if (!reader.parse(json, root, false)) {
+    if (document.Parse(json.c_str()).HasParseError() | !document.HasMember("data")) {
         return "Failed to parse tags info";
     }
 
     TagsInfo tags_info;
-    const Json::Value& data = root["data"];
+    ValueWrapper data{document["data"]};
     if (data.isArray()) {
-        for (const auto& tag : data) {
-            tags_info << TagInfo{ tag["name"].asString(), tag["media_count"].asInt() };
+        for (const auto& tag : data.getArray()) {
+            tags_info << TagInfo{ tag["name"].GetString(), tag["media_count"].GetInt() };
         }
     }
 
@@ -239,53 +293,56 @@ TagsInfo parseTagsInfo(const std::string& json) {
 }
 
 CommentsInfo parseComments(const std::string& json) {
-    Json::Reader reader{};
-    Json::Value root{};
-    if (!reader.parse(json, root, false)) {
+    Document document{};
+    Value value{};
+    if (document.Parse(json.c_str()).HasParseError() | !document.HasMember("data")) {
         return "Failed to parse comments";
     }
 
-    CommentsInfo comments_info{};
-    const Json::Value& data = root["data"];
+    CommentsInfo commentsInfo{};
+    ValueWrapper data{document["data"]};
     if (data.isArray()) {
-        for (const Json::Value& comment : data) {
-            comments_info << getCommentInfo(comment);
+        for (const Value& comment : data.getArray()) {
+            commentsInfo << getCommentInfo(comment);
         }
     }
 
-    return comments_info;
+    return commentsInfo;
 }
 
-CommentInfo getCommentInfo(const Json::Value& comment) {
-    CommentInfo comment_info{};
+CommentInfo getCommentInfo(ValueWrapper comment) {
+    if(comment.isNull()){
+        return "Invalid json document, failed to parse comment";
+    }
 
-    comment_info.setText(comment["text"].asString());
-    comment_info.setId(comment["id"].asString());
-    comment_info.setCreateTime(std::stol(comment["created_time"].asString()));
+    CommentInfo commentInfo{};
 
-    const Json::Value& from = comment["from"];
-    comment_info.setUserInfo(getUserInfo(from));
+    commentInfo.setText(comment.getString("text"));
+    commentInfo.setId(comment.getString("id"));
+    commentInfo.setCreateTime(std::stol(comment.getString("created_time")));
 
-    return comment_info;
+    commentInfo.setUserInfo(getUserInfo(comment["from"]));
+
+    return commentInfo;
 }
 
 LocationInfo parseLocation(const std::string& json) {
-    Json::Reader reader{};
-    Json::Value root{};
-    if (!reader.parse(json, root, false)) {
+    Document document{};
+    Value value{};
+    if (document.Parse(json.c_str()).HasParseError() | !document.HasMember("data")) {
         return "Failed to parse location";
     }
 
-    return getLocation(root["data"]);
+    return getLocation(document["data"]);
 }
 
-LocationInfo getLocation(const Json::Value& location) {
+LocationInfo getLocation(ValueWrapper location) {
     if (!location.isNull()) {
         LocationInfo info{};
-        info.setId(location["id"].asString());
-        info.setName(location["name"].asString());
-        info.setLatitude(location["latitude"].asDouble());
-        info.setLongitude(location["longitude"].asDouble());
+        info.setId(location.getString("id"));
+        info.setName(location.getString("name"));
+        info.setLatitude(location.getDouble("latitude"));
+        info.setLongitude(location.getDouble("longitude"));
 
         return info;
     } else {
@@ -294,48 +351,48 @@ LocationInfo getLocation(const Json::Value& location) {
 }
 
 LocationsInfo parseLocations(const std::string& json) {
-    Json::Reader reader{};
-    Json::Value root{};
-    if (!reader.parse(json, root, false)) {
+    Document document{};
+    Value value{};
+    if (document.Parse(json.c_str()).HasParseError() | !document.HasMember("data")) {
         return "Failed to parse locations";
     }
 
-    const Json::Value& data = root["data"];
+    LocationsInfo infos{};
+    ValueWrapper data{document["data"]};
     if (data.isArray()) {
-        LocationsInfo infos{};
-        for (const auto& location : data) {
+        for (const auto& location : data.getArray()) {
             infos << getLocation(location);
         }
-
-        return infos;
-    } else {
-        return "Invalid json, failed to parse locations";
     }
+
+    return infos;
 }
 
 std::string getError(const std::string& json) {
-    Json::Reader reader{};
-    Json::Value root{};
+    Document document{};
 
-    if (!reader.parse(json, root, false)) {
+    if (document.Parse(json.c_str()).HasParseError()) {
         return "Failed to parse error";
     }
 
-    const Json::Value& meta = root["meta"].isNull() ? root : root["meta"];
+    ValueWrapper meta{document.HasMember("meta") ? document : document["meta"]};
 
-    int code = meta["code"].asInt();
+    int code = meta.getInt("code");
     if (code == 200) {
         return "";
     }
 
-    const Json::Value& err_msg = meta["error_message"];
-    const Json::Value& err_type = meta["error_type"];
+    ValueWrapper errMsg{meta["error_message"]};
+    ValueWrapper errType{meta["error_type"]};
 
-    if (!err_type.isNull() || !err_msg.isNull()) {
-        return err_type.asString() + " : " + err_msg.asString();
-    } else {
+    if (!errType.isNull() || !errMsg.isNull()) {
+        return errType.getString() + " : " + errMsg.getString();
+    } else if(code != -1){
         return "Unknown error with code = " + std::to_string(code);
+    } else {
+        return "Unknown error";
     }
 }
 
 }
+
