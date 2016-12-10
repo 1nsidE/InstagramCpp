@@ -91,4 +91,8 @@ void CommentInfo::setUserInfo(const UserInfo &userInfo) {
     m_userInfo = userInfo;
 }
 
+void CommentInfo::setUserInfo(UserInfo&& userInfo){
+    m_userInfo = std::move(userInfo);
+}
+
 }

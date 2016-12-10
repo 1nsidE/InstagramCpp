@@ -101,15 +101,14 @@ void HttpRequest::parse(const std::string& request){
     
     setMethod(fromStr(tokens[0]));
 
-    HttpUrl url{tokens[1]};
-    setUrl(std::move(url));
-
     while (std::getline(string_stream, line)) {
         if (!line.compare("\r")) {
             break;
         }
         addHeader(line);
     }
+
+    setUrl(getHeader(Header::HOST) + tokens[1]);
     
     size_t pos{0};
     if ((pos = static_cast<size_t>(string_stream.tellg())) < request.length()) {

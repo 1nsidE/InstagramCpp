@@ -28,7 +28,8 @@ public:
     void setText(const std::string &text);
     void setId(const std::string &id_);
     void setCreateTime(long createdTime);
-    void setUserInfo(const UserInfo &userInfo);
+    void setUserInfo(const UserInfo& userInfo);
+    void setUserInfo(UserInfo&& userInfo);
 private:
     std::string m_text{""};
     std::string m_id {""};

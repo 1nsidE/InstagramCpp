@@ -379,7 +379,7 @@ std::string getError(const std::string& json) {
 
     int code = meta.getInt("code");
     if (code == 200) {
-        return "";
+        return " Call was successful";
     }
 
     ValueWrapper errMsg{meta["error_message"]};
