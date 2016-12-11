@@ -131,16 +131,14 @@ void HttpClient::send(const HttpRequest& httpRequest) {
 
 HttpResponse HttpClient::receive(const HttpUrl& url, unsigned int timeout) {
     std::string response = read(url, timeout);
+    
+    int retry_count = 3;
+    while (response.find("\r\n\r\n") == std::string::npos && retry_count) {
+        response.append(read(url, timeout));
+        --retry_count;
+    }
 
     HttpResponse httpResponse = response;
-    if (httpResponse.code() == Status::UNKNOWN) {
-        int retry_count = 3;
-        while (retry_count && httpResponse.code() == Status::UNKNOWN) {
-            response.append(read(url, timeout));
-            httpResponse = response;
-            --retry_count;
-        }
-    }
 
     if (httpResponse.code() == Status::UNKNOWN) {
         return httpResponse;
