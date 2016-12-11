@@ -242,15 +242,15 @@ RelationshipInfo InstagramClient::getRelationshipInfo(const std::string& userId)
 }
 
 RelationshipInfo InstagramClient::follow(const std::string& userId){
-    return postRelationship(Relationship::ignore, userId);
+    return postRelationship(Relationship::follow, userId);
 }
 
 RelationshipInfo InstagramClient::unfollow(const std::string& userId){
-    return postRelationship(Relationship::ignore, userId);
+    return postRelationship(Relationship::unfollow, userId);
 }
 
 RelationshipInfo InstagramClient::approve(const std::string& userId){
-    return postRelationship(Relationship::ignore, userId);
+    return postRelationship(Relationship::approve, userId);
 }
 
 RelationshipInfo InstagramClient::ignore(const std::string& userId){
