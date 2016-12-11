@@ -48,6 +48,10 @@ public:
     UsersInfo getFollowedBy();
     UsersInfo getRequestedBy();
     RelationshipInfo getRelationshipInfo(const std::string& userId);
+    RelationshipInfo follow(const std::string& userId);
+    RelationshipInfo unfollow(const std::string& userId);
+    RelationshipInfo approve(const std::string& userId);
+    RelationshipInfo ignore(const std::string& userId);
 //Media
     MediaEntry getMedia(const std::string& mediaId);
     MediaEntry getMediaWithShortCode(const std::string& shortcode);
@@ -74,6 +78,9 @@ private:
 
     UsersInfo getUsersInfo(const Http::HttpUrl& url);
     MediaEntries getMedia(const Http::HttpUrl& url);
+
+    enum class Relationship{follow, unfollow, approve, ignore};
+    RelationshipInfo postRelationship(Relationship relationship, const std::string& userId);
 
     void checkAuth();
     std::string getResult(const Http::HttpResponse& response);

@@ -16,6 +16,14 @@ static const char* MIN_ID_ARG = "min_id";
 static const char* MAX_ID_ARG = "max_id";
 static const char* MAX_LIKE_ID = "max_like_id";
 
+static const char* RELATIONSHIP_ACTION_ARG = "action";
+static const char* RELATIONSHIP_FOLLOW = "follow";
+static const char* RELATIONSHIP_UNFOLLOW = "unfollow";
+static const char* RELATIONSHIP_APPROVE = "approve";
+static const char* RELATIONSHIP_IGNORE = "ignore";
+
+enum class Relationship {follow, unfollow, approve, ignore};
+
 }
 
 #endif

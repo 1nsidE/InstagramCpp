@@ -241,6 +241,56 @@ RelationshipInfo InstagramClient::getRelationshipInfo(const std::string& userId)
     }
 }
 
+RelationshipInfo InstagramClient::follow(const std::string& userId){
+    return postRelationship(Relationship::ignore, userId);
+}
+
+RelationshipInfo InstagramClient::unfollow(const std::string& userId){
+    return postRelationship(Relationship::ignore, userId);
+}
+
+RelationshipInfo InstagramClient::approve(const std::string& userId){
+    return postRelationship(Relationship::ignore, userId);
+}
+
+RelationshipInfo InstagramClient::ignore(const std::string& userId){
+    return postRelationship(Relationship::ignore, userId);
+}
+
+RelationshipInfo InstagramClient::postRelationship(Relationship relationship, const std::string& userId){
+    try{
+        checkAuth();
+
+        Http::HttpUrl url = getStandartUrl(Users::users + userId + Relationships::relationship);
+        Http::FormData formData{};
+
+        switch(relationship){
+            case Relationship::follow:
+                formData[RELATIONSHIP_ACTION_ARG] = RELATIONSHIP_FOLLOW;
+                break;
+            case Relationship::unfollow:
+                formData[RELATIONSHIP_ACTION_ARG] = RELATIONSHIP_UNFOLLOW;
+                break;
+            case Relationship::approve:
+                formData[RELATIONSHIP_ACTION_ARG] = RELATIONSHIP_APPROVE;
+                break;
+            case Relationship::ignore:
+                formData[RELATIONSHIP_ACTION_ARG] = RELATIONSHIP_IGNORE;
+                break;
+        }
+        formData[AUTH_TOKEN_ARG] = m_authToken;
+
+        const Http::HttpResponse response = m_httpClient.post(url, formData);
+        if(response.code() == Http::Status::OK){
+            return parseRelationshipInfo(response.data());
+        }else{
+            return getResult(response);
+        }
+    }catch(const std::exception& err){
+        return err.what();
+    }
+}
+
 MediaEntry InstagramClient::getMedia(const std::string& mediaId) {
     try {
         checkAuth();
