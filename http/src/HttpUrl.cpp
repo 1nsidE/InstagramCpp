@@ -17,7 +17,7 @@ HttpUrl::HttpUrl(const HttpUrl& url) : m_host{url.m_host}, m_endpoint {url.m_end
     }
 }
 
-HttpUrl::HttpUrl(HttpUrl&& url) : m_argumentsMapPtr {std::move(url.m_argumentsMapPtr)}, m_host{std::move(url.m_host)}, m_endpoint {std::move(url.m_endpoint)}, m_protocol{std::move(url.m_protocol)} {
+HttpUrl::HttpUrl(HttpUrl&& url) : m_argumentsMapPtr {std::move(url.m_argumentsMapPtr)}, m_host{std::move(url.m_host)}, m_endpoint {std::move(url.m_endpoint)}, m_protocol{url.m_protocol} {
     url.m_protocol = HttpProtocol::UNKNOWN;
 }
 
