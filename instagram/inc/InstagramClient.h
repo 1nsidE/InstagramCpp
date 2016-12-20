@@ -82,7 +82,7 @@ private:
     enum class Relationship{follow, unfollow, approve, ignore};
     RelationshipInfo postRelationship(Relationship relationship, const std::string& userId);
 
-    void checkAuth();
+    bool checkAuth();
     std::string getResult(const Http::HttpResponse& response);
 };
 

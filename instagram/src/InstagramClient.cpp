@@ -19,10 +19,8 @@ void InstagramClient::setAuthToken(const std::string& authToken) {
     m_authToken = authToken;
 }
 
-void InstagramClient::checkAuth() {
-    if (m_authToken.empty()) {
-        throw std::runtime_error("not authorized");
-    }
+inline bool InstagramClient::checkAuth() {
+    return !m_authToken.empty();
 }
 
 std::string InstagramClient::getResult(const Http::HttpResponse& response) {
@@ -46,18 +44,14 @@ AuthorizationToken InstagramClient::authenticate(const std::string& code,
     form_data["redirect_uri"] = redirectUri;
     form_data["grant_type"] = AUTH_CODE_GRANT_TYPE;
 
-    try {
-        const Http::HttpResponse response = m_httpClient.post(getStandartUrl(Auth::GET_AUTH_CODE), form_data);
-        if (response.code() == Http::Status::OK) {
-            AuthorizationToken authToken = parseAuthToken(response.data());
-            setAuthToken(authToken.token());
+    const Http::HttpResponse response = m_httpClient.post(getStandartUrl(Auth::GET_AUTH_CODE), form_data);
+    if (response.code() == Http::Status::OK) {
+        AuthorizationToken authToken = parseAuthToken(response.data());
+        setAuthToken(authToken.token());
 
-            return authToken;
-        } else {
-            return getResult(response);
-        }
-    } catch (const std::exception& err) {
-        return err.what();
+        return authToken;
+    } else {
+        return getResult(response);
     }
 }
 
@@ -66,19 +60,18 @@ UserInfo InstagramClient::getUserInfo() {
 }
 
 UserInfo InstagramClient::getUserInfo(const std::string& userId) {
-    try {
-        checkAuth();
-        Http::HttpUrl url = getStandartUrl(Users::users + userId);
-        url[AUTH_TOKEN_ARG] = m_authToken;
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
+    }
 
-        const Http::HttpResponse response = m_httpClient << url;
-        if (response.code() == Http::Status::OK) {
-            return parseUserInfo(response.data());
-        } else {
-            return getResult(response);
-        }
-    } catch (const std::exception& err) {
-        return err.what();
+    Http::HttpUrl url = getStandartUrl(Users::users + userId);
+    url[AUTH_TOKEN_ARG] = m_authToken;
+
+    const Http::HttpResponse response = m_httpClient << url;
+    if (response.code() == Http::Status::OK) {
+        return parseUserInfo(response.data());
+    } else {
+        return getResult(response);
     }
 }
 
@@ -87,16 +80,15 @@ MediaEntries InstagramClient::getRecentMedia(unsigned count) {
 }
 
 MediaEntries InstagramClient::getRecentMedia(const std::string& userId, unsigned count) {
-    try {
-        checkAuth();
-        Http::HttpUrl url = getStandartUrl(Users::users + userId + Media::recentMedia);
-        url[AUTH_TOKEN_ARG] = m_authToken;
-        url[COUNT_ARG] = std::to_string(count);
-
-        return getMedia(url);
-    } catch (const std::exception& err) {
-        return err.what();
+    if(!checkAuth()){ 
+        return NOT_AUTHENTICATED;
     }
+
+    Http::HttpUrl url = getStandartUrl(Users::users + userId + Media::recentMedia);
+    url[AUTH_TOKEN_ARG] = m_authToken;
+    url[COUNT_ARG] = std::to_string(count);
+
+    return getMedia(url);
 } 
 
 MediaEntries InstagramClient::getRecentMedia(const std::string& min_id, const std::string& max_id, unsigned count) {
@@ -104,50 +96,44 @@ MediaEntries InstagramClient::getRecentMedia(const std::string& min_id, const st
 }
 
 MediaEntries InstagramClient::getRecentMedia(const std::string& userId, const std::string& min_id, const std::string& max_id, unsigned count) {
-    try {
-        checkAuth();
-
-        Http::HttpUrl url = getStandartUrl(Users::users + userId + Media::recentMedia);
-        url[AUTH_TOKEN_ARG] = m_authToken;
-        
-        if (!min_id.empty()) url[MIN_ID_ARG] = min_id;
-        if (!max_id.empty()) url[MAX_ID_ARG] = max_id;
-        
-        url[COUNT_ARG] = std::to_string(count);
-
-        return getMedia(url);
-    } catch (const std::exception& err) {
-        return err.what();
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
     }
+
+    Http::HttpUrl url = getStandartUrl(Users::users + userId + Media::recentMedia);
+    url[AUTH_TOKEN_ARG] = m_authToken;
+    
+    if (!min_id.empty()) url[MIN_ID_ARG] = min_id;
+    if (!max_id.empty()) url[MAX_ID_ARG] = max_id;
+    
+    url[COUNT_ARG] = std::to_string(count);
+
+    return getMedia(url);
 }
 
 MediaEntries InstagramClient::getLikedMedia(unsigned int count) {
-    try {
-        checkAuth();
-
-        Http::HttpUrl url = getStandartUrl(std::string{Users::users} + Users::ownLikes);
-        url[AUTH_TOKEN_ARG] = m_authToken;
-        url[COUNT_ARG] = std::to_string(count);
-
-        return getMedia(url);
-    } catch (const std::exception& err) {
-        return err.what();
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
     }
+
+    Http::HttpUrl url = getStandartUrl(std::string{Users::users} + Users::ownLikes);
+    url[AUTH_TOKEN_ARG] = m_authToken;
+    url[COUNT_ARG] = std::to_string(count);
+
+    return getMedia(url);
 }
 
 MediaEntries InstagramClient::getLikedMedia(const std::string& max_id, unsigned int count) {
-    try {
-        checkAuth();
-
-        Http::HttpUrl url = getStandartUrl(std::string{Users::users} + Users::ownLikes);
-        url[AUTH_TOKEN_ARG] = m_authToken;
-        url[MAX_LIKE_ID] = max_id;
-        url[COUNT_ARG] = std::to_string(count);
-
-        return getMedia(url);
-    } catch (const std::exception& err) {
-        return err.what();
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
     }
+
+    Http::HttpUrl url = getStandartUrl(std::string{Users::users} + Users::ownLikes);
+    url[AUTH_TOKEN_ARG] = m_authToken;
+    url[MAX_LIKE_ID] = max_id;
+    url[COUNT_ARG] = std::to_string(count);
+
+    return getMedia(url);
 }
 
 MediaEntries InstagramClient::getMedia(const Http::HttpUrl& url) {
@@ -161,83 +147,75 @@ MediaEntries InstagramClient::getMedia(const Http::HttpUrl& url) {
 }
 
 UsersInfo InstagramClient::searchUsers(const std::string& query, unsigned count) {
-    try {
-        checkAuth();
-
-        Http::HttpUrl url = getStandartUrl(std::string{Users::users} + Users::search);
-        url[AUTH_TOKEN_ARG] = m_authToken;
-        url[QUERY_ARG] = query;
-        url[COUNT_ARG] = std::to_string(count);
-
-        return getUsersInfo(url);
-    } catch (const std::exception& err) {
-        return err.what();
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
     }
+
+    Http::HttpUrl url = getStandartUrl(std::string{Users::users} + Users::search);
+    url[AUTH_TOKEN_ARG] = m_authToken;
+    url[QUERY_ARG] = query;
+    url[COUNT_ARG] = std::to_string(count);
+
+    return getUsersInfo(url);
 }
 
 UsersInfo InstagramClient::getFollows() {
-    try {
-        checkAuth();
-        Http::HttpUrl url = getStandartUrl(std::string{Users::users} + Relationships::follows);
-        url[AUTH_TOKEN_ARG] = m_authToken;
-        return getUsersInfo(url);
-    } catch (const std::exception& err) {
-        return err.what();
-    }
+    if(!checkAuth()){
+       return NOT_AUTHENTICATED;
+    } 
+    Http::HttpUrl url = getStandartUrl(std::string{Users::users} + Relationships::follows);
+    url[AUTH_TOKEN_ARG] = m_authToken;
+    return getUsersInfo(url);
 }
 
 UsersInfo InstagramClient::getFollowedBy() {
-    try {
-        checkAuth();
-        Http::HttpUrl url = getStandartUrl(std::string{Users::users} + Relationships::followedBy);
-        url[AUTH_TOKEN_ARG] = m_authToken;
-        return getUsersInfo(url);
-    } catch (const std::exception& err) {
-        return err.what();
-    }
+    if(!checkAuth()){
+       return NOT_AUTHENTICATED;
+    } 
+
+    Http::HttpUrl url = getStandartUrl(std::string{Users::users} + Relationships::followedBy);
+    url[AUTH_TOKEN_ARG] = m_authToken;
+    return getUsersInfo(url);
 }
 
 UsersInfo InstagramClient::getRequestedBy() {
-    try {
-        checkAuth();
-        Http::HttpUrl url = getStandartUrl(std::string{Users::users} + Relationships::requestedBy);
-        url[AUTH_TOKEN_ARG] = m_authToken;
-        return getUsersInfo(url);
-    } catch (const std::exception& err) {
-        return err.what();
+    if(!checkAuth()){
+       return NOT_AUTHENTICATED;
     }
+
+    Http::HttpUrl url = getStandartUrl(std::string{Users::users} + Relationships::requestedBy);
+    url[AUTH_TOKEN_ARG] = m_authToken;
+    return getUsersInfo(url);
 }
 
 UsersInfo InstagramClient::getUsersInfo(const Http::HttpUrl& url) {
-    try {
-        checkAuth();
-        const Http::HttpResponse response = m_httpClient << url;
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
+    } 
 
-        if (response.code() == Http::Status::OK) {
-            return parseUsersInfo(response.data());
-        } else {
-            return getResult(response);
-        }
-    } catch (const std::exception& err) {
-        return err.what();
+    const Http::HttpResponse response = m_httpClient << url;
+
+    if (response.code() == Http::Status::OK) {
+        return parseUsersInfo(response.data());
+    } else {
+        return getResult(response);
     }
 }
 
 RelationshipInfo InstagramClient::getRelationshipInfo(const std::string& userId) {
-    try {
-        checkAuth();
-        Http::HttpUrl url = getStandartUrl(Users::users + userId + Relationships::relationship);
-        url[AUTH_TOKEN_ARG] = m_authToken;
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
+    }
 
-        const Http::HttpResponse response = m_httpClient << url;
+    Http::HttpUrl url = getStandartUrl(Users::users + userId + Relationships::relationship);
+    url[AUTH_TOKEN_ARG] = m_authToken;
 
-        if (response.code() == Http::Status::OK) {
-            return parseRelationshipInfo(response.data());
-        } else {
-            return getResult(response);
-        }
-    } catch (const std::exception& err) {
-        return err.what();
+    const Http::HttpResponse response = m_httpClient << url;
+
+    if (response.code() == Http::Status::OK) {
+        return parseRelationshipInfo(response.data());
+    } else {
+        return getResult(response);
     }
 }
 
@@ -258,304 +236,276 @@ RelationshipInfo InstagramClient::ignore(const std::string& userId){
 }
 
 RelationshipInfo InstagramClient::postRelationship(Relationship relationship, const std::string& userId){
-    try{
-        checkAuth();
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
+    }
 
-        Http::HttpUrl url = getStandartUrl(Users::users + userId + Relationships::relationship);
-        Http::FormData formData{};
+    Http::HttpUrl url = getStandartUrl(Users::users + userId + Relationships::relationship);
+    Http::FormData formData{};
 
-        switch(relationship){
-            case Relationship::follow:
-                formData[RELATIONSHIP_ACTION_ARG] = RELATIONSHIP_FOLLOW;
-                break;
-            case Relationship::unfollow:
-                formData[RELATIONSHIP_ACTION_ARG] = RELATIONSHIP_UNFOLLOW;
-                break;
-            case Relationship::approve:
-                formData[RELATIONSHIP_ACTION_ARG] = RELATIONSHIP_APPROVE;
-                break;
-            case Relationship::ignore:
-                formData[RELATIONSHIP_ACTION_ARG] = RELATIONSHIP_IGNORE;
-                break;
-        }
-        formData[AUTH_TOKEN_ARG] = m_authToken;
+    switch(relationship){
+        case Relationship::follow:
+            formData[RELATIONSHIP_ACTION_ARG] = RELATIONSHIP_FOLLOW;
+            break;
+        case Relationship::unfollow:
+            formData[RELATIONSHIP_ACTION_ARG] = RELATIONSHIP_UNFOLLOW;
+            break;
+        case Relationship::approve:
+            formData[RELATIONSHIP_ACTION_ARG] = RELATIONSHIP_APPROVE;
+            break;
+        case Relationship::ignore:
+            formData[RELATIONSHIP_ACTION_ARG] = RELATIONSHIP_IGNORE;
+            break;
+    }
+    formData[AUTH_TOKEN_ARG] = m_authToken;
 
-        const Http::HttpResponse response = m_httpClient.post(url, formData);
-        if(response.code() == Http::Status::OK){
-            return parseRelationshipInfo(response.data());
-        }else{
-            return getResult(response);
-        }
-    }catch(const std::exception& err){
-        return err.what();
+    const Http::HttpResponse response = m_httpClient.post(url, formData);
+    if(response.code() == Http::Status::OK){
+        return parseRelationshipInfo(response.data());
+    }else{
+        return getResult(response);
     }
 }
 
 MediaEntry InstagramClient::getMedia(const std::string& mediaId) {
-    try {
-        checkAuth();
+    if(!checkAuth()){ 
+        return NOT_AUTHENTICATED;
+    }
 
-        Http::HttpUrl url  = getStandartUrl(Media::media + mediaId);
-        url[AUTH_TOKEN_ARG] = m_authToken;
+    Http::HttpUrl url  = getStandartUrl(Media::media + mediaId);
+    url[AUTH_TOKEN_ARG] = m_authToken;
 
-        const Http::HttpResponse response = m_httpClient << url;
-        if (response.code() == Http::Status::OK) {
-            return parseMediaEntry(response.data());
-        } else {
-            return getResult(response);
-        }
-    } catch (const std::exception& err) {
-        return err.what();
+    const Http::HttpResponse response = m_httpClient << url;
+    if (response.code() == Http::Status::OK) {
+        return parseMediaEntry(response.data());
+    } else {
+        return getResult(response);
     }
 }
 
 MediaEntry InstagramClient::getMediaWithShortCode(const std::string& shortcode) {
-    try {
-        checkAuth();
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
+    } 
 
-        Http::HttpUrl url = getStandartUrl(Media::byShortCode + shortcode);
-        url[AUTH_TOKEN_ARG] = m_authToken;
+    Http::HttpUrl url = getStandartUrl(Media::byShortCode + shortcode);
+    url[AUTH_TOKEN_ARG] = m_authToken;
 
-        const Http::HttpResponse response = m_httpClient << url;
-        if (response.code() == Http::Status::OK) {
-            return parseMediaEntry(response.data());
-        } else {
-            return getResult(response);
-        }
-    } catch (const std::exception& err) {
-        return err.what();
+    const Http::HttpResponse response = m_httpClient << url;
+    if (response.code() == Http::Status::OK) {
+        return parseMediaEntry(response.data());
+    } else {
+        return getResult(response);
     }
 }
 
 MediaEntries InstagramClient::searchMedia(double lat, double lng, int distance) {
-    try {
-        checkAuth();
-
-        Http::HttpUrl url = getStandartUrl(Media::search);
-        url[LAT_ARG] = std::to_string(lat);
-        url[LNG_ARG] = std::to_string(lng);
-        url[DST_ARG] = std::to_string(distance);
-        url[AUTH_TOKEN_ARG] = m_authToken;
-
-        return getMedia(url);
-    } catch (const std::exception& err) {
-        return err.what();
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
     }
+
+    checkAuth();
+
+    Http::HttpUrl url = getStandartUrl(Media::search);
+    url[LAT_ARG] = std::to_string(lat);
+    url[LNG_ARG] = std::to_string(lng);
+    url[DST_ARG] = std::to_string(distance);
+    url[AUTH_TOKEN_ARG] = m_authToken;
+
+    return getMedia(url);
 }
 
 CommentsInfo InstagramClient::getComments(const std::string& mediaId) {
-    try {
-        checkAuth();
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
+    }
 
-        Http::HttpUrl url = getStandartUrl(Media::media + mediaId + Comments::comments);
-        url[AUTH_TOKEN_ARG] = m_authToken;
+    Http::HttpUrl url = getStandartUrl(Media::media + mediaId + Comments::comments);
+    url[AUTH_TOKEN_ARG] = m_authToken;
 
-        const Http::HttpResponse response = m_httpClient << url;
-        if (response.code() == Http::Status::OK) {
-            return parseComments(response.data());
-        } else {
-            return getResult(response);
-        }
-    } catch (const std::exception& err) {
-        return err.what();
+    const Http::HttpResponse response = m_httpClient << url;
+    if (response.code() == Http::Status::OK) {
+        return parseComments(response.data());
+    } else {
+        return getResult(response);
     }
 }
 
 BaseResult InstagramClient::comment(const std::string& mediaId, const std::string& text) {
-    try {
-        checkAuth();
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
+    }
 
-        Http::HttpUrl url = getStandartUrl(Media::media + mediaId + Comments::comments);
-        url[AUTH_TOKEN_ARG] = m_authToken;
+    Http::HttpUrl url = getStandartUrl(Media::media + mediaId + Comments::comments);
+    url[AUTH_TOKEN_ARG] = m_authToken;
 
-        Http::FormData form_data {};
-        form_data[Comments::TEXT_ARG] = text;
+    Http::FormData form_data {};
+    form_data[Comments::TEXT_ARG] = text;
 
-        const Http::HttpResponse response = m_httpClient.post(url, form_data);
-        if (response.code() == Http::Status::OK) {
-            return {};
-        } else {
-            return getResult(response);
-        }
-    } catch (const std::exception& err) {
-        return err.what();
+    const Http::HttpResponse response = m_httpClient.post(url, form_data);
+    if (response.code() == Http::Status::OK) {
+        return {};
+    } else {
+        return getResult(response);
     }
 }
 
 BaseResult InstagramClient::deleteComment(const std::string& mediaId, const std::string& commentId) {
-    try {
-        checkAuth();
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
+    }
 
-        Http::HttpUrl url = getStandartUrl(Media::media + mediaId + Comments::comments + commentId);
-        url[AUTH_TOKEN_ARG] = m_authToken;
-        const Http::HttpResponse response = m_httpClient.del(url);
-        if (response.code() == Http::Status::OK) {
-            return {};
-        } else {
-            return getResult(response);
-        }
-    } catch (const std::exception& err) {
-        return err.what();
+    Http::HttpUrl url = getStandartUrl(Media::media + mediaId + Comments::comments + commentId);
+    url[AUTH_TOKEN_ARG] = m_authToken;
+    const Http::HttpResponse response = m_httpClient.del(url);
+    if (response.code() == Http::Status::OK) {
+        return {};
+    } else {
+        return getResult(response);
     }
 }
 
 UsersInfo InstagramClient::getLikes(const std::string& mediaId) {
-    try {
-        checkAuth();
-
-        Http::HttpUrl url = getStandartUrl(Media::media + mediaId + Likes::likes);
-        url[AUTH_TOKEN_ARG] = m_authToken;
-
-        return getUsersInfo(url);
-    } catch (const std::exception& err) {
-        return err.what();
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
     }
+
+    Http::HttpUrl url = getStandartUrl(Media::media + mediaId + Likes::likes);
+    url[AUTH_TOKEN_ARG] = m_authToken;
+
+    return getUsersInfo(url);
 }
 
 BaseResult InstagramClient::like(const std::string& mediaId) {
-    try {
-        checkAuth();
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
+    }
 
-        Http::HttpUrl url = getStandartUrl(Media::media + mediaId + Likes::likes);
-        Http::FormData form_data {};
-        form_data[AUTH_TOKEN_ARG] = m_authToken;
+    Http::HttpUrl url = getStandartUrl(Media::media + mediaId + Likes::likes);
+    Http::FormData form_data {};
+    form_data[AUTH_TOKEN_ARG] = m_authToken;
 
-        const Http::HttpResponse response = m_httpClient.post(url, form_data);
-        if (response.code() == Http::Status::OK) {
-            return {};
-        } else {
-            return getResult(response);
-        }
-    } catch (const std::exception& err) {
-        return err.what();
+    const Http::HttpResponse response = m_httpClient.post(url, form_data);
+    if (response.code() == Http::Status::OK) {
+        return {};
+    } else {
+        return getResult(response);
     }
 }
 
 BaseResult InstagramClient::unlike(const std::string& mediaId) {
-    try {
-        checkAuth();
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
+    }
 
-        Http::HttpUrl url = getStandartUrl(Media::media + mediaId + Likes::likes);
-        url[AUTH_TOKEN_ARG] = m_authToken;
+    Http::HttpUrl url = getStandartUrl(Media::media + mediaId + Likes::likes);
+    url[AUTH_TOKEN_ARG] = m_authToken;
 
-        const Http::HttpResponse response = m_httpClient.del(url);
-        if (response.code() == Http::Status::OK) {
-            return {};
-        } else {
-            return getResult(response);
-        }
-    } catch (const std::exception& err) {
-        return err.what();
+    const Http::HttpResponse response = m_httpClient.del(url);
+    if (response.code() == Http::Status::OK) {
+        return {};
+    } else {
+        return getResult(response);
     }
 }
 
 TagInfo InstagramClient::getTagInfo(const std::string& tag_name) {
-    try {
-        checkAuth();
-        Http::HttpUrl url = getStandartUrl(Tags::tags + tag_name);
-        url[AUTH_TOKEN_ARG] = m_authToken;
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
+    }
 
-        const Http::HttpResponse response = m_httpClient << url;
-        if (response.code() == Http::Status::OK) {
-            return parseTagInfo(response.data());
-        } else {
-            return getResult(response);
-        }
-    } catch (const std::exception& err) {
-        return err.what();
+    Http::HttpUrl url = getStandartUrl(Tags::tags + tag_name);
+    url[AUTH_TOKEN_ARG] = m_authToken;
+
+    const Http::HttpResponse response = m_httpClient << url;
+    if (response.code() == Http::Status::OK) {
+        return parseTagInfo(response.data());
+    } else {
+        return getResult(response);
     }
 }
 
 TagsInfo InstagramClient::searchTags(const std::string& query) {
-    try {
-        checkAuth();
-        Http::HttpUrl url = getStandartUrl(std::string{Tags::tags} + Tags::tagsSearch);
-        url[QUERY_ARG] = query;
-        url[AUTH_TOKEN_ARG] = m_authToken;
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
+    }
 
-        const Http::HttpResponse response = m_httpClient << url;
-        if (response.code() == Http::Status::OK) {
-            return parseTagsInfo(response.data());
-        } else {
-            return getResult(response);
-        }
-    } catch (const std::exception& err) {
-        return err.what();
+    Http::HttpUrl url = getStandartUrl(std::string{Tags::tags} + Tags::tagsSearch);
+    url[QUERY_ARG] = query;
+    url[AUTH_TOKEN_ARG] = m_authToken;
+
+    const Http::HttpResponse response = m_httpClient << url;
+    if (response.code() == Http::Status::OK) {
+        return parseTagsInfo(response.data());
+    } else {
+        return getResult(response);
     }
 
 }
 
 MediaEntries InstagramClient::getRecentMediaForTag(const std::string& tag_name) {
-    try {
-        checkAuth();
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
+    }
 
-        Http::HttpUrl url = getStandartUrl(Tags::tags + tag_name + Media::recentMedia);
-        url[AUTH_TOKEN_ARG] = m_authToken;
+    Http::HttpUrl url = getStandartUrl(Tags::tags + tag_name + Media::recentMedia);
+    url[AUTH_TOKEN_ARG] = m_authToken;
 
-        const Http::HttpResponse response = m_httpClient << url;
-        if (response.code() == Http::Status::OK) {
-            return parseMediaEntries(response.data());
-        } else {
-            return getResult(response);
-        }
-    } catch (const std::exception& err) {
-        return err.what();
+    const Http::HttpResponse response = m_httpClient << url;
+    if (response.code() == Http::Status::OK) {
+        return parseMediaEntries(response.data());
+    } else {
+        return getResult(response);
     }
 }
 
 LocationInfo InstagramClient::getLocationById(const std::string& location_id) {
-    try {
-        checkAuth();
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
+    }
 
-        Http::HttpUrl url = getStandartUrl(Locations::locations + location_id);
-        url[AUTH_TOKEN_ARG] = m_authToken;
+    Http::HttpUrl url = getStandartUrl(Locations::locations + location_id);
+    url[AUTH_TOKEN_ARG] = m_authToken;
 
-        const Http::HttpResponse response = m_httpClient << url;
-        if (response.code() == Http::Status::OK) {
-            return parseLocation(response.data());
-        } else {
-            return getResult(response);
-        }
-    } catch (const std::exception& err) {
-        return err.what();
+    const Http::HttpResponse response = m_httpClient << url;
+    if (response.code() == Http::Status::OK) {
+        return parseLocation(response.data());
+    } else {
+        return getResult(response);
     }
 }
 
 MediaEntries InstagramClient::getMediaForLoccation(const std::string& location_id) {
-    try {
-        checkAuth();
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
+    }
 
-        Http::HttpUrl url = getStandartUrl(Locations::locations + location_id + Media::recentMedia);
-        Http::HttpResponse response = m_httpClient << url;
+    Http::HttpUrl url = getStandartUrl(Locations::locations + location_id + Media::recentMedia);
+    Http::HttpResponse response = m_httpClient << url;
 
-        if (response.code() == Http::Status::OK) {
-            return parseMediaEntries(response.data());
-        } else {
-            return getResult(response);
-        }
-    } catch (std::exception& err) {
-        return err.what();
+    if (response.code() == Http::Status::OK) {
+        return parseMediaEntries(response.data());
+    } else {
+        return getResult(response);
     }
 }
 
 LocationsInfo InstagramClient::searchLocations(double lat, double lng, int distance) {
-    try {
-        checkAuth();
+    if(!checkAuth()){
+        return NOT_AUTHENTICATED;
+    }
 
-        Http::HttpUrl url = getStandartUrl(std::string{Locations::locations} + Locations::search);
-        url[LAT_ARG] = std::to_string(lat);
-        url[LNG_ARG] = std::to_string(lng);
-        url[DST_ARG] = std::to_string(distance);
-        url[AUTH_TOKEN_ARG] = m_authToken;
+    Http::HttpUrl url = getStandartUrl(std::string{Locations::locations} + Locations::search);
+    url[LAT_ARG] = std::to_string(lat);
+    url[LNG_ARG] = std::to_string(lng);
+    url[DST_ARG] = std::to_string(distance);
+    url[AUTH_TOKEN_ARG] = m_authToken;
 
-        Http::HttpResponse response = m_httpClient << url;
-        if (response.code() == Http::Status::OK) {
-            return parseLocations(response.data());
-        } else {
-            return getResult(response);
-        }
-    } catch (std::exception& err) {
-        return err.what();
+    Http::HttpResponse response = m_httpClient << url;
+    if (response.code() == Http::Status::OK) {
+        return parseLocations(response.data());
+    } else {
+        return getResult(response);
     }
 }
 

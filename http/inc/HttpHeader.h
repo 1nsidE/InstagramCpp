@@ -6,10 +6,10 @@
 #include "Http.h"
 
 namespace Http {
-using HeadersMap = std::unordered_map<std::string, std::string>;
 
 class EXPORT_HTTP HttpHeader {
 public:
+    using HeadersMap = std::unordered_map<std::string, std::string>;
     virtual ~HttpHeader();
 
     const std::string& getHeader(Header header) const noexcept;
