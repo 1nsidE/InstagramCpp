@@ -22,7 +22,7 @@ int init_wsa() {
     if (!is_wsa_initialized) {
         WSAData data{};
 
-        int result = WSAStartup(MAKEWORD(2, 2), &data);
+        result = WSAStartup(MAKEWORD(2, 2), &data);
         if (result != 0) {
             return result;
         }
@@ -36,7 +36,7 @@ int init_wsa() {
 std::string errorString(int code){
     char* msg = nullptr;
 
-    if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr, code, 0, &msg, 0, nullptr) == 0) {
+    if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr, code, 0, msg, 0, nullptr) == 0) {
         return "Unknown Error";
     }
 
@@ -136,7 +136,7 @@ void TCPSocket::close() {
     }
 }
 
-std::string TCPSocket::getIp() const {
+std::string TCPSocket::ip() const {
     if (m_sockfd == -1) {
         return "";
     }
