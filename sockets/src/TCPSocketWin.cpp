@@ -80,7 +80,7 @@ void TCPSocket::connect(const std::string& host, const std::string& port) {
     if (getaddrinfo(host.c_str(), port.c_str(), &hints, &res) != 0) {
         if (WSAGetLastError() == WSANOTINITIALISED) {
             int result = init_wsa();
-            if (!result) {
+            if (result) {
                 throwError("Failed to initialize WSA : ", result);
             }
         }

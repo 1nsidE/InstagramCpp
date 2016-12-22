@@ -195,7 +195,7 @@ UserInfo parseUserInfo(const std::string& json) {
     Document document{};
     Value value{};
 
-    if (document.Parse(json.c_str()).HasParseError() | !document.HasMember("data")) {
+    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
         return "Failed to parse user info";
     }
 
@@ -205,7 +205,7 @@ UserInfo parseUserInfo(const std::string& json) {
 UsersInfo parseUsersInfo(const std::string& json) {
     Document document{};
     Value value;
-    if (document.Parse(json.c_str()).HasParseError() | !document.HasMember("data")) {
+    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
         return "Failed to parse users info";
     }
 
@@ -249,7 +249,7 @@ UserInfo getUserInfo(ValueWrapper info) {
 RelationshipInfo parseRelationshipInfo(const std::string& json) {
     Document document{};
     Value value{};
-    if (document.Parse(json.c_str()).HasParseError() | !document.HasMember("data")) {
+    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
         return "Failed to parse relationship info";
     }
 
@@ -263,7 +263,7 @@ TagInfo parseTagInfo(const std::string& json) {
     Document document{};
     Value value{};
 
-    if (document.Parse(json.c_str()).HasParseError() | !document.HasMember("data")) {
+    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
         return "Failed to parse tag info";
     }
 
@@ -277,7 +277,7 @@ TagsInfo parseTagsInfo(const std::string& json) {
     Document document{};
     Value value{};
 
-    if (document.Parse(json.c_str()).HasParseError() | !document.HasMember("data")) {
+    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
         return "Failed to parse tags info";
     }
 
@@ -295,7 +295,7 @@ TagsInfo parseTagsInfo(const std::string& json) {
 CommentsInfo parseComments(const std::string& json) {
     Document document{};
     Value value{};
-    if (document.Parse(json.c_str()).HasParseError() | !document.HasMember("data")) {
+    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
         return "Failed to parse comments";
     }
 
@@ -329,7 +329,7 @@ CommentInfo getCommentInfo(ValueWrapper comment) {
 LocationInfo parseLocation(const std::string& json) {
     Document document{};
     Value value{};
-    if (document.Parse(json.c_str()).HasParseError() | !document.HasMember("data")) {
+    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
         return "Failed to parse location";
     }
 
@@ -353,7 +353,7 @@ LocationInfo getLocation(ValueWrapper location) {
 LocationsInfo parseLocations(const std::string& json) {
     Document document{};
     Value value{};
-    if (document.Parse(json.c_str()).HasParseError() | !document.HasMember("data")) {
+    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
         return "Failed to parse locations";
     }
 
