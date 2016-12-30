@@ -4,6 +4,9 @@
 #include "InstagramEndpoints.h"
 #include "FormData.h"
 
+#include "HttpUrl.h"
+#include "HttpResponse.h"
+
 namespace Instagram {
 
 inline Http::HttpUrl getStandartUrl(const std::string &str){

@@ -1,10 +1,7 @@
 #ifndef INSTAGRAM_SERVICE
 #define INSTAGRAM_SERVICE
 
-#include "HttpResponse.h"
-#include "HttpRequest.h"
 #include "HttpClient.h"
-#include "HttpUrl.h"
 
 #include "AuthorizationToken.h"
 #include "MediaEntries.h"
