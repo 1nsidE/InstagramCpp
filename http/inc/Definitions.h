@@ -1,7 +1,7 @@
 #ifndef HTTP_DEFINITIONS_HEADER
 #define HTTP_DEFINITIONS_HEADER
 
-#ifdef WIN32
+#ifdef _WIN32
     #include<xstring>
     #include<unordered_map>
     #include<map>

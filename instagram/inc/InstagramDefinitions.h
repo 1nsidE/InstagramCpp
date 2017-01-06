@@ -1,7 +1,7 @@
 #ifndef INSTAGRAM_DEFINITIONS_HEADER
 #define INSTAGRAM_DEFINITIONS_HEADER
 
-#ifdef WIN32
+#ifdef _WIN32
     #include<xstring>
 
     #ifdef INSTAGRAM_LIB_EXPORT
