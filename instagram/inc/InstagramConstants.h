@@ -25,6 +25,7 @@ static const char* RELATIONSHIP_IGNORE = "ignore";
 enum class Relationship {follow, unfollow, approve, ignore};
 
 static const char* NOT_AUTHENTICATED = "Not authenticated";
+static const char* FORM_DATA_BOUNDARY = "################";
 
 }
 

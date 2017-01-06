@@ -19,7 +19,9 @@ HttpClient::HttpClient(){
     m_hostToSocketMap.max_load_factor(0.75);
 }
 
-HttpClient::HttpClient(HttpClient&& http_client) : m_hostToSocketMap {std::move(http_client.m_hostToSocketMap)}{}
+HttpClient::HttpClient(HttpClient&& httpClient) : HttpClient{}{
+    swap(*this, httpClient);
+}
 
 HttpClient::~HttpClient() {}
 
@@ -222,15 +224,24 @@ void HttpClient::disconnect(const HttpUrl& url) {
 }
 
 HttpClient::SocketPtr HttpClient::getSocket(const HttpUrl& url){
-    const std::string& host = url.host();
-    
-    SocketPtr socket = m_hostToSocketMap[host];
-    if(!socket){
+    std::string host = toString(url.protocol()) + (':' + url.host());
+
+    HostToSocketMap::const_iterator it = m_hostToSocketMap.find(host);
+
+    SocketPtr socket{nullptr};
+    if(it == m_hostToSocketMap.end()){
         socket = connect(url);
         m_hostToSocketMap[host] = socket;
+    }else{
+        socket = m_hostToSocketMap[host];
     }
     
     return socket;
+}
+
+void swap(HttpClient& first, HttpClient& second){
+    using std::swap;
+    swap(first.m_hostToSocketMap, second.m_hostToSocketMap);
 }
 
 }
