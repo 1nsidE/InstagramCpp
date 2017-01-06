@@ -12,7 +12,7 @@ MediaEntry::MediaEntry(const std::string& errMsg) : BaseResult{errMsg} {}
 
 MediaEntry::MediaEntry(const char* errMsg) : BaseResult{errMsg} {}
 
-MediaEntry::MediaEntry(const MediaEntry &mediaEntry) : BaseResult{mediaEntry},
+MediaEntry::MediaEntry(const MediaEntry &mediaEntry): BaseResult{mediaEntry},
                                                         m_link{mediaEntry.m_link},
                                                         m_id{mediaEntry.m_id},
                                                         m_caption{mediaEntry.m_caption},
@@ -24,94 +24,31 @@ MediaEntry::MediaEntry(const MediaEntry &mediaEntry) : BaseResult{mediaEntry},
                                                         m_videoStandart{mediaEntry.m_videoStandart},
                                                         m_tags{mediaEntry.m_tags},
                                                         m_users{mediaEntry.m_users},
+                                                        m_userInfo{mediaEntry.m_userInfo},
                                                         m_commentsCount{mediaEntry.m_commentsCount},
                                                         m_likesCount{mediaEntry.m_likesCount},
                                                         m_createTime{mediaEntry.m_createTime},
                                                         m_mediaType{mediaEntry.m_mediaType} {}
 
-MediaEntry::MediaEntry(MediaEntry &&mediaEntry) : BaseResult{std::move(mediaEntry)},
-                                                   m_link{std::move(mediaEntry.m_link)},
-                                                   m_id{std::move(mediaEntry.m_id)},
-                                                   m_caption{std::move(mediaEntry.m_caption)},
-                                                   m_lowResolution{std::move(mediaEntry.m_lowResolution)},
-                                                   m_thumbnail{std::move(mediaEntry.m_thumbnail)},
-                                                   m_standartResolution{std::move(mediaEntry.m_standartResolution)},
-                                                   m_filter{std::move(mediaEntry.m_filter)},
-                                                   m_videoLow{mediaEntry.m_videoLow},
-                                                   m_videoStandart{mediaEntry.m_videoStandart},
-                                                   m_tags(std::move(mediaEntry.m_tags)),
-                                                   m_users{std::move(mediaEntry.m_users)},
-                                                   m_commentsCount(mediaEntry.m_commentsCount),
-                                                   m_likesCount(mediaEntry.m_likesCount),
-                                                   m_createTime(mediaEntry.m_createTime),
-                                                   m_mediaType{mediaEntry.m_mediaType} {
-    mediaEntry.m_commentsCount = -1;
-    mediaEntry.m_likesCount = -1;
-    mediaEntry.m_createTime = -1;
-    mediaEntry.m_mediaType = MediaType::UNKNOWN;
+
+MediaEntry::MediaEntry(MediaEntry &&mediaEntry) : MediaEntry(){
+    swap(*this, mediaEntry);
 }
 
 MediaEntry::~MediaEntry() {}
 
 MediaEntry& MediaEntry::operator=(const MediaEntry& mediaEntry) {
-    if (this == &mediaEntry){
-        return *this;
-    }
+    MediaEntry copy{mediaEntry};
 
-    BaseResult::operator=(mediaEntry);
-
-    m_link = mediaEntry.m_link;
-    m_id = mediaEntry.m_id;
-    m_caption = mediaEntry.m_caption;
-    m_lowResolution = mediaEntry.m_lowResolution;
-    m_thumbnail = mediaEntry.m_thumbnail;
-    m_standartResolution = mediaEntry.m_standartResolution;
-    m_filter = mediaEntry.m_filter;
-    m_videoLow = mediaEntry.m_videoLow;
-    m_videoStandart = mediaEntry.m_videoStandart;
-
-    m_tags = mediaEntry.m_tags;
-    m_users = mediaEntry.m_users;
-
-    m_commentsCount = mediaEntry.m_commentsCount;
-    m_likesCount = mediaEntry.m_likesCount;
-    m_createTime = mediaEntry.m_createTime;
-    m_mediaType = mediaEntry.m_mediaType;
-
+    swap(*this, copy);
     return *this;
 }
 
 MediaEntry& MediaEntry::operator=(MediaEntry&& mediaEntry) {
-    if (this == &mediaEntry){
-        return *this;
-    }
+    swap(*this, mediaEntry);
 
-    BaseResult::operator=(std::move(mediaEntry));
-
-    m_link = std::move(mediaEntry.m_link);
-    m_id = std::move(mediaEntry.m_id);
-    m_caption = std::move(mediaEntry.m_caption);
-    m_lowResolution = std::move(mediaEntry.m_lowResolution);
-    m_thumbnail = std::move(mediaEntry.m_thumbnail);
-    m_standartResolution = std::move(mediaEntry.m_standartResolution);
-    m_filter = std::move(mediaEntry.m_filter);
-    m_videoLow = std::move(mediaEntry.m_videoLow);
-    m_videoStandart = std::move(mediaEntry.m_videoStandart);
-
-    m_tags = std::move(mediaEntry.m_tags);
-    m_users = std::move(mediaEntry.m_users);
-
-    m_commentsCount = mediaEntry.m_commentsCount;
-    mediaEntry.m_commentsCount = -1;
-
-    m_likesCount = mediaEntry.m_likesCount;
-    mediaEntry.m_likesCount = -1;
-
-    m_createTime = mediaEntry.m_createTime;
-    mediaEntry.m_createTime = -1;
-
-    m_mediaType = mediaEntry.m_mediaType;
-    mediaEntry.m_mediaType = MediaType::UNKNOWN;
+    MediaEntry temp{};
+    swap(mediaEntry, temp);
 
     return *this;
 }
@@ -176,6 +113,10 @@ const std::string& MediaEntry::videoStandartResolution() const noexcept {
     return m_videoStandart;
 }
 
+const UserInfo& MediaEntry::userInfo() const noexcept{
+    return m_userInfo;
+}
+
 void MediaEntry::setType(MediaType type) {
     m_mediaType = type;
 }
@@ -234,6 +175,41 @@ void MediaEntry::setVideoStandartResolution(const std::string& url) {
 
 void MediaEntry::addUser(const std::string& user) {
     m_users.push_back(user);
+}
+
+void MediaEntry::setUserInfo(const UserInfo& userInfo){
+    m_userInfo = userInfo;
+}
+
+void MediaEntry::setUserInfo(UserInfo&& userInfo){
+    using std::swap;
+    swap(m_userInfo, userInfo);
+    
+    UserInfo temp{};
+    swap(userInfo, temp);
+}
+
+void swap(MediaEntry& media1, MediaEntry& media2){
+    using std::swap;
+
+    swap(static_cast<BaseResult&>(media1), static_cast<BaseResult&>(media2));
+
+    swap(media1.m_link, media2.m_link);
+    swap(media1.m_id, media2.m_id);
+    swap(media1.m_caption, media2.m_caption);
+    swap(media1.m_lowResolution, media2.m_lowResolution);
+    swap(media1.m_thumbnail, media2.m_thumbnail);
+    swap(media1.m_standartResolution, media2.m_standartResolution);
+    swap(media1.m_filter, media2.m_filter);
+    swap(media1.m_videoLow, media2.m_videoLow);
+    swap(media1.m_videoStandart, media2.m_videoStandart);
+    swap(media1.m_tags, media2.m_tags);
+    swap(media1.m_users, media2.m_users);
+    swap(media1.m_userInfo, media2.m_userInfo);
+    swap(media1.m_commentsCount, media2.m_commentsCount);
+    swap(media1.m_likesCount, media2.m_likesCount);
+    swap(media1.m_createTime, media2.m_createTime);
+    swap(media1.m_mediaType, media2.m_mediaType);
 }
 
 }

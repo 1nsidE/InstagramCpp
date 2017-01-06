@@ -43,32 +43,6 @@ std::string errorString(int code){
     return msg;
 }
 
-TCPSocket::TCPSocket(const std::string &host, const std::string &port) {
-   connect(host, port);
-}
-
-TCPSocket::TCPSocket(int sockfd, bool isBlocking) : m_sockfd{ sockfd }, m_isBlocking{ isBlocking } {}
-
-TCPSocket::TCPSocket(TCPSocket&& tcpSocket) : m_sockfd{ tcpSocket.m_sockfd }, m_isBlocking{ tcpSocket.m_isBlocking } {
-    tcpSocket.m_sockfd = -1;
-    tcpSocket.m_isBlocking = false;
-}
-
-TCPSocket::~TCPSocket() {
-    TCPSocket::close();
-}
-
-TCPSocket &TCPSocket::operator=(TCPSocket &&tcp_socket) {
-    if (this != &tcp_socket) {
-        m_sockfd = tcp_socket.m_sockfd;
-        m_isBlocking = tcp_socket.m_isBlocking;
-
-        tcp_socket.m_sockfd = -1;
-        tcp_socket.m_isBlocking = false;
-    }
-    return *this;
-}
-
 void TCPSocket::connect(const std::string& host, const std::string& port) {
     addrinfo hints;
     addrinfo* res;
@@ -98,17 +72,16 @@ void TCPSocket::connect(const std::string& host, const std::string& port) {
         }
 
         if (::connect(m_sockfd, tmp_res->ai_addr, tmp_res->ai_addrlen) == -1) {
-            throwError("connect() failed: ", lastErrorCode());
+            m_sockfd = -1;
         }
 
         break;
     }
 
-    if (m_sockfd == -1) {
-        throwError("failed to craete socket : ", lastErrorCode());
-    }
-
     freeaddrinfo(res);
+    if (m_sockfd == -1) {
+        throwError("failed to create socket", lastErrorCode());
+    }
 }
 
 long TCPSocket::write(const void *data, size_t length) {
@@ -232,7 +205,7 @@ int TCPSocket::lastErrorCode() const {
 
 void TCPSocket::throwError(const char* err_msg, int code) const {
     std::string msg{ err_msg };
-    msg += errorString(code);
+    msg = msg + " : " + errorString(code);
     throw std::runtime_error(err_msg);
 }
 

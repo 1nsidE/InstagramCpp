@@ -10,28 +10,25 @@ HttpResponse::HttpResponse(const std::string& response) : HttpHeader{} {
 }
 
 HttpResponse::HttpResponse(const HttpResponse& response) : HttpHeader { response }, m_status { response.m_status }, m_code { response.m_code } {}
-HttpResponse::HttpResponse(HttpResponse&& response) : HttpHeader { std::forward<HttpHeader>(response) }, m_status { std::move(response.m_status) }, m_code { response.m_code } {
-    response.m_code = -1;
+
+HttpResponse::HttpResponse(HttpResponse&& response) : HttpResponse{} {
+    swap(*this, response);
 }
 
 HttpResponse::~HttpResponse() {}
 
 HttpResponse &HttpResponse::operator=(const HttpResponse& httpResponse) {
-    if (this != &httpResponse) {
-        HttpHeader::operator=(httpResponse);
-        m_status = httpResponse.m_status;
-    }
+    HttpResponse copy{httpResponse};
+
+    swap(*this, copy);
     return *this;
 }
 
 HttpResponse &HttpResponse::operator=(HttpResponse &&httpResponse) {
-    if (this != &httpResponse) {
-        HttpHeader::operator=(std::forward<HttpHeader>(httpResponse));
-        m_status = std::move(httpResponse.m_status);
+    swap(*this, httpResponse);
 
-        m_code = httpResponse.m_code;
-        httpResponse.m_code = -1;
-    }
+    HttpResponse temp{};
+    swap(httpResponse, temp);
     return *this;
 }
 
@@ -51,7 +48,7 @@ void HttpResponse::setStatus(const std::string& status, int code) {
 }
 
 std::string HttpResponse::getString() const {
-    std::string result("");
+    std::string result{};
     result.append(HTTP_1_1).append(" ").append(m_status).append(" ").append(std::to_string(m_code)).append(CRLF);
 
     result.append(HttpHeader::getString());
@@ -94,6 +91,14 @@ void HttpResponse::parseResponse(const std::string& response){
     if ((pos = static_cast<size_t>(stringStream.tellg())) < response.length()) {
         setData(response.substr(pos, response.length() - pos));
     }
+}
+
+void swap(HttpResponse& first, HttpResponse& second){
+    using std::swap;
+    swap(static_cast<HttpHeader&>(first), static_cast<HttpHeader&>(second));
+
+    swap(first.m_status, second.m_status);
+    swap(first.m_code, second.m_code);
 }
 
 }

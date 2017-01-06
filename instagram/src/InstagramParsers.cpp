@@ -87,15 +87,7 @@ AuthorizationToken parseAuthToken(const std::string& json) {
     }
 
     token.setAuthToken(document["access_token"].GetString());
-
-    ValueWrapper user{document["user"]};
-    token.setId(user.getString("id"));
-    token.setUsername(user.getString("username"));
-    token.setUserBio(user.getString("bio"));
-    token.setFullName(user.getString("full_name"));
-    token.setProfilePictureUrl(user.getString("profile_picture"));
-    token.setWebsite(user.getString("website"));
-
+    token.setUserInfo(getUserInfo(document["user"]));
     return token;
 }
 
@@ -187,6 +179,8 @@ MediaEntry getMediaEntry(ValueWrapper media) {
 
     entry.setFilter(media.getString("filter"));
     entry.setId(media.getString("id"));
+
+    entry.setUserInfo(getUserInfo(media["user"]));
 
     return entry;
 }

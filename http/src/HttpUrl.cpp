@@ -17,41 +17,24 @@ HttpUrl::HttpUrl(const HttpUrl& url) : m_host{url.m_host}, m_endpoint {url.m_end
     }
 }
 
-HttpUrl::HttpUrl(HttpUrl&& url) : m_argumentsMapPtr {std::move(url.m_argumentsMapPtr)}, m_host{std::move(url.m_host)}, m_endpoint {std::move(url.m_endpoint)}, m_protocol{url.m_protocol} {
-    url.m_protocol = HttpProtocol::UNKNOWN;
+HttpUrl::HttpUrl(HttpUrl&& url) : HttpUrl{} {
+    swap(*this, url);
 }
 
 HttpUrl::~HttpUrl() {}
 
 HttpUrl& HttpUrl::operator=(const HttpUrl& url) {
-    if (this == &url) {
-        return *this;
-    }
-
-    m_argumentsMapPtr.reset();
-    if(url.m_argumentsMapPtr){
-        m_argumentsMapPtr = std::make_unique<ArgumentsMap>(*url.m_argumentsMapPtr);
-    }
-
-    m_protocol = url.m_protocol;
-    m_host = url.m_host;
-    m_endpoint = url.m_endpoint;
-
+    HttpUrl copy{url};
+    
+    swap(*this, copy);
     return *this;
 }
 
 HttpUrl& HttpUrl::operator=(HttpUrl&& url) {
-    if (this == &url) {
-        return *this;
-    }
-
-    m_argumentsMapPtr = std::move(url.m_argumentsMapPtr);
-
-    m_protocol = std::move(url.m_protocol);
-    url.m_protocol = HttpProtocol::UNKNOWN;
-
-    m_host = std::move(url.m_host);
-    m_endpoint = std::move(url.m_endpoint);
+    swap(*this, url);
+    
+    HttpUrl temp{};
+    swap(url, temp);
 
     return *this;
 }
@@ -192,7 +175,16 @@ void HttpUrl::parseArguments(const std::string args) {
         }
 
         addArgument(argsVec[0], argsVec[1]);
-        }
     }
+}
+
+void swap(HttpUrl& first, HttpUrl& second){
+    using std::swap;
+    swap(first.m_argumentsMapPtr, second.m_argumentsMapPtr);
+    swap(first.m_host, second.m_host);
+    swap(first.m_endpoint, second.m_endpoint);
+    swap(first.m_protocol, second.m_protocol);
+}
+
 }
 

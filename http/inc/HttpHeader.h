@@ -52,6 +52,8 @@ private:
 
     using DataPtr = std::unique_ptr<std::string>;
     DataPtr m_data{};
+
+    friend void swap(HttpHeader& first, HttpHeader& second);
 };
 
 }

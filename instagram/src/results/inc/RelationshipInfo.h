@@ -25,6 +25,8 @@ public:
 private:
     std::string m_incomingStatus{};
     std::string m_outgoingStatus{};
+
+    friend void swap(RelationshipInfo& first, RelationshipInfo& second);
 };
 
 }

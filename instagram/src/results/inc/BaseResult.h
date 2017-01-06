@@ -27,6 +27,8 @@ public:
 private:
     using ErrPtr = std::unique_ptr<std::string>;
     ErrPtr m_errMsg;
+
+    friend void swap(BaseResult& result1, BaseResult& result2);
 };
 
 }

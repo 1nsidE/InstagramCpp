@@ -7,11 +7,15 @@
 
 namespace Http {
 
+FormData::FormData(){}
+
 FormData::FormData(const std::string &boundary) : m_boundary{boundary} {}
 
 FormData::FormData(const FormData& formData) : m_data{formData.m_data}, m_boundary{formData.m_boundary} {}
 
-FormData::FormData(FormData&& formData) : m_data{std::move(formData.m_data)}, m_boundary{std::move(formData.m_boundary)} {}
+FormData::FormData(FormData&& formData) : FormData{}{
+    swap(*this, formData);
+} 
 
 void FormData::addPair(const std::string &name, const std::string &value) {
     m_data[name] = value;
@@ -45,6 +49,12 @@ std::string FormData::contentType() const {
     std::string content_type {CONTENT_TYPE};
     content_type.append(m_boundary);
     return content_type;
+}
+
+void swap(FormData& first, FormData& second){
+    using std::swap;
+    swap(first.m_data, second.m_data);
+    swap(first.m_boundary, second.m_boundary);
 }
 
 }

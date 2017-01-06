@@ -54,6 +54,8 @@ private:
     std::string m_host{""};
     std::string m_endpoint{""};
     HttpProtocol m_protocol{HttpProtocol::UNKNOWN};
+
+    friend void swap(HttpUrl& first, HttpUrl& second);
 };
 
 }

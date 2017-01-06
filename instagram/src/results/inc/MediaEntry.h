@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-#include "BaseResult.h"
+#include "UserInfo.h"
 //TODO: make this class iterable
 
 namespace Instagram{
@@ -40,6 +40,8 @@ public:
     const std::vector<std::string>& tags() const noexcept;
     const std::vector<std::string>& usersInPhoto() const noexcept;
 
+    const UserInfo& userInfo() const noexcept;
+
     int commentsCount() const noexcept;
     int likesCount() const noexcept;
     long createTime() const noexcept;
@@ -62,6 +64,9 @@ public:
 
     void addTag(const std::string& tag);
     void addUser(const std::string& userId);
+
+    void setUserInfo(const UserInfo& userInfo);
+    void setUserInfo(UserInfo&& userInfo);
 private:
     std::string m_link{};
     std::string m_id{};
@@ -76,12 +81,16 @@ private:
 
     std::vector<std::string> m_tags;
     std::vector<std::string> m_users;
+
+    UserInfo m_userInfo{};
+
     int m_commentsCount = -1;
     int m_likesCount = -1;
     long m_createTime = -1;
     MediaType m_mediaType = MediaType::UNKNOWN;
+    
+    friend void swap(MediaEntry& media1, MediaEntry& media2);
 };
 
 }
-
 #endif

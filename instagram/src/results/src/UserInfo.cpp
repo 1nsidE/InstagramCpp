@@ -16,23 +16,9 @@ UserInfo::UserInfo(const UserInfo& userInfo) : BaseResult{userInfo},
                                                 m_follows{userInfo.m_follows},
                                                 m_mediaCount{userInfo.m_mediaCount} {}
 
-UserInfo::UserInfo(UserInfo&& userInfo) : BaseResult{std::forward<BaseResult>(userInfo)},
-                                           m_id{std::move(userInfo.m_id)},
-                                           m_username{std::move(userInfo.m_username)},
-                                           m_name{std::move(userInfo.m_name)},
-                                           m_lastName{std::move(userInfo.m_lastName)},
-                                           m_bio{std::move(userInfo.m_bio)},
-                                           m_profPicUrl{std::move(userInfo.m_profPicUrl)},
-                                           m_website{std::move(userInfo.m_website)},
-                                           m_followedBy{userInfo.m_followedBy},
-                                           m_follows{userInfo.m_follows},
-                                           m_mediaCount{userInfo.m_mediaCount} {
-
-    userInfo.m_follows = -1;
-    userInfo.m_followedBy = -1;
-    userInfo.m_mediaCount = -1;
+UserInfo::UserInfo(UserInfo&& userInfo) : UserInfo(){
+    swap(*this, userInfo);
 }
-
 
 UserInfo::UserInfo(const char* errMsg) : BaseResult{errMsg} {}
 
@@ -41,49 +27,17 @@ UserInfo::UserInfo(const std::string& errMsg) : BaseResult{errMsg} {}
 UserInfo::~UserInfo() {}
 
 UserInfo& UserInfo::operator=(const UserInfo& userInfo) {
-    if (this == &userInfo) {
-        return *this;
-   }
+    UserInfo copy{userInfo};
 
-    BaseResult::operator=(userInfo);
-
-    m_id = userInfo.m_id;
-    m_username = userInfo.m_username;
-    m_name = userInfo.m_name;
-    m_lastName = userInfo.m_lastName;
-    m_bio = userInfo.m_bio;
-    m_profPicUrl = userInfo.m_profPicUrl;
-    m_website = userInfo.m_website;
-
-    m_followedBy = userInfo.m_followedBy;
-    m_follows = userInfo.m_follows;
-    m_mediaCount = userInfo.m_mediaCount;
-
+    swap(*this, copy);
     return *this;
 }
 
 UserInfo& UserInfo::operator=(UserInfo&& userInfo) {
-    if (this == &userInfo) {
-        return *this;
-   }
+    swap(*this, userInfo);
 
-    BaseResult::operator=(std::forward<BaseResult>(userInfo));
-
-    m_id = std::move(userInfo.m_id);
-    m_username = std::move(userInfo.m_username);
-    m_name = std::move(userInfo.m_name);
-    m_lastName = std::move(userInfo.m_lastName);
-    m_bio = std::move(userInfo.m_bio);
-    m_profPicUrl = std::move(userInfo.m_profPicUrl);
-    m_website = std::move(userInfo.m_website);
-
-    m_followedBy = userInfo.m_followedBy;
-    userInfo.m_followedBy = -1;
-    m_follows = userInfo.m_follows;
-    userInfo.m_follows = -1;
-    m_mediaCount = userInfo.m_mediaCount;
-    userInfo.m_mediaCount = -1;
-
+    UserInfo temp{};
+    swap(userInfo, temp);
     return *this;
 }
 
@@ -165,6 +119,22 @@ void UserInfo::setFollows(int count) {
 
 void UserInfo::setMediaCount(int count) {
     m_mediaCount = count;
+}
+
+void swap(UserInfo& info1, UserInfo& info2){
+    using std::swap;
+    swap(static_cast<BaseResult&>(info1), static_cast<BaseResult&>(info2));
+
+    swap(info1.m_id, info2.m_id);
+    swap(info1.m_username, info2.m_username);
+    swap(info1.m_name, info2.m_name);
+    swap(info1.m_lastName, info2.m_lastName);
+    swap(info1.m_bio, info2.m_bio);
+    swap(info1.m_profPicUrl, info2.m_profPicUrl);
+    swap(info1.m_website, info2.m_website);
+    swap(info1.m_followedBy, info2.m_followedBy);
+    swap(info1.m_follows, info2.m_follows);
+    swap(info1.m_mediaCount, info2.m_mediaCount);
 }
 
 }

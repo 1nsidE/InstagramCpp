@@ -12,36 +12,24 @@ TagInfo::TagInfo(const std::string& name, int count) : BaseResult{}, m_name{name
 
 TagInfo::TagInfo(const TagInfo& tagInfo) : BaseResult{tagInfo}, m_name{tagInfo.m_name}, m_count{tagInfo.m_count} {}
 
-TagInfo::TagInfo(TagInfo&& tagInfo) : BaseResult{std::forward<BaseResult>(tagInfo)}, m_name{std::move(tagInfo.m_name)}, m_count{tagInfo.m_count} {
-    tagInfo.m_count = -1;
+TagInfo::TagInfo(TagInfo&& tagInfo) : TagInfo(){
+    swap(*this, tagInfo);
 }
 
 TagInfo::~TagInfo() {}
 
 TagInfo& TagInfo::operator=(const TagInfo& tagInfo) {
-    if (this == &tagInfo) {
-        return *this;
-   }
+    TagInfo copy{tagInfo};
 
-    BaseResult::operator=(tagInfo);
-
-    m_name = tagInfo.m_name;
-    m_count = tagInfo.m_count;
-
+    swap(*this, copy);
     return *this;
 }
 
 TagInfo& TagInfo::operator=(TagInfo&& tagInfo) {
-    if (this == &tagInfo) {
-        return *this;
-   }
+    swap(*this, tagInfo);
 
-    BaseResult::operator=(std::forward<BaseResult>(tagInfo));
-
-    m_name = std::move(tagInfo.m_name);
-    m_count = tagInfo.m_count;
-    tagInfo.m_count = -1;
-
+    TagInfo temp{};
+    swap(tagInfo, temp);
     return *this;
 }
 
@@ -59,6 +47,14 @@ void TagInfo::setName(const std::string& name) {
 
 void TagInfo::setCount(int count) {
     m_count = count;
+}
+
+void swap(TagInfo& first, TagInfo& second){
+    using std::swap;
+    swap(static_cast<BaseResult&>(first), static_cast<BaseResult&>(second));
+
+    swap(first.m_name, second.m_name);
+    swap(first.m_count, second.m_count);
 }
 
 }

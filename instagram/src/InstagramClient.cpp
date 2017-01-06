@@ -14,6 +14,9 @@ inline Http::HttpUrl getStandartUrl(const std::string &str){
 }
 
 InstagramClient::InstagramClient() :  m_httpClient {}, m_authToken { "" } {}
+
+InstagramClient::InstagramClient(const std::string& authToken) : m_httpClient{}, m_authToken{authToken}{}
+
 const std::string& InstagramClient::getAuthToken() const {
     return m_authToken;
 }

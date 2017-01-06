@@ -54,6 +54,8 @@ private:
     int m_followedBy{-1};
     int m_follows{-1};
     int m_mediaCount{-1};
+
+    friend void swap(UserInfo& info1, UserInfo& info2);
 };
 
 }

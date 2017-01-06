@@ -30,7 +30,6 @@ namespace Socket{
         gnutls_session_t m_session{};
         gnutls_certificate_credentials_t m_credentials;
     };
-
 }
 
 #endif

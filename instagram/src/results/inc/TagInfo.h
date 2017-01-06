@@ -25,8 +25,10 @@ public:
     void setName(const std::string& name);
     void setCount(int count);
 private:
-    std::string m_name{""};
+    std::string m_name{};
     int m_count{-1};
+
+    friend void swap(TagInfo& first, TagInfo& second);
 };
 
 }

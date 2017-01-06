@@ -13,7 +13,8 @@ namespace  Http {
 
 class EXPORT_HTTP FormData {
 public:
-    FormData(const std::string& boundary = "##############");
+    FormData();
+    FormData(const std::string& boundary);
     FormData(const FormData& formData);
     FormData(FormData&& formData);
 
@@ -24,10 +25,12 @@ public:
     const std::string getString() const;
     std::string contentType() const;
 private:
-    std::map<std::string, std::string> m_data;
-    std::string m_boundary;
+    std::map<std::string, std::string> m_data{};
+    std::string m_boundary{};
     const char* CONTENT_DISP = "Content-Disposition: form-data; name=";
     const char* CONTENT_TYPE = "multipart/form-data; boundary=";
+
+    friend void swap(FormData& first, FormData& second);
 };
 
 }

@@ -30,6 +30,8 @@ private:
     std::string m_name{""};
     double m_lat{-1};
     double m_lng{-1};
+
+    friend void swap(LocationInfo& first, LocationInfo& second);
 };
 
 }

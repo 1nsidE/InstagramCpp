@@ -11,23 +11,13 @@ AuthorizationToken::AuthorizationToken(const char* errMsg) : BaseResult{errMsg} 
 AuthorizationToken::AuthorizationToken(const std::string& errMsg) : BaseResult{errMsg} {}
 
 
-AuthorizationToken::AuthorizationToken(AuthorizationToken& token) : BaseResult{token},
+AuthorizationToken::AuthorizationToken(const AuthorizationToken& token) : BaseResult{token},
                                                                     m_token(token.m_token),
-                                                                    m_id(token.m_id),
-                                                                    m_username(token.m_username),
-                                                                    m_bio(token.m_bio),
-                                                                    m_fullName(token.m_fullName),
-                                                                    m_profilePicUrl(token.m_profilePicUrl),
-                                                                    m_website{token.m_website} {}
+                                                                    m_userInfo{token.m_userInfo}{}
 
-AuthorizationToken::AuthorizationToken(AuthorizationToken&& token) : BaseResult{std::forward<BaseResult>(token)},
-                                                                    m_token(std::move(token.m_token)),
-                                                                    m_id(std::move(token.m_id)),
-                                                                    m_username(std::move(token.m_username)),
-                                                                    m_bio(std::move(token.m_bio)),
-                                                                    m_fullName(std::move(token.m_fullName)),
-                                                                    m_profilePicUrl(std::move(token.m_profilePicUrl)),
-                                                                    m_website{std::move(token.m_website)} {}
+AuthorizationToken::AuthorizationToken(AuthorizationToken&& token) : AuthorizationToken{} {
+    swap(*this, token);
+}
 
 AuthorizationToken::~AuthorizationToken() {}
 
@@ -35,64 +25,27 @@ const std::string& AuthorizationToken::token() const noexcept {
     return m_token;
 }
 
-const std::string& AuthorizationToken::id() const noexcept {
-    return m_id;
+const UserInfo& AuthorizationToken::userInfo() const noexcept{
+    return m_userInfo;
 }
 
-const std::string& AuthorizationToken::username() const noexcept {
-    return m_username;
-}
-
-const std::string& AuthorizationToken::bio() const noexcept {
-    return m_bio;
-}
-
-const std::string& AuthorizationToken::fullName() const noexcept {
-    return m_fullName;
-}
-
-const std::string& AuthorizationToken::profilePictureUrl() const noexcept {
-    return m_profilePicUrl;
-}
-
-const std::string& AuthorizationToken::website() const noexcept {
-    return m_website;
-}
-
-
-AuthorizationToken& AuthorizationToken::setAuthToken(const std::string &token) {
+void AuthorizationToken::setAuthToken(const std::string& token){
     m_token = token;
-    return *this;
 }
 
-AuthorizationToken& AuthorizationToken::setId(const std::string &id) {
-    m_id = id;
-    return *this;
+void AuthorizationToken::setUserInfo(const UserInfo& userInfo){
+    m_userInfo = userInfo;
 }
 
-AuthorizationToken& AuthorizationToken::setUsername(const std::string &username) {
-    m_username = username;
-    return *this;
+void AuthorizationToken::setUserInfo(UserInfo&& userInfo){
+    m_userInfo = std::move(userInfo);
 }
 
-AuthorizationToken& AuthorizationToken::setUserBio(const std::string &bio) {
-    m_bio = bio;
-    return *this;
-}
-
-AuthorizationToken& AuthorizationToken::setFullName(const std::string &fullName) {
-    m_fullName = fullName;
-    return *this;
-}
-
-AuthorizationToken& AuthorizationToken::setProfilePictureUrl(const std::string &profilePicUrl) {
-    m_profilePicUrl = profilePicUrl;
-    return *this;
-}
-
-AuthorizationToken& AuthorizationToken::setWebsite(const std::string &website) {
-    m_website = website;
-    return *this;
+void swap(AuthorizationToken& first, AuthorizationToken& second){
+    using std::swap;
+    swap(static_cast<BaseResult&>(first), static_cast<BaseResult&>(second));
+    swap(first.m_token, second.m_token);
+    swap(first.m_userInfo, second.m_userInfo);
 }
 
 }

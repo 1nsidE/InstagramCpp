@@ -8,8 +8,12 @@
 namespace Http {
 
 HttpRequest::HttpRequest() : HttpHeader {}, m_method(Http::Method::UNKNOWN) {}
+
 HttpRequest::HttpRequest(const HttpRequest& request) : HttpHeader {request}, m_method {request.m_method}, m_url{request.m_url} {}
-HttpRequest::HttpRequest(HttpRequest&& request) : HttpHeader {std::move(request)}, m_method {request.m_method}, m_url{std::move(request.m_url)} {}
+
+HttpRequest::HttpRequest(HttpRequest&& request) : HttpRequest{} {
+    swap(*this, request);
+} 
 
 HttpRequest::HttpRequest(const HttpUrl& url, Method method) : HttpHeader{}, m_method{method}, m_url{url}{
     setHost(url.host());
@@ -25,28 +29,18 @@ HttpRequest::HttpRequest(const std::string& request){
 
 HttpRequest::~HttpRequest(){}
 
-HttpRequest& HttpRequest::operator=(const HttpRequest& http_request) {
-    if (this == &http_request) {
-        return *this;
-    }
-    HttpHeader::operator=(http_request);
-    m_method = http_request.m_method;
-    m_url = http_request.m_url;
+HttpRequest& HttpRequest::operator=(const HttpRequest& httpRequest) {
+    HttpRequest copy{httpRequest};
 
+    swap(*this, copy);
     return *this;
 }
 
-HttpRequest& HttpRequest::operator=(HttpRequest&& http_request) {
-    if (this == &http_request) {
-        return *this;
-    }
-    HttpHeader::operator=(std::forward<HttpHeader>(http_request));
+HttpRequest& HttpRequest::operator=(HttpRequest&& httpRequest) {
+    swap(*this, httpRequest);
 
-    m_method = http_request.m_method;
-    http_request.m_method = Http::Method::UNKNOWN;
-
-    m_url = std::move(http_request.m_url);
-
+    HttpRequest temp{};
+    swap(httpRequest, temp);
     return *this;
 }
 
@@ -74,7 +68,6 @@ void HttpRequest::setUrl(const HttpUrl& url) {
     m_url = url;
     setHost(url.host());
 }
-
 
 void HttpRequest::setUrl(HttpUrl&& url) {
     m_url = std::move(url);
@@ -114,6 +107,14 @@ void HttpRequest::parse(const std::string& request){
     if ((pos = static_cast<size_t>(string_stream.tellg())) < request.length()) {
         setData(request.substr(pos, request.length() - pos));
     }
+}
+
+void swap(HttpRequest& first, HttpRequest& second){
+    using std::swap;
+    swap(static_cast<HttpHeader&>(first), static_cast<HttpHeader&>(second));
+
+    swap(first.m_url, second.m_url);
+    swap(first.m_method, second.m_method);
 }
 
 }

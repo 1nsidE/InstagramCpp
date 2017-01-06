@@ -10,33 +10,24 @@ HttpHeader::HttpHeader(const HttpHeader& httpHeader) : m_headersMap{httpHeader.m
     }
 }
 
-HttpHeader::HttpHeader(HttpHeader&& httpHeader) : m_headersMap{std::move(httpHeader.m_headersMap)}, m_data{std::move(httpHeader.m_data)} {}
+HttpHeader::HttpHeader(HttpHeader&& httpHeader) : HttpHeader{}{
+    swap(*this, httpHeader);
+}
 
 HttpHeader::~HttpHeader() {}
 
 HttpHeader& HttpHeader::operator=(const HttpHeader& httpHeader) {
-    if (this == &httpHeader) {
-        return *this;
-    }
+    HttpHeader copy{httpHeader};
 
-    m_headersMap = httpHeader.m_headersMap;
-    m_data.reset();
-
-    if (httpHeader.m_data) {
-        m_data = std::make_unique<std::string>(*httpHeader.m_data);
-    }
-
+    swap(*this, copy);
     return *this;
 }
 
 HttpHeader& HttpHeader::operator=(HttpHeader&& httpHeader) {
-    if (this == &httpHeader) {
-        return *this;
-    }
-
-    m_headersMap = std::move(httpHeader.m_headersMap);
-    m_data = std::move(httpHeader.m_data);
-
+    swap(*this, httpHeader);
+    
+    HttpHeader temp{};
+    swap(httpHeader, temp);
     return *this;
 }
 
@@ -173,6 +164,12 @@ void HttpHeader::addHeader(const std::string& header){
         throw std::runtime_error("invalid header : " + header);
     }
     addHeader(tokens[0], tokens[1]);
+}
+
+void swap(HttpHeader& first, HttpHeader& second){
+    using std::swap;
+    swap(first.m_headersMap, second.m_headersMap);
+    swap(first.m_data, second.m_data);
 }
 
 }

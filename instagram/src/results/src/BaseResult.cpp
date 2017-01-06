@@ -11,17 +11,19 @@ BaseResult::BaseResult() {}
 
 BaseResult::BaseResult(const char *errMsg) {
     if (errMsg == nullptr) {
-        throw std::invalid_argument("err_msg cannot be null");
+        throw std::invalid_argument("errMsg cannot be null");
     }
 
     m_errMsg = std::make_unique<std::string>(errMsg);
 }
 
 BaseResult::BaseResult(const std::string& errMsg) {
-    m_errMsg = std::make_unique<std::string>(std::string{errMsg});
+    m_errMsg = std::make_unique<std::string>(errMsg);
 }
 
-BaseResult::BaseResult(BaseResult&& baseResult) : m_errMsg{std::move(baseResult.m_errMsg)} {}
+BaseResult::BaseResult(BaseResult&& baseResult) : BaseResult() {
+    swap(*this, baseResult);
+}
 
 BaseResult::BaseResult(const BaseResult& baseResult) {
     if (baseResult.m_errMsg) {
@@ -32,28 +34,17 @@ BaseResult::BaseResult(const BaseResult& baseResult) {
 BaseResult::~BaseResult() {}
 
 BaseResult& BaseResult::operator=(const BaseResult& baseResult) {
-    if (this == &baseResult) {
-        return *this;
-    }
+    BaseResult copy{baseResult};
 
-    if (m_errMsg) {
-        m_errMsg.reset();
-    }
-
-    if (baseResult.m_errMsg) {
-        m_errMsg = std::make_unique<std::string>(*baseResult.m_errMsg);
-    }
-
+    swap(*this, copy);
     return *this;
 }
 
 BaseResult& BaseResult::operator=(BaseResult&& baseResult) {
-    if (this == &baseResult) {
-        return *this;
-    }
+    swap(*this, baseResult);
 
-    m_errMsg = std::move(baseResult.m_errMsg);
-
+    BaseResult temp{};
+    swap(baseResult, temp); 
     return *this;
 }
 
@@ -68,6 +59,11 @@ const std::string& BaseResult::errorMessage() const noexcept {
 
 bool BaseResult::succeed() const noexcept {
     return m_errMsg == nullptr;
+}
+
+void swap(BaseResult& result1, BaseResult& result2){
+    using std::swap;
+    swap(result1.m_errMsg, result2.m_errMsg);
 }
 
 }

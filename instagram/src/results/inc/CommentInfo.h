@@ -35,6 +35,8 @@ private:
     std::string m_id {""};
     long m_createTime = -1;
     UserInfo m_userInfo{};
+
+    friend void swap(CommentInfo& first, CommentInfo& second);
 };
 
 }

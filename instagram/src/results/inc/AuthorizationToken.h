@@ -1,7 +1,7 @@
 #ifndef AUTHORIZATION_TOKEN
 #define AUTHORIZATION_TOKEN
 
-#include "BaseResult.h"
+#include "UserInfo.h"
 
 namespace Instagram{
 
@@ -12,32 +12,20 @@ public:
     AuthorizationToken(const std::string& errMsg);
     ~AuthorizationToken();
 
-    AuthorizationToken(AuthorizationToken& authToken);
+    AuthorizationToken(const AuthorizationToken& authToken);
     AuthorizationToken(AuthorizationToken&& authToken);
 
-    const std::string& token() const noexcept ;
-    const std::string& id() const noexcept;
-    const std::string& username() const noexcept;
-    const std::string& bio() const noexcept;
-    const std::string& fullName() const noexcept;
-    const std::string& profilePictureUrl() const noexcept;
-    const std::string& website() const noexcept;
+    const std::string& token() const noexcept;
+    const UserInfo& userInfo() const noexcept;
 
-    AuthorizationToken& setAuthToken(const std::string &authToken);
-    AuthorizationToken& setId(const std::string &id);
-    AuthorizationToken& setUsername(const std::string &username);
-    AuthorizationToken& setUserBio(const std::string &userBio);
-    AuthorizationToken& setFullName(const std::string &userFullName);
-    AuthorizationToken& setProfilePictureUrl(const std::string &userProfilePictureUrl);
-    AuthorizationToken& setWebsite(const std::string &website);
+    void setAuthToken(const std::string& token);
+    void setUserInfo(const UserInfo& userInfo);
+    void setUserInfo(UserInfo&& userInfo);
 private:
-    std::string m_token;
-    std::string m_id;
-    std::string m_username;
-    std::string m_bio;
-    std::string m_fullName;
-    std::string m_profilePicUrl;
-    std::string m_website;
+    std::string m_token {};
+    UserInfo m_userInfo{};
+
+    friend void swap(AuthorizationToken& first, AuthorizationToken& second);
 };
 
 }

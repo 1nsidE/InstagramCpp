@@ -5,8 +5,9 @@ if(DEFINED GNUTLS_INCLUDE)
 endif()
 
 set(SOCKETS_SOURCES
-        SSLSocket.cpp 
-        ConnectionListener.cpp)
+    TCPSocket.cpp
+    SSLSocket.cpp 
+    ConnectionListener.cpp)
 
 if(UNIX AND NOT APPLE)
     set(TCP_SOCKET TCPSocketLinux.cpp)

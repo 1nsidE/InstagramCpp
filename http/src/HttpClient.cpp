@@ -194,11 +194,11 @@ std::string HttpClient::read(const HttpUrl& url, unsigned int timeout) {
 }
 
 HttpClient::SocketPtr HttpClient::connect(const HttpUrl& url) {
-    
+    HttpProtocol httpProtocol = url.protocol();   
     const std::string& host = url.host();
     
     SocketPtr socket{};
-    HttpProtocol httpProtocol = url.protocol();
+
     switch (httpProtocol) {
     case HttpProtocol::HTTPS:
         socket = std::make_shared<Socket::SSLSocket>(host, toString(httpProtocol));

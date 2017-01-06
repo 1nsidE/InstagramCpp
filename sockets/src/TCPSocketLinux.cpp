@@ -16,32 +16,6 @@
 
 namespace Socket {
 
-TCPSocket::TCPSocket(const std::string &host, const std::string &port) {
-   connect(host, port);
-}
-
-TCPSocket::TCPSocket(int sockfd, bool isBlocking) : m_sockfd{ sockfd }, m_isBlocking{ isBlocking } {}
-
-TCPSocket::TCPSocket(TCPSocket&& tcpSocket) : m_sockfd{ tcpSocket.m_sockfd }, m_isBlocking{ tcpSocket.m_isBlocking } {
-    tcpSocket.m_sockfd = -1;
-    tcpSocket.m_isBlocking = false;
-}
-
-TCPSocket::~TCPSocket() {
-    TCPSocket::close();
-}
-
-TCPSocket &TCPSocket::operator=(TCPSocket &&tcpSocket) {
-    if (this != &tcpSocket) {
-        m_sockfd = tcpSocket.m_sockfd;
-        m_isBlocking = tcpSocket.m_isBlocking;
-
-        tcpSocket.m_sockfd = -1;
-        tcpSocket.m_isBlocking = false;
-    }
-    return *this;
-}
-
 void TCPSocket::connect(const std::string& host, const std::string& port) {
     addrinfo hints;
     addrinfo* res;
@@ -51,7 +25,7 @@ void TCPSocket::connect(const std::string& host, const std::string& port) {
     hints.ai_family = AF_UNSPEC;
 
     if (getaddrinfo(host.c_str(), port.c_str(), &hints, &res) != 0) {
-        throwError("getaddrinfo() failed: ", lastErrorCode());
+        throwError("getaddrinfo() failed", lastErrorCode());
     }
 
     for (addrinfo* tmp_res = res; tmp_res != nullptr; tmp_res = res->ai_next) {
@@ -62,17 +36,17 @@ void TCPSocket::connect(const std::string& host, const std::string& port) {
         }
 
         if (::connect(m_sockfd, tmp_res->ai_addr, tmp_res->ai_addrlen) == -1) {
-            throwError("connect() failed: ", lastErrorCode());
+            m_sockfd = -1;
         }
 
         break;
     }
 
-    if (m_sockfd == -1) {
-        throwError("failed to craete socket : ", lastErrorCode());
-    }
-
     freeaddrinfo(res);
+
+    if (m_sockfd == -1) {
+        throwError("failed to create socket", lastErrorCode());
+    }
 }
 
 long TCPSocket::write(const void *data, size_t length) {
@@ -138,12 +112,12 @@ void TCPSocket::makeNonBlocking() {
     if (m_sockfd != -1) {
         int flags = fcntl(m_sockfd, F_GETFL, 0);
         if (flags < 0) {
-            throwError("failed to get socket flags : ", lastErrorCode());
+            throwError("failed to get socket flags", lastErrorCode());
         }
 
         flags |= O_NONBLOCK;
         if (fcntl(m_sockfd, F_SETFL, flags) < 0) {
-            throwError("failed to change socket to non-blocking mode : ", lastErrorCode());
+            throwError("failed to change socket to non-blocking mode", lastErrorCode());
         }
 
         m_isBlocking = false;
@@ -198,9 +172,8 @@ int TCPSocket::lastErrorCode() const {
 
 void TCPSocket::throwError(const char* err_msg, int code) const {
     std::string msg{err_msg};
-    msg += gai_strerror(code);
+    msg =  msg + " : " + gai_strerror(code);
     throw std::runtime_error(err_msg);
 }
 
 }
-

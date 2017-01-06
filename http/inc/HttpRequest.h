@@ -33,14 +33,15 @@ public:
 
     std::string getString() const override;
 private:
-    class HttpClient;
-    friend HttpClient;
+    friend class HttpClient;
     
     HttpRequest(const std::string& request);
     void parse(const std::string& request);
     
     Method m_method = Method::UNKNOWN;
     HttpUrl m_url{};
+
+    friend void swap(HttpRequest& first, HttpRequest& second);
 };
 
 }

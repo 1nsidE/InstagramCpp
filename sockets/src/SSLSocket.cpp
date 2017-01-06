@@ -13,7 +13,7 @@ namespace Socket {
         SSLSocket::connect(hostname);
     }
 
-    SSLSocket::SSLSocket(SSLSocket&& sslSocket) : TCPSocket(std::forward<TCPSocket>(sslSocket)), 
+    SSLSocket::SSLSocket(SSLSocket&& sslSocket) : TCPSocket(std::move(sslSocket)), 
                                                     m_session{std::move(sslSocket.m_session)}, 
                                                     m_credentials{std::move(sslSocket.m_credentials)} {}
     
@@ -24,8 +24,7 @@ namespace Socket {
 
     SSLSocket &SSLSocket::operator=(SSLSocket &&sslSocket) {
         if (this != &sslSocket) {
-            TCPSocket::operator=(std::forward<TCPSocket>(sslSocket));
-
+            TCPSocket::operator=(std::move(sslSocket));
             m_session = std::move(sslSocket.m_session);
 
             m_sockfd = sslSocket.m_sockfd;
@@ -104,4 +103,3 @@ namespace Socket {
         gnutls_global_deinit();
     }
 }
-

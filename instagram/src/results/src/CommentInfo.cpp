@@ -12,12 +12,8 @@ CommentInfo::CommentInfo(const std::string& text, const std::string& id, long cr
 
 CommentInfo::CommentInfo(const CommentInfo& commentInfo) : BaseResult{commentInfo}, m_text{commentInfo.m_text}, m_id{commentInfo.m_id}, m_createTime{commentInfo.m_createTime}, m_userInfo{commentInfo.m_userInfo} {}
 
-CommentInfo::CommentInfo(CommentInfo&& commentInfo) : BaseResult{std::move(commentInfo)},
-                                                       m_text{std::move(commentInfo.m_text)},
-                                                       m_id{std::move(commentInfo.m_id)},
-                                                       m_createTime{commentInfo.m_createTime},
-                                                       m_userInfo{std::move(commentInfo.m_userInfo) } {
-    commentInfo.m_createTime = -1;
+CommentInfo::CommentInfo(CommentInfo&& commentInfo) : CommentInfo(){
+    swap(*this, commentInfo);
 }
 
 CommentInfo::CommentInfo(const std::string& errMsg) : BaseResult{errMsg} {}
@@ -27,35 +23,17 @@ CommentInfo::CommentInfo(const char* errMsg) : BaseResult{errMsg} {}
 CommentInfo::~CommentInfo() {}
 
 CommentInfo& CommentInfo::operator=(const CommentInfo& commentInfo) {
-    if (this == &commentInfo) {
-        return *this;
-    }
+    CommentInfo copy{commentInfo};
 
-    BaseResult::operator=(commentInfo);
-
-    m_text = commentInfo.m_text;
-    m_id = commentInfo.m_id;
-    m_createTime = commentInfo.m_createTime;
-    m_userInfo = commentInfo.m_userInfo;
-
+    swap(*this, copy);
     return *this;
 }
 
 CommentInfo& CommentInfo::operator=(CommentInfo&& commentInfo) {
-    if (this == &commentInfo) {
-        return *this;
-    }
+    swap(*this, commentInfo);
 
-    BaseResult::operator=(std::forward<BaseResult>(commentInfo));
-    m_text = std::move(commentInfo.m_text);
-
-    m_id = commentInfo.m_id;
-    commentInfo.m_id = -1;
-
-    m_createTime = commentInfo.m_createTime;
-    commentInfo.m_createTime = -1;
-
-    m_userInfo = std::move(commentInfo.m_userInfo);
+    CommentInfo temp{};
+    swap(commentInfo, temp);
     return *this;
 }
 
@@ -92,7 +70,20 @@ void CommentInfo::setUserInfo(const UserInfo &userInfo) {
 }
 
 void CommentInfo::setUserInfo(UserInfo&& userInfo){
-    m_userInfo = std::move(userInfo);
+    swap(m_userInfo, userInfo);
+
+    UserInfo temp{};
+    swap(userInfo, temp);
+}
+
+void swap(CommentInfo& first, CommentInfo& second){
+    using std::swap;
+    swap(static_cast<BaseResult&>(first), static_cast<BaseResult&>(second));
+
+    swap(first.m_text, second.m_text);
+    swap(first.m_id, second.m_id);
+    swap(first.m_createTime, second.m_createTime);
+    swap(first.m_userInfo, second.m_userInfo);
 }
 
 }

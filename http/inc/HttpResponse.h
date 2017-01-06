@@ -27,12 +27,15 @@ public:
 
     std::string getString() const override;
 private:
-    friend HttpClient;
+    friend class HttpClient;
 
     HttpResponse(const std::string& response);
     void parseResponse(const std::string& response);
+    
     std::string m_status{};
     int m_code{-1};
+
+    friend void swap(HttpResponse& first, HttpResponse& second);
 };
 
 }
