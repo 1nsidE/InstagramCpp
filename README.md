@@ -28,7 +28,7 @@ int main(){
         return 1;
     }
     
-    std::cout << "User with name : " << authToken.username() << " authenticated" << std::endl;
+    std::cout << "User with name : " << authToken.userInfo().username() << " authenticated" << std::endl;
     
     Instagram::MediaEntries mediaEntries = instClient.getRecentMedia();
     if(!mediaEntries){
