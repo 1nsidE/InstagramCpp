@@ -2,10 +2,8 @@
 #define HTTP_DEFINITIONS_HEADER
 
 #ifdef _WIN32
-    #include<xstring>
-    #include<unordered_map>
-    #include<map>
-    #include<vector>
+	#undef max
+	#undef DELETE
 
     #ifdef HTTP_LIB_EXPORT
         #define EXPORT_HTTP __declspec(dllexport)
@@ -14,10 +12,6 @@
         #define EXPORT_HTTP __declspec(dllimport)
         #define HTTP_EXP_TMP extern
     #endif
-
-    HTTP_EXP_TMP template class EXPORT_HTTP std::map<std::string, std::string>;
-    HTTP_EXP_TMP template class EXPORT_HTTP std::unordered_map<std::string, std::string>;
-    HTTP_EXP_TMP template struct EXPORT_HTTP std::pair<std::string, std::string>;
 #endif
 
 #ifdef __linux__
