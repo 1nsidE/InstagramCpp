@@ -54,7 +54,7 @@ private:
     using HostToSocketMap = std::unordered_map<std::string, SocketPtr>;
     HostToSocketMap m_hostToSocketMap{};
 
-    friend void swap(HttpClient& first, HttpClient& second);
+    EXPORT_HTTP friend void swap(HttpClient& first, HttpClient& second);
 };
 
 }

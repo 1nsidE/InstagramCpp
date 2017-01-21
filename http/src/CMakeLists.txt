@@ -20,7 +20,7 @@ if(DEFINED GNUTLS_INCLUDE)
     include_directories(${GNUTLS_INCLUDE})
 endif()
 
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
     add_definitions(-DHTTP_LIB_EXPORT)
 
     if(NOT GNUTLS_LIB_NAME)
