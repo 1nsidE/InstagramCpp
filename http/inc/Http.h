@@ -1,9 +1,7 @@
 #ifndef HTTP_DEFINITIONS
 #define HTTP_DEFINITIONS
 
-#include <functional>
 #include <string>
-#include <cstring>
 #include <vector>
 #include "Definitions.h"
 

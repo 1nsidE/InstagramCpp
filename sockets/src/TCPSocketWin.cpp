@@ -14,7 +14,7 @@ namespace Socket {
 
 void throwError(const char* errMsg, int code);
 void atExit();
-int iniWSA();
+int initWSA();
 std::string errorString(int code);
 
 
@@ -188,7 +188,7 @@ int TCPSocket::lastErrorCode() const {
 }
 
 void throwError(const char* errMsg, int code) {
-    std::string msg{ err_msg };
+    std::string msg{errMsg};
     msg = msg + " : " + errorString(code);
     throw std::runtime_error(errMsg);
 }
