@@ -23,7 +23,7 @@ namespace Socket{
         void close() override;
     private:
         void init();
-       void connect(const std::string& hostname);
+        void connect();
 
         SSL* m_ssl;
         SSL_CTX* m_ctx;

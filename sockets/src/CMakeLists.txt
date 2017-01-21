@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.8)
 
-if(DEFINED GNUTLS_INCLUDE)
-    include_directories(${GNUTLS_INCLUDE})
+if(DEFINED OPENSSL_INCLUDE)
+    include_directories(${OPENSSL_INCLUDE})
 endif()
 
 set(SOCKETS_SOURCES

@@ -21,7 +21,7 @@ namespace Socket {
     static SSLInit sslInit{};
 
     SSLSocket::SSLSocket(const std::string& hostname, const std::string& port) : TCPSocket{hostname, port} {
-        SSLSocket::connect(hostname);
+        SSLSocket::connect();
     }
 
     SSLSocket::SSLSocket(SSLSocket&& sslSocket) : TCPSocket(std::move(sslSocket)), m_ssl{sslSocket.m_ssl}, m_ctx{sslSocket.m_ctx} {
@@ -46,7 +46,7 @@ namespace Socket {
         return *this;
     }
 
-    void SSLSocket::connect(const std::string& hostname) {
+    void SSLSocket::connect() {
         m_ctx = SSL_CTX_new(SSLv23_client_method());
         m_ssl = SSL_new(m_ctx);
 
