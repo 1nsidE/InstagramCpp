@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include <gnutls/gnutls.h>
+#include <openssl/ssl.h>
 #include "TCPSocket.h"
 
 namespace Socket{
@@ -23,12 +23,10 @@ namespace Socket{
         void close() override;
     private:
         void init();
-        [[noreturn]] void  throwError(const char* errMsg) const;
-        void connect(const std::string& hostname);
+       void connect(const std::string& hostname);
 
-        inline void check(int result);
-        gnutls_session_t m_session{};
-        gnutls_certificate_credentials_t m_credentials;
+        SSL* m_ssl;
+        SSL_CTX* m_ctx;
     };
 }
 

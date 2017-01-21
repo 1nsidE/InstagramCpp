@@ -12,36 +12,11 @@
 
 namespace Socket {
 
-void atExit() {
-    WSACleanup();
-}
+void throwError(const char* errMsg, int code);
+void atExit();
+int iniWSA();
+std::string errorString(int code);
 
-int init_wsa() {
-    static bool is_wsa_initialized = false;
-    int result = 0;
-    if (!is_wsa_initialized) {
-        WSAData data{};
-
-        result = WSAStartup(MAKEWORD(2, 2), &data);
-        if (result != 0) {
-            return result;
-        }
-
-        std::atexit(atExit);
-        is_wsa_initialized = true;
-    }
-    return result;
-}
-
-std::string errorString(int code){
-    char* msg = nullptr;
-
-    if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr, code, 0, msg, 0, nullptr) == 0) {
-        return "Unknown Error";
-    }
-
-    return msg;
-}
 
 void TCPSocket::connect(const std::string& host, const std::string& port) {
     addrinfo hints;
@@ -53,7 +28,7 @@ void TCPSocket::connect(const std::string& host, const std::string& port) {
 
     if (getaddrinfo(host.c_str(), port.c_str(), &hints, &res) != 0) {
         if (WSAGetLastError() == WSANOTINITIALISED) {
-            int result = init_wsa();
+            int result = initWSA();
             if (result) {
                 throwError("Failed to initialize WSA : ", result);
             }
@@ -194,6 +169,15 @@ Error TCPSocket::lastError() const {
     }
 }
 
+std::string errorString(int code){
+    char* msg = nullptr;
+    if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr, code, 0, msg, 0, nullptr) == 0) {
+        return "Unknown Error";
+    }
+
+    return msg;
+}
+
 std::string TCPSocket::lastErrorString() const {
     int code = lastErrorCode();
     return errorString(code);
@@ -203,11 +187,31 @@ int TCPSocket::lastErrorCode() const {
     return WSAGetLastError();
 }
 
-void TCPSocket::throwError(const char* err_msg, int code) const {
+void throwError(const char* errMsg, int code) {
     std::string msg{ err_msg };
     msg = msg + " : " + errorString(code);
-    throw std::runtime_error(err_msg);
+    throw std::runtime_error(errMsg);
+}
+
+void atExit() {
+    WSACleanup();
+}
+
+int initWSA() {
+    static bool is_wsa_initialized = false;
+    int result = 0;
+    if (!is_wsa_initialized) {
+        WSAData data{};
+
+        result = WSAStartup(MAKEWORD(2, 2), &data);
+        if (result != 0) {
+            return result;
+        }
+
+        std::atexit(atExit);
+        is_wsa_initialized = true;
+    }
+    return result;
 }
 
 }
-

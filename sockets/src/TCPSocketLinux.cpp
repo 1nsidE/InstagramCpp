@@ -16,6 +16,8 @@
 
 namespace Socket {
 
+void throwError(const char* errMsg, int code);
+
 void TCPSocket::connect(const std::string& host, const std::string& port) {
     addrinfo hints;
     addrinfo* res;
@@ -170,10 +172,10 @@ int TCPSocket::lastErrorCode() const {
     return errno;
 }
 
-void TCPSocket::throwError(const char* err_msg, int code) const {
-    std::string msg{err_msg};
+void throwError(const char* errMsg, int code) {
+    std::string msg{errMsg};
     msg =  msg + " : " + gai_strerror(code);
-    throw std::runtime_error(err_msg);
+    throw std::runtime_error(msg);
 }
 
 }

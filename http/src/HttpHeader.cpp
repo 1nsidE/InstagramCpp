@@ -5,8 +5,8 @@ namespace Http {
 HttpHeader::HttpHeader() {}
 
 HttpHeader::HttpHeader(const HttpHeader& httpHeader) : m_headersMap{httpHeader.m_headersMap} {
-    if(httpHeader.m_data){
-        m_data = std::make_unique<std::string>(*httpHeader.m_data);
+    if(httpHeader.m_body){
+        m_body = std::make_unique<std::string>(*httpHeader.m_body);
     }
 }
 
@@ -72,49 +72,49 @@ void HttpHeader::addHeader(const std::string& header, const std::string& val) {
     m_headersMap[changeCase(header)] = val;
 }
 
-void HttpHeader::setData(const std::string &data) {
-    m_data = std::make_unique<std::string>(data);
+void HttpHeader::setBody(const std::string &body) {
+    m_body = std::make_unique<std::string>(body);
 }
 
-const std::string& HttpHeader::data() const noexcept {
-    if(m_data){
-        return *m_data;
+const std::string& HttpHeader::body() const noexcept {
+    if(m_body){
+        return *m_body;
     }else{
-        static const std::string emptydata {""};
-        return emptydata;    
+        static const std::string emptybody {""};
+        return emptybody; 
     }
 }
 
-void HttpHeader::appendData(const std::string &data) {
-    if (!m_data) {
-        m_data = std::make_unique<std::string>(data);
+void HttpHeader::appendBody(const std::string &body) {
+    if (!m_body) {
+        m_body = std::make_unique<std::string>(body);
     } else {
-        m_data->append(data);
+        m_body->append(body);
     }
 }
 
-void HttpHeader::appendData(const char *data) {
-    if (!data) {
+void HttpHeader::appendBody(const char *body) {
+    if (!body) {
         return;
-    }else if (!m_data) {
-        m_data = std::make_unique<std::string>(data);
+    }else if (!m_body) {
+        m_body = std::make_unique<std::string>(body);
     } else {
-        m_data->append(data);
+        m_body->append(body);
     }
 }
 
-void HttpHeader::appendData(const char *data, const size_t len) {
-    if (!data) {
+void HttpHeader::appendBody(const char *body, const size_t len) {
+    if (!body) {
         return;
-    }else if (!m_data) {
-        m_data = std::make_unique<std::string>(data, len);
+    }else if (!m_body) {
+        m_body = std::make_unique<std::string>(body, len);
     }else{
-        m_data->append(data, len);
+        m_body->append(body, len);
     }
 }
 
-size_t HttpHeader::dataLen() const noexcept {
-    return (m_data ? m_data->length() : 0);
+size_t HttpHeader::bodySize() const noexcept {
+    return (m_body ? m_body->length() : 0);
 }
 
 bool HttpHeader::isContainsHeader(Http::Header header) const noexcept {
@@ -151,8 +151,8 @@ std::string HttpHeader::getString() const {
     }
     result.append(CRLF);
 
-    if (m_data) {
-        result.append(*m_data);
+    if (m_body) {
+        result.append(*m_body);
     }
 
     return result;
@@ -169,7 +169,7 @@ void HttpHeader::addHeader(const std::string& header){
 void swap(HttpHeader& first, HttpHeader& second){
     using std::swap;
     swap(first.m_headersMap, second.m_headersMap);
-    swap(first.m_data, second.m_data);
+    swap(first.m_body, second.m_body);
 }
 
 }

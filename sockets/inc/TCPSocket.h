@@ -39,7 +39,6 @@ namespace Socket{
         TCPSocket(int sockfd, bool isBlocking);
         void connect(const std::string& host, const std::string& port);
         int lastErrorCode() const;
-        [[noreturn]] void throwError(const char* errMsg, int code) const;
 
         friend void swap(TCPSocket& sock1, TCPSocket& sock2);
     };

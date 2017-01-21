@@ -24,12 +24,12 @@ public:
     void addHeader(Header header, const std::string& _val);
     void addHeader(const std::string& header, const std::string& val);
 
-    const std::string& data() const noexcept;
-    void setData(const std::string& data);
-    void appendData(const std::string& _data);
-    void appendData(const char* _data);
-    void appendData(const char *_data, const size_t len);
-    size_t dataLen() const noexcept;
+    const std::string& body() const noexcept;
+    void setBody(const std::string& body);
+    void appendBody(const std::string& _body);
+    void appendBody(const char* _body);
+    void appendBody(const char *_body, const size_t len);
+    size_t bodySize() const noexcept;
 
     bool isContainsHeader(Header header) const noexcept;
     size_t contentLen() const;
@@ -50,8 +50,8 @@ protected:
 private:
     HeadersMap m_headersMap {};
 
-    using DataPtr = std::unique_ptr<std::string>;
-    DataPtr m_data{};
+    using BodyPtr = std::unique_ptr<std::string>;
+    BodyPtr m_body{};
 
     friend void swap(HttpHeader& first, HttpHeader& second);
 };

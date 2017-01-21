@@ -105,7 +105,7 @@ void HttpRequest::parse(const std::string& request){
     
     size_t pos{0};
     if ((pos = static_cast<size_t>(string_stream.tellg())) < request.length()) {
-        setData(request.substr(pos, request.length() - pos));
+        setBody(request.substr(pos, request.length() - pos));
     }
 }
 

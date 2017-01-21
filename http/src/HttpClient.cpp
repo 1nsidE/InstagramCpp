@@ -37,7 +37,7 @@ HttpResponse HttpClient::post(const HttpUrl& url, const std::string& data, const
     HttpRequest httpRequest = getDefaultRequest();
     httpRequest.setMethod(Method::POST);
     httpRequest.setUrl(url);
-    httpRequest.setData(data);
+    httpRequest.setBody(data);
     httpRequest[Header::CONTENT_TYPE] = content_type;
     httpRequest[Header::CONTENT_LENGTH] = std::to_string(data.size());
 
@@ -53,7 +53,7 @@ HttpResponse HttpClient::post(const HttpUrl& url, const std::pair<std::string, s
     httpRequest.setMethod(Method::POST);
     httpRequest.setUrl(url);
     httpRequest[Header::CONTENT_TYPE] = type_and_data.first;
-    httpRequest.setData(type_and_data.second);
+    httpRequest.setBody(type_and_data.second);
     httpRequest[Header::CONTENT_LENGTH] = std::to_string(type_and_data.second.size());
 
     return sendRequest(httpRequest);
@@ -152,11 +152,11 @@ HttpResponse HttpClient::receive(const HttpUrl& url, unsigned int timeout) {
         throw HttpTooBigResponse { "server response is too big!" };
     }
 
-    size_t actual_contentLen = httpResponse.dataLen();
+    size_t actual_contentLen = httpResponse.bodySize();
     while (contentLen > actual_contentLen) {
         const std::string& data = read(url, timeout);
         actual_contentLen += data.length();
-        httpResponse.appendData(data);
+        httpResponse.appendBody(data);
     }
 
     return httpResponse;

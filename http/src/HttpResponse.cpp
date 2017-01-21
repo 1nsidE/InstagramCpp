@@ -89,7 +89,7 @@ void HttpResponse::parseResponse(const std::string& response){
  
     size_t pos;
     if ((pos = static_cast<size_t>(stringStream.tellg())) < response.length()) {
-        setData(response.substr(pos, response.length() - pos));
+        setBody(response.substr(pos, response.length() - pos));
     }
 }
 

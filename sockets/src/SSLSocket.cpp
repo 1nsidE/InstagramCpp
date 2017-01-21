@@ -1,21 +1,33 @@
 #include <stdexcept>
-#include <gnutls/gnutls.h>
-#include <gnutls/x509.h>
-
+#include <openssl/err.h>
+#include <openssl/x509v3.h>
 #include "SSLSocket.h"
 
 namespace Socket {
+    [[noreturn]] inline void throwSslError();
 
-    void atExitSsl();
+    class SSLInit{
+    public:        
+        SSLInit(){
+            SSL_load_error_strings();
+            SSL_library_init();
+        }
+
+        ~SSLInit(){
+
+        }
+    };
+
+    static SSLInit sslInit{};
 
     SSLSocket::SSLSocket(const std::string& hostname, const std::string& port) : TCPSocket{hostname, port} {
-        SSLSocket::init();
         SSLSocket::connect(hostname);
     }
 
-    SSLSocket::SSLSocket(SSLSocket&& sslSocket) : TCPSocket(std::move(sslSocket)), 
-                                                    m_session{std::move(sslSocket.m_session)}, 
-                                                    m_credentials{std::move(sslSocket.m_credentials)} {}
+    SSLSocket::SSLSocket(SSLSocket&& sslSocket) : TCPSocket(std::move(sslSocket)), m_ssl{sslSocket.m_ssl}, m_ctx{sslSocket.m_ctx} {
+        sslSocket.m_ctx = nullptr;
+        sslSocket.m_ssl = nullptr;
+    }
     
 
     SSLSocket::~SSLSocket() {
@@ -25,81 +37,51 @@ namespace Socket {
     SSLSocket &SSLSocket::operator=(SSLSocket &&sslSocket) {
         if (this != &sslSocket) {
             TCPSocket::operator=(std::move(sslSocket));
-            m_session = std::move(sslSocket.m_session);
+            m_ssl = sslSocket.m_ssl;
+            m_ctx = sslSocket.m_ctx;
 
-            m_sockfd = sslSocket.m_sockfd;
-            sslSocket.m_sockfd = -1;
+            sslSocket.m_ssl = nullptr;
+            sslSocket.m_ctx = nullptr;
         }
         return *this;
     }
 
-    void SSLSocket::init() {
-        static bool is_initialized = false; //TODO: make threadsafe
-        if (!is_initialized) {
-            int result = gnutls_global_init();
-            
-            if (result < 0) {
-                throwError(gnutls_strerror(result));
-            }
-
-            std::atexit(atExitSsl);
-            is_initialized = true;
-        }
-    }
-
     void SSLSocket::connect(const std::string& hostname) {
-        int result{ 0 };
+        m_ctx = SSL_CTX_new(SSLv23_client_method());
+        m_ssl = SSL_new(m_ctx);
 
-        check(result = gnutls_certificate_allocate_credentials(&m_credentials));
-        check(gnutls_certificate_set_x509_system_trust(m_credentials));
-        check(gnutls_init(&m_session, GNUTLS_CLIENT));
-        check(gnutls_server_name_set(m_session, GNUTLS_NAME_DNS, hostname.c_str(), hostname.size()));
-        check(gnutls_set_default_priority(m_session));
-        check(gnutls_credentials_set(m_session, GNUTLS_CRD_CERTIFICATE, m_credentials));
-
-        gnutls_session_set_verify_cert(m_session, hostname.c_str(), 0);
-        gnutls_transport_set_int(m_session, m_sockfd);
-        gnutls_handshake_set_timeout(m_session, GNUTLS_DEFAULT_HANDSHAKE_TIMEOUT);
-
-        do {
-            result = gnutls_handshake(m_session);
-        } while (result < 0 && gnutls_error_is_fatal(result) == 0);
-
-        if (result < 0) {
-            throwError(gnutls_strerror(result));
+        if(m_ssl == nullptr){
+            throwSslError();
         }
 
-    }
+        if(!SSL_set_fd(m_ssl, m_sockfd)){
+            throwSslError();
+        }
 
-    inline void SSLSocket::check(int result) {
-        if (result < 0) {
-            throwError(gnutls_strerror(result));
+        if(SSL_connect(m_ssl) != 1){
+            throwSslError();
         }
     }
 
     long SSLSocket::write(const void *data, size_t len) {
-        long count = gnutls_record_send(m_session, data, len);
+        long count = SSL_write(m_ssl, data, static_cast<int>(len));
         return count;
     }
 
     long SSLSocket::read(void *buf, size_t len) {
-        long count = gnutls_record_recv(m_session, buf, len);
+        long count = SSL_read(m_ssl, buf, static_cast<int>(len));
         return count;
     }
 
     void SSLSocket::close() {
-        gnutls_bye(m_session, GNUTLS_SHUT_RDWR);
+        SSL_free(m_ssl);
+        SSL_CTX_free(m_ctx);
         TCPSocket::close();
-
-        gnutls_deinit(m_session);
-        gnutls_certificate_free_credentials(m_credentials);
     }
 
-    void SSLSocket::throwError(const char* err_msg) const {
-        throw std::runtime_error(err_msg);
+    [[noreturn]] inline void throwSslError() {
+        throw std::runtime_error(ERR_lib_error_string(ERR_peek_last_error()));
     }
 
-    void atExitSsl() {
-        gnutls_global_deinit();
-    }
+
 }
