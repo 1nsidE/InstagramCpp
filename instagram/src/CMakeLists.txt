@@ -7,10 +7,11 @@ if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
 endif()
 
 if(DEFINED RAPIDJSON_INCLUDE)
+    message("Include rapidjson headers from: " ${RAPIDJSON_INCLUDE})
     include_directories(${RAPIDJSON_INCLUDE})
 endif()
 
-set(INSTAGRAM_SOURCES 
+set(INSTAGRAM_SOURCES
     InstagramClient.cpp
     InstagramParsers.cpp
 )
