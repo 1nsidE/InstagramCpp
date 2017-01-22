@@ -13,6 +13,7 @@ addons:
   - gcc-6
   - g++-6
   - libssl-dev
+  - rapidjson-dev
 
 install:
 - mkdir build
@@ -22,5 +23,5 @@ install:
 
 script:
 - ls ./rapidjson/include
-- cmake -G "Unix Makefiles" . .. -DRAPIDJSON_INCLUDE=./rapidjson/include
+- cmake -G "Unix Makefiles" . .. -DRAPIDJSON_INCLUDE=./rapidjson/include/
 - cmake --build .
