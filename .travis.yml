@@ -22,6 +22,5 @@ install:
 - if [ "$CXX" = "g++" ]; then export CXX="g++-6" CC="gcc-6"; fi
 
 script:
-- ls ./rapidjson/include
 - cmake -G "Unix Makefiles" . .. -DRAPIDJSON_INCLUDE=./rapidjson/include/
-- cmake --build .
+- make
