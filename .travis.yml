@@ -18,8 +18,10 @@ install:
 - mkdir build
 - cd build
 - git clone https://github.com/miloyip/rapidjson
+- ls
 - if [ "$CXX" = "g++" ]; then export CXX="g++-6" CC="gcc-6"; fi
 
 script:
+- ls
 - cmake -G "Unix Makefiles" . .. -DRAPIDJSON_INCLUDE=./rapidjson/include
 - cmake --build .
