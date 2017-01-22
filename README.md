@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/1nsidE/InstagramCpp.svg?branch=master)](https://travis-ci.org/1nsidE/InstagramCpp)
 
-##InstagramCpp:
+InstagramCpp:
 ----------------
 Implementation of the Instagram REST API client in C++.
 
