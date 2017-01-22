@@ -13,7 +13,6 @@ addons:
   - gcc-6
   - g++-6
   - libssl-dev
-  - rapidjson-dev
 
 install:
 - mkdir build
