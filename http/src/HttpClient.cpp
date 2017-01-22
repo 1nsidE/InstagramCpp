@@ -2,6 +2,7 @@
 // Created by inside on 4/23/16.
 //
 #include <limits>
+#include <cstring>
 
 #include "SSLSocket.h"
 #include "HttpClient.h"
