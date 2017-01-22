@@ -25,7 +25,7 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
     set(CRYPTO_LIB_NAME "libeay32")
     set(SSL_LIB_NAME "ssleay32")
 elseif(CMAKE_COMPILER_IS_GNUCXX)
-    set(CRYPTO_LIB_NAME "cyrpto")
+    set(CRYPTO_LIB_NAME "crypto")
     set(SSL_LIB_NAME "ssl")
 endif()
 
