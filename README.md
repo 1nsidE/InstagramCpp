@@ -50,7 +50,7 @@ Dependencies:
 ----------------
 RapidJSON - https://github.com/miloyip/rapidjson
 
-GnuTLS - https://www.gnutls.org
+OpenSSL - https://github.com/openssl/openssl
 
 Build Instructions:
 ----------------
@@ -72,6 +72,6 @@ Experimental Windows builds is supported. To build under Windows you need to pro
 
 Tested only with Visual Studio 2015.
 
-    cmake -G "Visual Studio 14 [Win64]" . -DRAPIDJSON_INCLUDE=<PATH_TO_RAPIDJSON_INCLUDE> -GNUTLS_LIB=<PATH_TO_GNUTLS_LIB_FILE> -DGNUTLS_INCLUDE=<PATH_TO_GNUTLS_HEADERS>
+    cmake -G "Visual Studio 14 [Win64]" . -DRAPIDJSON_INCLUDE=${PATH_TO_RAPIDJSON_HEADERS} -DOPENSSL_LIB=${PATH_TO_OPENSSL_LIBS_FOLDER} -DOPENSSL_INCLUDE=${PATH_TO_OPENSSL_HEADERS}
 
 This will create Visual Studio project.
