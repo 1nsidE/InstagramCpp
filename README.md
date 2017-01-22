@@ -1,4 +1,6 @@
-InstagramCpp:
+[![Build Status](https://travis-ci.org/1nsidE/InstagramCpp.svg?branch=master)](https://travis-ci.org/1nsidE/InstagramCpp)
+
+##InstagramCpp:
 ----------------
 Implementation of the Instagram REST API client in C++.
 
@@ -27,9 +29,9 @@ int main(){
         std::cerr << "Failed to retrieve authorization token, reason : " << authToken.errorMessage() << std::endl;
         return 1;
     }
-    
+
     std::cout << "User with name : " << authToken.userInfo().username() << " authenticated" << std::endl;
-    
+
     Instagram::MediaEntries mediaEntries = instClient.getRecentMedia();
     if(!mediaEntries){
         std::cerr << "Failed to retrieve recent media, reason : " << mediaEntries.errorMessage() << std::endl;
@@ -39,7 +41,7 @@ int main(){
     for(const auto& media : mediaEntries){
         std::cout << media.caption() << "\n";
         std::cout << "likes count : "  << media.likesCount() << "\n";
-        std::cout << "comments count " << media.commentsCount() << "\n"<< std::endl; 
+        std::cout << "comments count " << media.commentsCount() << "\n"<< std::endl;
     }
 
     return 0;
