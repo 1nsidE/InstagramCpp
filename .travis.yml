@@ -13,17 +13,11 @@ addons:
   - gcc-6
   - g++-6
   - libssl-dev
-  - libjsoncpp-dev
 
 install:
-- mkdir -p ${HOME}/bin
-- if [ "${CC}" = "gcc" ]; then export TOOLSET="gcc"; ln -s `which g++-6` ${HOME}/bin/g++;
-  ln -s `which gcc-6` ${HOME}/bin/gcc; fi
-- export PATH=${HOME}/bin:${PATH}
-
-before_script:
 - mkdir build
 - cd build
-- cmake -G "Unix Makefiles" . ..
+- git clone https://github.com/miloyip/rapidjson
 
-script: cmake --build .
+script:
+- cmake -G "Unix Makefiles" . .. -DRAPIDJSON_INCLUDE=./rapidjson
