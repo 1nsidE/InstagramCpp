@@ -67,7 +67,7 @@ public:
     MediaEntries getRecentMediaForTag(const std::string& tagName) const;
 //Locations
     LocationInfo getLocationById(const std::string& locationId) const;
-    MediaEntries getMediaForLoccation(const std::string& locationId) const;
+    MediaEntries getMediaForLocation(const std::string& locationId) const;
     LocationsInfo searchLocations(double lat, double lng, int distance = 500) const;
 private:
     mutable Http::HttpClient m_httpClient;
