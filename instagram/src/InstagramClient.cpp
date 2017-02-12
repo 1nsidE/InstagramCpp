@@ -485,7 +485,7 @@ LocationInfo InstagramClient::getLocationById(const std::string& location_id) co
     }
 }
 
-MediaEntries InstagramClient::getMediaForLoccation(const std::string& location_id) const {
+MediaEntries InstagramClient::getMediaForLocation(const std::string& location_id) const {
     if(!checkAuth()){
         return NOT_AUTHENTICATED;
     }
