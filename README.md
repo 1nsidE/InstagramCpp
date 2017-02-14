@@ -70,7 +70,7 @@ You will find shared library with headers file divided into 2 folders in "lib" f
 Windows:
 ----------------
 
-Experimental Windows builds is supported. To build under Windows you need to provide path to the headers and .lib's of the dependencies (RapidJSON and GnuTLS).
+Experimental Windows builds is supported. To build under Windows you need to provide path to the headers and .lib's of the dependencies (RapidJSON and OpenSSL).
 
 Tested only with Visual Studio 2015.
 
