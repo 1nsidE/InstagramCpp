@@ -28,7 +28,7 @@ public:
     HttpClient(HttpClient&& http_socket);
     ~HttpClient();
 
-    HttpResponse get(const HttpUrl& url);
+    HttpResponse get(const HttpUrl& url) const;
     HttpResponse post(const HttpUrl& url, const std::string& data, const std::string& contentType);
     HttpResponse post(const HttpUrl& url, const std::pair<std::string, std::string>& typeAndData);
     HttpResponse post(const HttpUrl& url, const FormData& form_data);
@@ -36,10 +36,10 @@ public:
 
     HttpResponse sendRequest(const HttpRequest& httpRequest);
     HttpResponse operator<<(const HttpRequest& httpRequest);
-    HttpResponse operator<<(const HttpUrl& url);
+    HttpResponse operator<<(const HttpUrl& url) const;
 
 private:
-    HttpRequest getDefaultRequest();
+    HttpRequest getDefaultRequest() const;
     void send(const HttpRequest& httpRequest);
 
     HttpResponse receive(const HttpUrl& url, unsigned int timeout);
@@ -52,7 +52,7 @@ private:
     void disconnect(const HttpUrl& url);
 
     using HostToSocketMap = std::unordered_map<std::string, SocketPtr>;
-    HostToSocketMap m_hostToSocketMap{};
+    mutable HostToSocketMap m_hostToSocketMap{};
 
     EXPORT_HTTP friend void swap(HttpClient& first, HttpClient& second);
 };

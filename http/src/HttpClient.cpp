@@ -26,7 +26,7 @@ HttpClient::HttpClient(HttpClient&& httpClient) : HttpClient{}{
 
 HttpClient::~HttpClient() {}
 
-HttpResponse HttpClient::get(const HttpUrl& url) {
+HttpResponse HttpClient::get(const HttpUrl& url) const {
     HttpRequest httpRequest = getDefaultRequest();
     httpRequest.setMethod(Method::GET);
     httpRequest.setUrl(url);
@@ -68,7 +68,7 @@ HttpResponse HttpClient::del(const HttpUrl& url) {
     return sendRequest(request);
 }
 
-HttpRequest HttpClient::getDefaultRequest() {
+HttpRequest HttpClient::getDefaultRequest() const {
     HttpRequest httpRequest {};
     httpRequest[Header::USER_AGENT] = "http_client";
     httpRequest[Header::CONNECTION] = "keep-alive";
@@ -100,7 +100,7 @@ HttpResponse HttpClient::operator<<(const HttpRequest &httpRequest) {
     return sendRequest(httpRequest);
 }
 
-HttpResponse HttpClient::operator<<(const HttpUrl& url) {
+HttpResponse HttpClient::operator<<(const HttpUrl& url) const {
     return get(url);
 }
 
