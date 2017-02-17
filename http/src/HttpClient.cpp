@@ -26,7 +26,7 @@ HttpClient::HttpClient(HttpClient&& httpClient) : HttpClient{}{
 
 HttpClient::~HttpClient() {}
 
-HttpResponse HttpClient::get(const HttpUrl& url) const {
+HttpResponse HttpClient::get(const HttpUrl& url){
     HttpRequest httpRequest = getDefaultRequest();
     httpRequest.setMethod(Method::GET);
     httpRequest.setUrl(url);
@@ -77,7 +77,7 @@ HttpRequest HttpClient::getDefaultRequest() const {
     return httpRequest;
 }
 
-HttpResponse HttpClient::sendRequest(const HttpRequest& httpRequest) {
+HttpResponse HttpClient::sendRequest(const HttpRequest& httpRequest){
     HttpResponse response{};
     try{
         send(httpRequest);
@@ -100,7 +100,7 @@ HttpResponse HttpClient::operator<<(const HttpRequest &httpRequest) {
     return sendRequest(httpRequest);
 }
 
-HttpResponse HttpClient::operator<<(const HttpUrl& url) const {
+HttpResponse HttpClient::operator<<(const HttpUrl& url) {
     return get(url);
 }
 

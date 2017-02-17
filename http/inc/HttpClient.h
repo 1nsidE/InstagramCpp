@@ -28,7 +28,7 @@ public:
     HttpClient(HttpClient&& http_socket);
     ~HttpClient();
 
-    HttpResponse get(const HttpUrl& url) const;
+    HttpResponse get(const HttpUrl& url);
     HttpResponse post(const HttpUrl& url, const std::string& data, const std::string& contentType);
     HttpResponse post(const HttpUrl& url, const std::pair<std::string, std::string>& typeAndData);
     HttpResponse post(const HttpUrl& url, const FormData& form_data);
@@ -36,7 +36,7 @@ public:
 
     HttpResponse sendRequest(const HttpRequest& httpRequest);
     HttpResponse operator<<(const HttpRequest& httpRequest);
-    HttpResponse operator<<(const HttpUrl& url) const;
+    HttpResponse operator<<(const HttpUrl& url);
 
 private:
     HttpRequest getDefaultRequest() const;
