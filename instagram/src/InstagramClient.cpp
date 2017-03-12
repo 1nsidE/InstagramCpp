@@ -21,6 +21,13 @@ InstagramClient::InstagramClient(InstagramClient&& client) : InstagramClient{} {
 
 InstagramClient::InstagramClient(const std::string& authToken) : m_httpClient{}, m_authToken{authToken}{}
 
+InstagramClient& InstagramClient::operator=(InstagramClient&& client){
+    m_httpClient = std::move(client.m_httpClient);
+    m_authToken = std::move(client.m_authToken);
+
+    return *this;
+}
+
 const std::string& InstagramClient::getAuthToken() const {
     return m_authToken;
 }

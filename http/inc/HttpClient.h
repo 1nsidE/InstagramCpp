@@ -28,6 +28,8 @@ public:
     HttpClient(HttpClient&& http_socket);
     ~HttpClient();
 
+    HttpClient& operator=(HttpClient&& client);
+
     HttpResponse get(const HttpUrl& url);
     HttpResponse post(const HttpUrl& url, const std::string& data, const std::string& contentType);
     HttpResponse post(const HttpUrl& url, const std::pair<std::string, std::string>& typeAndData);
@@ -52,7 +54,7 @@ private:
     void disconnect(const HttpUrl& url);
 
     using HostToSocketMap = std::unordered_map<std::string, SocketPtr>;
-    mutable HostToSocketMap m_hostToSocketMap{};
+    HostToSocketMap m_hostToSocketMap{};
 
     EXPORT_HTTP friend void swap(HttpClient& first, HttpClient& second);
 };

@@ -22,6 +22,8 @@ public:
     InstagramClient(InstagramClient& instServ) = delete;
     InstagramClient(InstagramClient&& instServ);
 
+    InstagramClient& operator=(InstagramClient&& client);
+
     void setAuthToken(const std::string& authToken);
     const std::string& getAuthToken() const;
 

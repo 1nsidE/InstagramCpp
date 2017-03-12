@@ -36,6 +36,7 @@ public:
                 return tempValue.GetInt();
             }
         }
+
         return -1;
     }
 

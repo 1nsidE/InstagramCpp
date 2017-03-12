@@ -1,0 +1,14 @@
+*.directory
+*.json
+*.kdev4
+*.swp
+*.ycm_extra_conf*
+build.sh
+
+#Folders
+.idea/
+.kdev4/
+.vscode/
+build/
+cmake-build-debug/
+lib/

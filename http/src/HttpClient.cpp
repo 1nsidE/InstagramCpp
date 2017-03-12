@@ -26,6 +26,11 @@ HttpClient::HttpClient(HttpClient&& httpClient) : HttpClient{}{
 
 HttpClient::~HttpClient() {}
 
+HttpClient& HttpClient::operator=(HttpClient&& client){
+    m_hostToSocketMap = std::move(client.m_hostToSocketMap);
+    return *this;
+}
+
 HttpResponse HttpClient::get(const HttpUrl& url){
     HttpRequest httpRequest = getDefaultRequest();
     httpRequest.setMethod(Method::GET);
