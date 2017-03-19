@@ -220,13 +220,7 @@ UserInfo getUserInfo(ValueWrapper info) {
     userInfo.setUsername(info.getString("username"));
     userInfo.setProfilePictureUrl(info.getString("profile_picture"));
 
-    if (info.hasMember("first_name")) {
-        userInfo.setName(info.getString("first_name"));
-    } else if(info.hasMember("full_name")) {
-        userInfo.setName(info.getString("full_name"));
-    }
-
-    userInfo.setLastName(info.getString("last_name"));
+    userInfo.setFullName(info.getString("full_name"));
     userInfo.setBio(info.getString("bio"));
     userInfo.setWebsite(info.getString("website"));
 

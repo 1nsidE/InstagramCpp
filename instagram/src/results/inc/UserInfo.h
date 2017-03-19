@@ -21,8 +21,7 @@ public:
 
     const std::string& id() const noexcept;
     const std::string& username() const noexcept;
-    const std::string& name() const noexcept;
-    const std::string& lastName() const noexcept;
+    const std::string& fullName() const noexcept;
     const std::string& bio() const noexcept;
     const std::string& profilePictureUrl() const noexcept;
     const std::string& website() const noexcept;
@@ -33,8 +32,7 @@ public:
 
     void setId(const std::string& id);
     void setUsername(const std::string& username);
-    void setName(const std::string& name);
-    void setLastName(const std::string& lastName);
+    void setFullName(const std::string& name);
     void setBio(const std::string& bio);
     void setProfilePictureUrl(const std::string& profPicUrl);
     void setWebsite(const std::string& website);
@@ -45,8 +43,7 @@ public:
 private:
     std::string m_id{};
     std::string m_username{};
-    std::string m_name{};
-    std::string m_lastName{};
+    std::string m_fullName{};
     std::string m_bio{};
     std::string m_profPicUrl{};
     std::string m_website{};
