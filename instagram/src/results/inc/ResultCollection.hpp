@@ -81,11 +81,6 @@ public:
         m_elements.push_back(std::forward<T>(element));
         return *this;
     }
-
-    ResultCollection<T>& operator<<(T& element){
-        m_elements.push_back(element);
-        return *this;
-    }
     
     void addElement(T&& element){
         m_elements.push_back(std::forward<T>(element));

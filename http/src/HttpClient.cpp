@@ -194,7 +194,6 @@ std::string HttpClient::read(const HttpUrl& url, unsigned int timeout) {
             }
 
             result.append(buff, static_cast<size_t>(count));
-            std::memset(buff, 0, buffSize);
         }
     }
 
