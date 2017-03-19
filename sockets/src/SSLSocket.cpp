@@ -14,13 +14,10 @@ namespace Socket {
         }
 
         ~SSLInit(){
-
         }
     };
 
-    static SSLInit sslInit{};
-
-    SSLSocket::SSLSocket(const std::string& hostname, const std::string& port) : TCPSocket{hostname, port} {
+    SSLSocket::SSLSocket(const std::string& hostname, const std::string& port) : TCPSocket{hostname, port}, m_hostname{hostname} {
         SSLSocket::connect();
     }
 
@@ -47,17 +44,26 @@ namespace Socket {
     }
 
     void SSLSocket::connect() {
+        static SSLInit sslInit{};
+
         m_ctx = SSL_CTX_new(SSLv23_client_method());
         m_ssl = SSL_new(m_ctx);
+
+        SSL_CTX_set_verify(m_ctx, SSL_VERIFY_PEER, nullptr);
 
         if(m_ssl == nullptr){
             throwSslError();
         }
 
+        X509_VERIFY_PARAM* param = SSL_get0_param(m_ssl);
+        X509_VERIFY_PARAM_set_hostflags(param, X509_CHECK_FLAG_NO_PARTIAL_WILDCARDS);
+
+        X509_VERIFY_PARAM_set1_host(param, m_hostname.c_str(), m_hostname.size());
+
         if(!SSL_set_fd(m_ssl, m_sockfd)){
             throwSslError();
         }
-
+        
         if(SSL_connect(m_ssl) != 1){
             throwSslError();
         }

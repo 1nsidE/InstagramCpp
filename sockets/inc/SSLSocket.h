@@ -27,6 +27,7 @@ namespace Socket{
 
         SSL* m_ssl;
         SSL_CTX* m_ctx;
+        std::string m_hostname{};
     };
 }
 
