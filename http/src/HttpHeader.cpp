@@ -159,7 +159,7 @@ std::string HttpHeader::getString() const {
 }
 
 void HttpHeader::addHeader(const std::string& header){
-    std::vector<std::string> tokens = tokenize(header, ':', true);
+    std::vector<std::string> tokens = split(header, ':', true);
     if (tokens.size() != 2) {
         throw std::runtime_error("invalid header : " + header);
     }

@@ -135,7 +135,7 @@ std::string HttpUrl::url() const {
 }
 
 void HttpUrl::parse(const std::string &url) {
-    std::vector<std::string> urlAndArgs = tokenize(url, ARG_START_DELIMETER, true);
+    std::vector<std::string> urlAndArgs = split(url, ARG_START_DELIMETER, true);
     parseUrl(urlAndArgs[0]);
 
     if(urlAndArgs.size() > 1){
@@ -167,9 +167,9 @@ void HttpUrl::parseUrl(const std::string& url){
 }
 
 void HttpUrl::parseArguments(const std::string args) {
-    std::vector<std::string> url_str = tokenize(args, ARG_DELIMETER);
+    std::vector<std::string> url_str = split(args, ARG_DELIMETER);
     for (std::string arg_pair : url_str) {
-        std::vector<std::string> argsVec = tokenize(arg_pair, ARG_EQUAL, true);
+        std::vector<std::string> argsVec = split(arg_pair, ARG_EQUAL, true);
         if (argsVec.size() != 2) {
             throw std::runtime_error("invalid url format!");
         }

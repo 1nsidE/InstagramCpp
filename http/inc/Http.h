@@ -35,7 +35,7 @@ std::string changeCase(const std::string& str, bool to_upper = false);
 Method fromStr(const char* str);
 Method fromStr(const std::string& str);
 
-std::vector<std::string> tokenize(const std::string &str, const char delimeter, bool once = false);
+std::vector<std::string> split(const std::string &str, const char delimeter, bool once = false);
 
 }
 

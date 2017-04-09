@@ -168,7 +168,7 @@ namespace Http {
         return str.substr(first, (last - first) + 1);
     }
 
-    std::vector<std::string> tokenize(const std::string &str, const char delimeter, bool once) {
+    std::vector<std::string> split(const std::string &str, const char delimeter, bool once) {
         std::vector<std::string> result{};
 
         const char *ptr = str.c_str();

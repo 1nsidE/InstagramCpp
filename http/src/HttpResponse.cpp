@@ -72,7 +72,7 @@ void HttpResponse::parseResponse(const std::string& response){
     std::string line {};
 
     std::getline(stringStream, line);
-    std::vector<std::string> tokens = tokenize(line, ' ');
+    std::vector<std::string> tokens = split(line, ' ');
 
     if (tokens.size() < 3) {
         return;
