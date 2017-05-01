@@ -372,7 +372,7 @@ std::string getError(const std::string& json) {
     ValueWrapper errType{meta["error_type"]};
 
     if (!errType.isNull() || !errMsg.isNull()) {
-        return errType.getString() + " : " + errMsg.getString();
+        return std::to_string(code) + " : " + errType.getString() + " - " + errMsg.getString();
     } else if(code != -1){
         return "Unknown error with code = " + std::to_string(code);
     } else {

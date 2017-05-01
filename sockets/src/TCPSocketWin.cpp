@@ -47,6 +47,7 @@ void TCPSocket::connect(const std::string& host, const std::string& port) {
         }
 
         if (::connect(m_sockfd, tmp_res->ai_addr, tmp_res->ai_addrlen) == -1) {
+            close();
             m_sockfd = -1;
         }
 
@@ -81,6 +82,7 @@ long TCPSocket::read(void *data, size_t length) {
 void TCPSocket::close() {
     if (m_sockfd != -1) {
         closesocket(m_sockfd);
+        m_sockfd = -1;
     }
 }
 

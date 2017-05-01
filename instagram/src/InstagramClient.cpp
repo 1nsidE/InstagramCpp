@@ -9,7 +9,7 @@
 
 namespace Instagram {
 
-inline Http::HttpUrl getStandartUrl(const std::string &str){
+inline Http::HttpUrl getUrl(const std::string &str){
     return {INSTAGRAM_HOST, str, Http::HttpProtocol::HTTPS};
 }
 
@@ -61,7 +61,7 @@ AuthorizationToken InstagramClient::authenticate(const std::string& code,
     form_data["redirect_uri"] = redirectUri;
     form_data["grant_type"] = AUTH_CODE_GRANT_TYPE;
 
-    const Http::HttpResponse response = m_httpClient.post(getStandartUrl(Auth::GET_AUTH_CODE), form_data);
+    const Http::HttpResponse response = m_httpClient.post(getUrl(Auth::GET_AUTH_CODE), form_data);
     if (response.code() == Http::Status::OK) {
         AuthorizationToken authToken = parseAuthToken(response.body());
         setAuthToken(authToken.token());
@@ -81,7 +81,7 @@ UserInfo InstagramClient::getUserInfo(const std::string& userId) const {
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(Users::users + userId);
+    Http::HttpUrl url = getUrl(Users::users + userId);
     url[AUTH_TOKEN_ARG] = m_authToken;
 
     const Http::HttpResponse response = m_httpClient << url;
@@ -101,7 +101,7 @@ MediaEntries InstagramClient::getRecentMedia(const std::string& userId, unsigned
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(Users::users + userId + Media::recentMedia);
+    Http::HttpUrl url = getUrl(Users::users + userId + Media::recentMedia);
     url[AUTH_TOKEN_ARG] = m_authToken;
     url[COUNT_ARG] = std::to_string(count);
 
@@ -117,7 +117,7 @@ MediaEntries InstagramClient::getRecentMedia(const std::string& userId, const st
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(Users::users + userId + Media::recentMedia);
+    Http::HttpUrl url = getUrl(Users::users + userId + Media::recentMedia);
     url[AUTH_TOKEN_ARG] = m_authToken;
     
     if (!min_id.empty()) url[MIN_ID_ARG] = min_id;
@@ -133,7 +133,7 @@ MediaEntries InstagramClient::getLikedMedia(unsigned int count) const {
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(std::string{Users::users} + Users::ownLikes);
+    Http::HttpUrl url = getUrl(std::string{Users::users} + Users::ownLikes);
     url[AUTH_TOKEN_ARG] = m_authToken;
     url[COUNT_ARG] = std::to_string(count);
 
@@ -145,7 +145,7 @@ MediaEntries InstagramClient::getLikedMedia(const std::string& max_id, unsigned 
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(std::string{Users::users} + Users::ownLikes);
+    Http::HttpUrl url = getUrl(std::string{Users::users} + Users::ownLikes);
     url[AUTH_TOKEN_ARG] = m_authToken;
     url[MAX_LIKE_ID] = max_id;
     url[COUNT_ARG] = std::to_string(count);
@@ -168,7 +168,7 @@ UsersInfo InstagramClient::searchUsers(const std::string& query, unsigned count)
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(std::string{Users::users} + Users::search);
+    Http::HttpUrl url = getUrl(std::string{Users::users} + Users::search);
     url[AUTH_TOKEN_ARG] = m_authToken;
     url[QUERY_ARG] = query;
     url[COUNT_ARG] = std::to_string(count);
@@ -180,7 +180,7 @@ UsersInfo InstagramClient::getFollows() const {
     if(!checkAuth()){
        return NOT_AUTHENTICATED;
     } 
-    Http::HttpUrl url = getStandartUrl(std::string{Users::users} + Relationships::follows);
+    Http::HttpUrl url = getUrl(std::string{Users::users} + Relationships::follows);
     url[AUTH_TOKEN_ARG] = m_authToken;
     return getUsersInfo(url);
 }
@@ -190,7 +190,7 @@ UsersInfo InstagramClient::getFollowedBy() const {
        return NOT_AUTHENTICATED;
     } 
 
-    Http::HttpUrl url = getStandartUrl(std::string{Users::users} + Relationships::followedBy);
+    Http::HttpUrl url = getUrl(std::string{Users::users} + Relationships::followedBy);
     url[AUTH_TOKEN_ARG] = m_authToken;
     return getUsersInfo(url);
 }
@@ -200,7 +200,7 @@ UsersInfo InstagramClient::getRequestedBy() const {
        return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(std::string{Users::users} + Relationships::requestedBy);
+    Http::HttpUrl url = getUrl(std::string{Users::users} + Relationships::requestedBy);
     url[AUTH_TOKEN_ARG] = m_authToken;
     return getUsersInfo(url);
 }
@@ -224,7 +224,7 @@ RelationshipInfo InstagramClient::getRelationshipInfo(const std::string& userId)
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(Users::users + userId + Relationships::relationship);
+    Http::HttpUrl url = getUrl(Users::users + userId + Relationships::relationship);
     url[AUTH_TOKEN_ARG] = m_authToken;
 
     const Http::HttpResponse response = m_httpClient << url;
@@ -257,7 +257,7 @@ RelationshipInfo InstagramClient::postRelationship(Relationship relationship, co
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(Users::users + userId + Relationships::relationship);
+    Http::HttpUrl url = getUrl(Users::users + userId + Relationships::relationship);
     Http::FormData formData{FORM_DATA_BOUNDARY};
 
     switch(relationship){
@@ -289,7 +289,7 @@ MediaEntry InstagramClient::getMedia(const std::string& mediaId) const {
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url  = getStandartUrl(Media::media + mediaId);
+    Http::HttpUrl url  = getUrl(Media::media + mediaId);
     url[AUTH_TOKEN_ARG] = m_authToken;
 
     const Http::HttpResponse response = m_httpClient << url;
@@ -305,7 +305,7 @@ MediaEntry InstagramClient::getMediaWithShortCode(const std::string& shortcode) 
         return NOT_AUTHENTICATED;
     } 
 
-    Http::HttpUrl url = getStandartUrl(Media::byShortCode + shortcode);
+    Http::HttpUrl url = getUrl(Media::byShortCode + shortcode);
     url[AUTH_TOKEN_ARG] = m_authToken;
 
     const Http::HttpResponse response = m_httpClient << url;
@@ -323,7 +323,7 @@ MediaEntries InstagramClient::searchMedia(double lat, double lng, int distance) 
 
     checkAuth();
 
-    Http::HttpUrl url = getStandartUrl(Media::search);
+    Http::HttpUrl url = getUrl(Media::search);
     url[LAT_ARG] = std::to_string(lat);
     url[LNG_ARG] = std::to_string(lng);
     url[DST_ARG] = std::to_string(distance);
@@ -337,7 +337,7 @@ CommentsInfo InstagramClient::getComments(const std::string& mediaId) const {
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(Media::media + mediaId + Comments::comments);
+    Http::HttpUrl url = getUrl(Media::media + mediaId + Comments::comments);
     url[AUTH_TOKEN_ARG] = m_authToken;
 
     const Http::HttpResponse response = m_httpClient << url;
@@ -353,7 +353,7 @@ BaseResult InstagramClient::comment(const std::string& mediaId, const std::strin
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(Media::media + mediaId + Comments::comments);
+    Http::HttpUrl url = getUrl(Media::media + mediaId + Comments::comments);
     url[AUTH_TOKEN_ARG] = m_authToken;
 
     Http::FormData form_data {FORM_DATA_BOUNDARY};
@@ -372,7 +372,7 @@ BaseResult InstagramClient::deleteComment(const std::string& mediaId, const std:
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(Media::media + mediaId + Comments::comments + commentId);
+    Http::HttpUrl url = getUrl(Media::media + mediaId + Comments::comments + commentId);
     url[AUTH_TOKEN_ARG] = m_authToken;
     const Http::HttpResponse response = m_httpClient.del(url);
     if (response.code() == Http::Status::OK) {
@@ -387,7 +387,7 @@ UsersInfo InstagramClient::getLikes(const std::string& mediaId) const {
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(Media::media + mediaId + Likes::likes);
+    Http::HttpUrl url = getUrl(Media::media + mediaId + Likes::likes);
     url[AUTH_TOKEN_ARG] = m_authToken;
 
     return getUsersInfo(url);
@@ -398,7 +398,7 @@ BaseResult InstagramClient::like(const std::string& mediaId) {
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(Media::media + mediaId + Likes::likes);
+    Http::HttpUrl url = getUrl(Media::media + mediaId + Likes::likes);
     Http::FormData form_data {FORM_DATA_BOUNDARY};
     form_data[AUTH_TOKEN_ARG] = m_authToken;
 
@@ -415,7 +415,7 @@ BaseResult InstagramClient::unlike(const std::string& mediaId) {
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(Media::media + mediaId + Likes::likes);
+    Http::HttpUrl url = getUrl(Media::media + mediaId + Likes::likes);
     url[AUTH_TOKEN_ARG] = m_authToken;
 
     const Http::HttpResponse response = m_httpClient.del(url);
@@ -431,7 +431,7 @@ TagInfo InstagramClient::getTagInfo(const std::string& tag_name) const {
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(Tags::tags + tag_name);
+    Http::HttpUrl url = getUrl(Tags::tags + tag_name);
     url[AUTH_TOKEN_ARG] = m_authToken;
 
     const Http::HttpResponse response = m_httpClient << url;
@@ -447,7 +447,7 @@ TagsInfo InstagramClient::searchTags(const std::string& query) const {
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(std::string{Tags::tags} + Tags::tagsSearch);
+    Http::HttpUrl url = getUrl(std::string{Tags::tags} + Tags::tagsSearch);
     url[QUERY_ARG] = query;
     url[AUTH_TOKEN_ARG] = m_authToken;
 
@@ -465,7 +465,7 @@ MediaEntries InstagramClient::getRecentMediaForTag(const std::string& tag_name) 
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(Tags::tags + tag_name + Media::recentMedia);
+    Http::HttpUrl url = getUrl(Tags::tags + tag_name + Media::recentMedia);
     url[AUTH_TOKEN_ARG] = m_authToken;
 
     const Http::HttpResponse response = m_httpClient << url;
@@ -481,7 +481,7 @@ LocationInfo InstagramClient::getLocationById(const std::string& location_id) co
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(Locations::locations + location_id);
+    Http::HttpUrl url = getUrl(Locations::locations + location_id);
     url[AUTH_TOKEN_ARG] = m_authToken;
 
     const Http::HttpResponse response = m_httpClient << url;
@@ -497,7 +497,7 @@ MediaEntries InstagramClient::getMediaForLocation(const std::string& location_id
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(Locations::locations + location_id + Media::recentMedia);
+    Http::HttpUrl url = getUrl(Locations::locations + location_id + Media::recentMedia);
     Http::HttpResponse response = m_httpClient << url;
 
     if (response.code() == Http::Status::OK) {
@@ -512,7 +512,7 @@ LocationsInfo InstagramClient::searchLocations(double lat, double lng, int dista
         return NOT_AUTHENTICATED;
     }
 
-    Http::HttpUrl url = getStandartUrl(std::string{Locations::locations} + Locations::search);
+    Http::HttpUrl url = getUrl(std::string{Locations::locations} + Locations::search);
     url[LAT_ARG] = std::to_string(lat);
     url[LNG_ARG] = std::to_string(lng);
     url[DST_ARG] = std::to_string(distance);
