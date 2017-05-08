@@ -1,3 +1,4 @@
+dist: trusty
 language: cpp
 
 compiler:
@@ -12,7 +13,7 @@ addons:
   - cmake
   - gcc-6
   - g++-6
-  - libssl-dev
+  - openssl
 
 install:
 - mkdir build
