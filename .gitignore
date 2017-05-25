@@ -3,7 +3,14 @@
 *.kdev4
 *.swp
 *.ycm_extra_conf*
+*.vcxproj
+*.filters
+*.cmake
+*.sln
+make.bat
 build.sh
+CMakeCache.txt
+
 
 #Folders
 .idea/
@@ -12,3 +19,8 @@ build.sh
 build/
 cmake-build-debug/
 lib/
+CMakeFiles/
+*.dir/
+.vs/
+x86/
+x64/
