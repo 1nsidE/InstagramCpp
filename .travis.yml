@@ -9,7 +9,7 @@ addons:
     sources:
     - kalakris-cmake
     - ubuntu-toolchain-r-test
-  packages:
+    packages:
     - cmake
     - gcc-6
     - g++-6
