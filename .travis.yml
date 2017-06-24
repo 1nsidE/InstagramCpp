@@ -1,5 +1,6 @@
 dist: trusty
 language: cpp
+sudo: required
 
 compiler:
   - gcc
@@ -13,11 +14,18 @@ addons:
     - cmake
     - gcc-6
     - g++-6
-    - openssl
 
 install:
-  - mkdir build
-  - cd build
+  - mkdir openssl
+  - cd openssl
+  - wget https://www.openssl.org/source/openssl-1.0.2l.tar.gz
+  - tar -xzvf openssl-1.0.2l.tar.gz
+  - cd openssl-1.0.2l
+  - sudo ./config
+  - sudo make install
+  - cd ../
+  - mkdir instcpp_build
+  - cd instcpp_build
   - git clone https://github.com/miloyip/rapidjson
   - if [ "$CXX" = "g++" ]; then export CXX="g++-6" CC="gcc-6"; fi
 
