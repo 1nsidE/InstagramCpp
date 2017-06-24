@@ -23,7 +23,7 @@ install:
   - cd openssl-1.0.2l
   - sudo ./config
   - sudo make install
-  - cd ../
+  - cd ../../
   - mkdir instcpp_build
   - cd instcpp_build
   - git clone https://github.com/miloyip/rapidjson
