@@ -20,8 +20,8 @@ install:
   - wget https://www.openssl.org/source/openssl-1.0.2l.tar.gz
   - tar -xzvf openssl-1.0.2l.tar.gz
   - cd openssl-1.0.2l
-  - sudo ./config --prefix=$HOME/openssl/ --openssldir=$HOME/openssl/
-  - sudo make install
+  - sudo ./config --prefix=$HOME/openssl/ --openssldir=$HOME/openssl/ --shared -DfPIC
+  - sudo make install > build.log
   - cd ../
   - mkdir instcpp_build
   - cd instcpp_build
