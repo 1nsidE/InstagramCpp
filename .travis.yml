@@ -16,11 +16,11 @@ addons:
     - g++-6
 
 install:
-  - mkdir openssl
+  - mkdir $HOME/openssl
   - wget https://www.openssl.org/source/openssl-1.0.2l.tar.gz
   - tar -xzvf openssl-1.0.2l.tar.gz
   - cd openssl-1.0.2l
-  - sudo ./config --prefix=../openssl/ --openssldir=../openssl/
+  - sudo ./config --prefix=$HOME/openssl/ --openssldir=$HOME/openssl/
   - sudo make install
   - cd ../
   - mkdir instcpp_build
@@ -29,5 +29,5 @@ install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-6" CC="gcc-6"; fi
 
 script:
-  - cmake -G "Unix Makefiles" . .. -DRAPIDJSON_INCLUDE="$PWD/rapidjson/include/" -DOPENSSL_INCLUDE="$PWD/../openssl/include" -DOPENSSL_LIB="$PWD/../openssl/lib"
+  - cmake -G "Unix Makefiles" . .. -DRAPIDJSON_INCLUDE="$PWD/rapidjson/include/" -DOPENSSL_INCLUDE="$HOME/openssl/include" -DOPENSSL_LIB="$HOME/openssl/lib"
   - cmake --build .
