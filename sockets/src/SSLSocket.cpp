@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <memory>
 #include <openssl/err.h>
 #include <openssl/x509v3.h>
 #include "SSLSocket.h"
@@ -47,18 +48,28 @@ namespace Socket {
         static SSLInit sslInit{};
 
         m_ctx = SSL_CTX_new(SSLv23_client_method());
-        m_ssl = SSL_new(m_ctx);
+        if(!SSL_CTX_set_default_verify_paths(m_ctx)){
+            throwSslError();
+        }
 
-        SSL_CTX_set_verify(m_ctx, SSL_VERIFY_PEER, nullptr);
+        m_ssl = SSL_new(m_ctx);
 
         if(m_ssl == nullptr){
             throwSslError();
         }
 
         X509_VERIFY_PARAM* param = SSL_get0_param(m_ssl);
+        if(param == nullptr){
+            throwSslError();
+        }
+
         X509_VERIFY_PARAM_set_hostflags(param, X509_CHECK_FLAG_NO_PARTIAL_WILDCARDS);
 
-        X509_VERIFY_PARAM_set1_host(param, m_hostname.c_str(), m_hostname.size());
+        if(!X509_VERIFY_PARAM_set1_host(param, m_hostname.c_str(), 0)){
+            throwSslError();
+        }
+
+        SSL_set_verify(m_ssl, SSL_VERIFY_PEER, nullptr);
 
         if(!SSL_set_fd(m_ssl, m_sockfd)){
             throwSslError();
@@ -86,8 +97,7 @@ namespace Socket {
     }
 
     [[noreturn]] inline void throwSslError() {
-        throw std::runtime_error(ERR_lib_error_string(ERR_peek_last_error()));
+        ERR_error_string(ERR_peek_last_error(), nullptr);
+        throw std::runtime_error(ERR_error_string(ERR_peek_last_error(), nullptr));
     }
-
-
 }
