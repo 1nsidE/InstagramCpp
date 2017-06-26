@@ -48,6 +48,11 @@ namespace Socket {
         static SSLInit sslInit{};
 
         m_ctx = SSL_CTX_new(SSLv23_client_method());
+
+        if(m_ctx == nullptr){
+            throwSslError();
+        }
+
         if(!SSL_CTX_set_default_verify_paths(m_ctx)){
             throwSslError();
         }
