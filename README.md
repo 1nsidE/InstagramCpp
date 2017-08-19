@@ -2,7 +2,7 @@
 
 InstagramCpp:
 ----------------
-Implementation of the Instagram REST API client in C++.
+Instagram REST API client Implementation of the  in C++.
 
 Project is under active development.
 
@@ -26,22 +26,22 @@ int main(){
     Instagram::AuthorizationToken authToken = instClient.authenticate(code, clientId, clientSecret, redirectUri);
 
     if(!authToken){
-        std::cerr << "Failed to retrieve authorization token, reason : " << authToken.errorMessage() << std::endl;
+        std::cerr << "Failed to retrieve authorization token, reason : " << authToken.errorMessage() << "\n";
         return 1;
     }
 
-    std::cout << "User with name : " << authToken.userInfo().username() << " authenticated" << std::endl;
+    std::cout << "User with name : " << authToken.userInfo().username() << " authenticated" << "\n";
 
     Instagram::MediaEntries mediaEntries = instClient.getRecentMedia();
     if(!mediaEntries){
-        std::cerr << "Failed to retrieve recent media, reason : " << mediaEntries.errorMessage() << std::endl;
+        std::cerr << "Failed to retrieve recent media, reason : " << mediaEntries.errorMessage() << "\n";
         return 1;
     }
 
     for(const auto& media : mediaEntries){
         std::cout << media.caption() << "\n";
         std::cout << "likes count : "  << media.likesCount() << "\n";
-        std::cout << "comments count " << media.commentsCount() << "\n"<< std::endl;
+        std::cout << "comments count " << media.commentsCount() << "\n\n";
     }
 
     return 0;
@@ -65,7 +65,7 @@ Tested only on Linux with 4.5 kernel.
     cmake .
     make
 
-You will find shared library with headers file divided into 2 folders in "lib" folder.
+You will find shared library under 'lib folder'
 
 Windows:
 ----------------
