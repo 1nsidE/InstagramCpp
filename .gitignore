@@ -18,7 +18,6 @@ CMakeCache.txt
 .vscode/
 build/
 cmake-build-debug/
-lib/
 CMakeFiles/
 *.dir/
 .vs/
