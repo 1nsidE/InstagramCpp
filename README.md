@@ -65,8 +65,6 @@ Tested only on Linux with 4.5 kernel.
     cmake .
     make
 
-You will find shared library under 'lib' folder.
-
 Windows:
 ----------------
 
