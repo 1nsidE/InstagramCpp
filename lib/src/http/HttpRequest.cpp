@@ -89,7 +89,7 @@ void HttpRequest::parse(const std::string& request){
     std::getline(string_stream, line);
     std::vector<std::string> tokens = split(line, ' ');
     if (tokens.size() != 3) {
-        throw std::runtime_error({ "invalid request header: " + line });
+        throw std::runtime_error("invalid request header: " + line);
     }
     
     setMethod(fromStr(tokens[0]));

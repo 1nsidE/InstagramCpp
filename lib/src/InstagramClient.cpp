@@ -54,18 +54,17 @@ AuthorizationToken InstagramClient::authenticate(const std::string& code,
         const std::string& clientSecret,
         const std::string& redirectUri) {
 
-    Http::FormData form_data {FORM_DATA_BOUNDARY};
-    form_data["code"] = code;
-    form_data["client_id"] = clientId;
-    form_data["client_secret"] = clientSecret;
-    form_data["redirect_uri"] = redirectUri;
-    form_data["grant_type"] = AUTH_CODE_GRANT_TYPE;
+    Http::FormData formData{FORM_DATA_BOUNDARY};
+    formData["code"] = code;
+    formData["client_id"] = clientId;
+    formData["client_secret"] = clientSecret;
+    formData["redirect_uri"] = redirectUri;
+    formData["grant_type"] = AUTH_CODE_GRANT_TYPE;
 
-    const Http::HttpResponse response = m_httpClient.post(getUrl(Auth::GET_AUTH_CODE), form_data);
+    const Http::HttpResponse response = m_httpClient.post(getUrl(Auth::GET_AUTH_CODE), formData);
     if (response.code() == Http::Status::OK) {
         AuthorizationToken authToken = parseAuthToken(response.body());
         setAuthToken(authToken.token());
-
         return authToken;
     } else {
         return getResult(response);
@@ -356,10 +355,10 @@ BaseResult InstagramClient::comment(const std::string& mediaId, const std::strin
     Http::HttpUrl url = getUrl(Media::media + mediaId + Comments::comments);
     url[AUTH_TOKEN_ARG] = m_authToken;
 
-    Http::FormData form_data {FORM_DATA_BOUNDARY};
-    form_data[Comments::TEXT_ARG] = text;
+    Http::FormData formData{FORM_DATA_BOUNDARY};
+    formData[Comments::TEXT_ARG] = text;
 
-    const Http::HttpResponse response = m_httpClient.post(url, form_data);
+    const Http::HttpResponse response = m_httpClient.post(url, formData);
     if (response.code() == Http::Status::OK) {
         return {};
     } else {
@@ -399,10 +398,10 @@ BaseResult InstagramClient::like(const std::string& mediaId) {
     }
 
     Http::HttpUrl url = getUrl(Media::media + mediaId + Likes::likes);
-    Http::FormData form_data {FORM_DATA_BOUNDARY};
-    form_data[AUTH_TOKEN_ARG] = m_authToken;
+    Http::FormData formData{FORM_DATA_BOUNDARY};
+    formData[AUTH_TOKEN_ARG] = m_authToken;
 
-    const Http::HttpResponse response = m_httpClient.post(url, form_data);
+    const Http::HttpResponse response = m_httpClient.post(url, formData);
     if (response.code() == Http::Status::OK) {
         return {};
     } else {

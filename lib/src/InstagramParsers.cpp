@@ -1,4 +1,5 @@
 #include <rapidjson/document.h>
+#include <rapidjson/error/en.h>
 #include "InstagramParsers.h"
 
 using namespace rapidjson;
@@ -83,8 +84,12 @@ AuthorizationToken parseAuthToken(const std::string& json) {
     AuthorizationToken token{};
 
     Document document;
-    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("access_token")) {
-        return "Failed to parse access token";
+    if (document.Parse(json.c_str()).HasParseError()) {
+        return std::string{"Failed to parse access token: "} + rapidjson::GetParseError_En(document.GetParseError());
+    }
+    
+    if(!document.HasMember("access_token")){
+        return "No 'data' field found in json";
     }
 
     token.setAuthToken(document["access_token"].GetString());
@@ -95,9 +100,13 @@ AuthorizationToken parseAuthToken(const std::string& json) {
 MediaEntries parseMediaEntries(const std::string& json) {
     Document document{};
 
-    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
-        return "Failed to parse media entries";
+    if (document.Parse(json.c_str()).HasParseError()) {
+        return std::string{"Failed to parse media entries: "} + rapidjson::GetParseError_En(document.GetParseError());
     };
+
+    if(!document.HasMember("data")){
+        return "No 'data' field found in json";
+    }
 
     ValueWrapper data{document["data"]};
     MediaEntries result{};
@@ -112,8 +121,12 @@ MediaEntries parseMediaEntries(const std::string& json) {
 MediaEntry parseMediaEntry(const std::string& json) {
     Document document;
 
-    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
-        return "Failed to parse media entry";
+    if (document.Parse(json.c_str()).HasParseError()) {
+        return std::string{"Failed to parse media entry: "} + rapidjson::GetParseError_En(document.GetParseError());
+    }
+
+    if(!document.HasMember("data")){
+        return "No 'data' field found in json";
     }
 
     return getMediaEntry(document["data"]);
@@ -189,8 +202,12 @@ MediaEntry getMediaEntry(ValueWrapper media) {
 UserInfo parseUserInfo(const std::string& json) {
     Document document{};
 
-    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
-        return "Failed to parse user info";
+    if (document.Parse(json.c_str()).HasParseError()){
+        return std::string{"Failed to parse user info: "} + rapidjson::GetParseError_En(document.GetParseError());
+    }
+
+    if(!document.HasMember("data")){
+        return "No 'data' field found in json";
     }
 
     return getUserInfo(document["data"]);
@@ -199,8 +216,12 @@ UserInfo parseUserInfo(const std::string& json) {
 UsersInfo parseUsersInfo(const std::string& json) {
     Document document{};
 
-    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
-        return "Failed to parse users info";
+    if (document.Parse(json.c_str()).HasParseError()){
+        return std::string{"Failed to parse users info: "} + rapidjson::GetParseError_En(document.GetParseError());
+    }
+
+    if(!document.HasMember("data")){
+        return "No 'data' field found in json";
     }
 
     ValueWrapper data{document["data"]};
@@ -237,52 +258,68 @@ UserInfo getUserInfo(ValueWrapper info) {
 RelationshipInfo parseRelationshipInfo(const std::string& json) {
     Document document{};
 
-    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
-        return "Failed to parse relationship info";
+    if (document.Parse(json.c_str()).HasParseError()) {
+        return std::string{"Failed to parse relationship info: "} + rapidjson::GetParseError_En(document.GetParseError());
+    }
+
+    if(!document.HasMember("data")){
+        return "No 'data' field found in json";
     }
 
     ValueWrapper data{document["data"]};
-    RelationshipInfo rel_info{ data.getString("incoming_status"), data.getString("outgoing_status") };
+    RelationshipInfo relInfo{ data.getString("incoming_status"), data.getString("outgoing_status") };
 
-    return rel_info;
+    return relInfo;
 }
 
 TagInfo parseTagInfo(const std::string& json) {
     Document document{};
 
-    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
-        return "Failed to parse tag info";
+    if (document.Parse(json.c_str()).HasParseError()) {
+        return std::string{"Failed to parse tag info: "} + rapidjson::GetParseError_En(document.GetParseError());
+    }
+
+    if(!document.HasMember("data")){
+        return "No 'data' field found in json";
     }
 
     ValueWrapper data{document["data"]};
-    TagInfo tag_info(data.getString("name"), data.getInt("media_count"));
+    TagInfo tagInfo(data.getString("name"), data.getInt("media_count"));
 
-    return tag_info;
+    return tagInfo;
 }
 
 TagsInfo parseTagsInfo(const std::string& json) {
     Document document{};
 
-    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
-        return "Failed to parse tags info";
+    if (document.Parse(json.c_str()).HasParseError()) {
+        return std::string{"Failed to parse tags info: "} + rapidjson::GetParseError_En(document.GetParseError());
     }
 
-    TagsInfo tags_info;
+    if(!document.HasMember("data")){
+        return "No 'data' field found in json";
+    }
+
+    TagsInfo tagsInfo;
     ValueWrapper data{document["data"]};
     if (data.isArray()) {
         for (const auto& tag : data.getArray()) {
-            tags_info << TagInfo{ tag["name"].GetString(), tag["media_count"].GetInt() };
+            tagsInfo << TagInfo{ tag["name"].GetString(), tag["media_count"].GetInt() };
         }
     }
 
-    return tags_info;
+    return tagsInfo;
 }
 
 CommentsInfo parseComments(const std::string& json) {
     Document document{};
 
-    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
-        return "Failed to parse comments";
+    if (document.Parse(json.c_str()).HasParseError()) {
+        return std::string{"Failed to parse comments: "} + rapidjson::GetParseError_En(document.GetParseError());
+    }
+
+    if(!document.HasMember("data")){
+        return "No 'data' field found in json";
     }
 
     CommentsInfo commentsInfo{};
@@ -315,8 +352,12 @@ CommentInfo getCommentInfo(ValueWrapper comment) {
 LocationInfo parseLocation(const std::string& json) {
     Document document{};
 
-    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
-        return "Failed to parse location";
+    if (document.Parse(json.c_str()).HasParseError()) {
+        return std::string{"Failed to parse location: "} + rapidjson::GetParseError_En(document.GetParseError());
+    }
+
+    if(!document.HasMember("data")){
+        return "No 'data' field found in json";
     }
 
     return getLocation(document["data"]);
@@ -339,8 +380,12 @@ LocationInfo getLocation(ValueWrapper location) {
 LocationsInfo parseLocations(const std::string& json) {
     Document document{};
 
-    if (document.Parse(json.c_str()).HasParseError() || !document.HasMember("data")) {
-        return "Failed to parse locations";
+    if (document.Parse(json.c_str()).HasParseError()) {
+        return std::string{"Failed to parse locations: "} + rapidjson::GetParseError_En(document.GetParseError());
+    }
+
+    if(!document.HasMember("data")){
+        return "No 'data' field found in json";
     }
 
     LocationsInfo infos{};
@@ -358,7 +403,7 @@ std::string getError(const std::string& json) {
     Document document{};
 
     if (document.Parse(json.c_str()).HasParseError()) {
-        return "Failed to parse error";
+        return std::string{"Failed to parse error: "} + rapidjson::GetParseError_En(document.GetParseError());
     }
 
     ValueWrapper meta{document.HasMember("meta") ? document : document["meta"]};
@@ -381,4 +426,3 @@ std::string getError(const std::string& json) {
 }
 
 }
-
