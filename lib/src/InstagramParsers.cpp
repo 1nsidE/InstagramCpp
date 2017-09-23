@@ -80,12 +80,15 @@ UserInfo getUserInfo(ValueWrapper info);
 CommentInfo getCommentInfo(ValueWrapper comment);
 LocationInfo getLocation(ValueWrapper locations);
 
+int getResponseCode(const Document& document);
+std::string getErrorMessage(const Document& document);
+
 AuthorizationToken parseAuthToken(const std::string& json) {
     AuthorizationToken token{};
 
-    Document document;
+    Document document{};
     if (document.Parse(json.c_str()).HasParseError()) {
-        return std::string{"Failed to parse access token: "} + rapidjson::GetParseError_En(document.GetParseError());
+        return std::string{"Failed to parse access token: "} + GetParseError_En(document.GetParseError());
     }
     
     if(!document.HasMember("access_token")){
@@ -101,7 +104,7 @@ MediaEntries parseMediaEntries(const std::string& json) {
     Document document{};
 
     if (document.Parse(json.c_str()).HasParseError()) {
-        return std::string{"Failed to parse media entries: "} + rapidjson::GetParseError_En(document.GetParseError());
+        return std::string{"Failed to parse media entries: "} + GetParseError_En(document.GetParseError());
     };
 
     if(!document.HasMember("data")){
@@ -119,10 +122,10 @@ MediaEntries parseMediaEntries(const std::string& json) {
 }
 
 MediaEntry parseMediaEntry(const std::string& json) {
-    Document document;
+    Document document{};
 
     if (document.Parse(json.c_str()).HasParseError()) {
-        return std::string{"Failed to parse media entry: "} + rapidjson::GetParseError_En(document.GetParseError());
+        return std::string{"Failed to parse media entry: "} + GetParseError_En(document.GetParseError());
     }
 
     if(!document.HasMember("data")){
@@ -203,7 +206,7 @@ UserInfo parseUserInfo(const std::string& json) {
     Document document{};
 
     if (document.Parse(json.c_str()).HasParseError()){
-        return std::string{"Failed to parse user info: "} + rapidjson::GetParseError_En(document.GetParseError());
+        return std::string{"Failed to parse user info: "} + GetParseError_En(document.GetParseError());
     }
 
     if(!document.HasMember("data")){
@@ -217,7 +220,7 @@ UsersInfo parseUsersInfo(const std::string& json) {
     Document document{};
 
     if (document.Parse(json.c_str()).HasParseError()){
-        return std::string{"Failed to parse users info: "} + rapidjson::GetParseError_En(document.GetParseError());
+        return std::string{"Failed to parse users info: "} + GetParseError_En(document.GetParseError());
     }
 
     if(!document.HasMember("data")){
@@ -259,7 +262,7 @@ RelationshipInfo parseRelationshipInfo(const std::string& json) {
     Document document{};
 
     if (document.Parse(json.c_str()).HasParseError()) {
-        return std::string{"Failed to parse relationship info: "} + rapidjson::GetParseError_En(document.GetParseError());
+        return std::string{"Failed to parse relationship info: "} + GetParseError_En(document.GetParseError());
     }
 
     if(!document.HasMember("data")){
@@ -276,7 +279,7 @@ TagInfo parseTagInfo(const std::string& json) {
     Document document{};
 
     if (document.Parse(json.c_str()).HasParseError()) {
-        return std::string{"Failed to parse tag info: "} + rapidjson::GetParseError_En(document.GetParseError());
+        return std::string{"Failed to parse tag info: "} + GetParseError_En(document.GetParseError());
     }
 
     if(!document.HasMember("data")){
@@ -293,7 +296,7 @@ TagsInfo parseTagsInfo(const std::string& json) {
     Document document{};
 
     if (document.Parse(json.c_str()).HasParseError()) {
-        return std::string{"Failed to parse tags info: "} + rapidjson::GetParseError_En(document.GetParseError());
+        return std::string{"Failed to parse tags info: "} + GetParseError_En(document.GetParseError());
     }
 
     if(!document.HasMember("data")){
@@ -315,7 +318,7 @@ CommentsInfo parseComments(const std::string& json) {
     Document document{};
 
     if (document.Parse(json.c_str()).HasParseError()) {
-        return std::string{"Failed to parse comments: "} + rapidjson::GetParseError_En(document.GetParseError());
+        return std::string{"Failed to parse comments: "} + GetParseError_En(document.GetParseError());
     }
 
     if(!document.HasMember("data")){
@@ -353,7 +356,7 @@ LocationInfo parseLocation(const std::string& json) {
     Document document{};
 
     if (document.Parse(json.c_str()).HasParseError()) {
-        return std::string{"Failed to parse location: "} + rapidjson::GetParseError_En(document.GetParseError());
+        return std::string{"Failed to parse location: "} + GetParseError_En(document.GetParseError());
     }
 
     if(!document.HasMember("data")){
@@ -381,7 +384,7 @@ LocationsInfo parseLocations(const std::string& json) {
     Document document{};
 
     if (document.Parse(json.c_str()).HasParseError()) {
-        return std::string{"Failed to parse locations: "} + rapidjson::GetParseError_En(document.GetParseError());
+        return std::string{"Failed to parse locations: "} + GetParseError_En(document.GetParseError());
     }
 
     if(!document.HasMember("data")){
@@ -399,30 +402,50 @@ LocationsInfo parseLocations(const std::string& json) {
     return infos;
 }
 
-std::string getError(const std::string& json) {
+std::string getErrorMessage(const std::string& json) {
     Document document{};
 
     if (document.Parse(json.c_str()).HasParseError()) {
-        return std::string{"Failed to parse error: "} + rapidjson::GetParseError_En(document.GetParseError());
+        return std::string{"Failed to parse error: "} + GetParseError_En(document.GetParseError());
+    }
+    
+    return getErrorMessage(document);
+}
+
+int getResponseCode(const Document& document){
+    if(!document.HasMember("meta")){
+        return -1;
     }
 
-    ValueWrapper meta{document.HasMember("meta") ? document : document["meta"]};
+    ValueWrapper meta{document["meta"]};
+    return meta.getInt("code");
+}
+
+std::string getErrorMessage(const Document& document){
+    if(!document.HasMember("meta")){
+        return "Invalid Instagram response - No 'meta' found";
+    }
+
+    ValueWrapper meta{document["meta"]};
 
     int code = meta.getInt("code");
     if (code == 200) {
         return " Call was successful";
     }
+    
+    std::string result{"code = " + std::to_string(code) + " "};
 
     ValueWrapper errMsg{meta["error_message"]};
-    ValueWrapper errType{meta["error_type"]};
-
-    if (!errType.isNull() || !errMsg.isNull()) {
-        return std::to_string(code) + " : " + errType.getString() + " - " + errMsg.getString();
-    } else if(code != -1){
-        return "Unknown error with code = " + std::to_string(code);
-    } else {
-        return "Unknown error";
+    if(!errMsg.isNull()){
+        result += "error message = " + errMsg.getString() + " ";
     }
+
+    ValueWrapper errType{meta["error_type"]};
+    if(!errType.isNull()){
+        result += "error type = " + errType.getString();
+    }
+
+    return result;
 }
 
 }

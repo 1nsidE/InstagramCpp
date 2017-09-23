@@ -40,15 +40,6 @@ inline bool InstagramClient::checkAuth() const {
     return !m_authToken.empty();
 }
 
-std::string InstagramClient::getResult(const Http::HttpResponse& response) const {
-    switch (response.code()) {
-    case Http::Status::BAD_REQUEST:
-        return getError(response.body());
-    default:
-        return response.getString();
-    }
-}
-
 AuthorizationToken InstagramClient::authenticate(const std::string& code,
         const std::string& clientId,
         const std::string& clientSecret,
@@ -67,7 +58,7 @@ AuthorizationToken InstagramClient::authenticate(const std::string& code,
         setAuthToken(authToken.token());
         return authToken;
     } else {
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 }
 
@@ -87,7 +78,7 @@ UserInfo InstagramClient::getUserInfo(const std::string& userId) const {
     if (response.code() == Http::Status::OK) {
         return parseUserInfo(response.body());
     } else {
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 }
 
@@ -107,11 +98,11 @@ MediaEntries InstagramClient::getRecentMedia(const std::string& userId, unsigned
     return getMedia(url);
 } 
 
-MediaEntries InstagramClient::getRecentMedia(const std::string& min_id, const std::string& max_id, unsigned count) const {
-    return getRecentMedia(SELF, min_id, max_id, count);
+MediaEntries InstagramClient::getRecentMedia(const std::string& minId, const std::string& maxId, unsigned count) const {
+    return getRecentMedia(SELF, minId, maxId, count);
 }
 
-MediaEntries InstagramClient::getRecentMedia(const std::string& userId, const std::string& min_id, const std::string& max_id, unsigned count) const {
+MediaEntries InstagramClient::getRecentMedia(const std::string& userId, const std::string& minId, const std::string& maxId, unsigned count) const {
     if(!checkAuth()){
         return NOT_AUTHENTICATED;
     }
@@ -119,8 +110,8 @@ MediaEntries InstagramClient::getRecentMedia(const std::string& userId, const st
     Http::HttpUrl url = getUrl(Users::users + userId + Media::recentMedia);
     url[AUTH_TOKEN_ARG] = m_authToken;
     
-    if (!min_id.empty()) url[MIN_ID_ARG] = min_id;
-    if (!max_id.empty()) url[MAX_ID_ARG] = max_id;
+    if (!minId.empty()) url[MIN_ID_ARG] = minId;
+    if (!maxId.empty()) url[MAX_ID_ARG] = maxId;
     
     url[COUNT_ARG] = std::to_string(count);
 
@@ -139,15 +130,15 @@ MediaEntries InstagramClient::getLikedMedia(unsigned int count) const {
     return getMedia(url);
 }
 
-MediaEntries InstagramClient::getLikedMedia(const std::string& max_id, unsigned int count) const {
+MediaEntries InstagramClient::getLikedMedia(const std::string& maxId, unsigned int count) const {
     if(!checkAuth()){
         return NOT_AUTHENTICATED;
     }
 
     Http::HttpUrl url = getUrl(std::string{Users::users} + Users::ownLikes);
     url[AUTH_TOKEN_ARG] = m_authToken;
-    url[MAX_LIKE_ID] = max_id;
     url[COUNT_ARG] = std::to_string(count);
+    if(!maxId.empty()) url[MAX_LIKE_ID] = maxId;
 
     return getMedia(url);
 }
@@ -158,7 +149,7 @@ MediaEntries InstagramClient::getMedia(const Http::HttpUrl& url) const {
     if (response.code() == Http::Status::OK) {
         return parseMediaEntries(response.body());
     } else {
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 }
 
@@ -214,7 +205,7 @@ UsersInfo InstagramClient::getUsersInfo(const Http::HttpUrl& url) const {
     if (response.code() == Http::Status::OK) {
         return parseUsersInfo(response.body());
     } else {
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 }
 
@@ -231,7 +222,7 @@ RelationshipInfo InstagramClient::getRelationshipInfo(const std::string& userId)
     if (response.code() == Http::Status::OK) {
         return parseRelationshipInfo(response.body());
     } else {
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 }
 
@@ -279,7 +270,7 @@ RelationshipInfo InstagramClient::postRelationship(Relationship relationship, co
     if(response.code() == Http::Status::OK){
         return parseRelationshipInfo(response.body());
     }else{
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 }
 
@@ -295,7 +286,7 @@ MediaEntry InstagramClient::getMedia(const std::string& mediaId) const {
     if (response.code() == Http::Status::OK) {
         return parseMediaEntry(response.body());
     } else {
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 }
 
@@ -311,7 +302,7 @@ MediaEntry InstagramClient::getMediaWithShortCode(const std::string& shortcode) 
     if (response.code() == Http::Status::OK) {
         return parseMediaEntry(response.body());
     } else {
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 }
 
@@ -343,7 +334,7 @@ CommentsInfo InstagramClient::getComments(const std::string& mediaId) const {
     if (response.code() == Http::Status::OK) {
         return parseComments(response.body());
     } else {
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 }
 
@@ -362,7 +353,7 @@ BaseResult InstagramClient::comment(const std::string& mediaId, const std::strin
     if (response.code() == Http::Status::OK) {
         return {};
     } else {
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 }
 
@@ -377,7 +368,7 @@ BaseResult InstagramClient::deleteComment(const std::string& mediaId, const std:
     if (response.code() == Http::Status::OK) {
         return {};
     } else {
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 }
 
@@ -405,7 +396,7 @@ BaseResult InstagramClient::like(const std::string& mediaId) {
     if (response.code() == Http::Status::OK) {
         return {};
     } else {
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 }
 
@@ -421,7 +412,7 @@ BaseResult InstagramClient::unlike(const std::string& mediaId) {
     if (response.code() == Http::Status::OK) {
         return {};
     } else {
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 }
 
@@ -437,7 +428,7 @@ TagInfo InstagramClient::getTagInfo(const std::string& tag_name) const {
     if (response.code() == Http::Status::OK) {
         return parseTagInfo(response.body());
     } else {
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 }
 
@@ -454,7 +445,7 @@ TagsInfo InstagramClient::searchTags(const std::string& query) const {
     if (response.code() == Http::Status::OK) {
         return parseTagsInfo(response.body());
     } else {
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 
 }
@@ -471,7 +462,7 @@ MediaEntries InstagramClient::getRecentMediaForTag(const std::string& tag_name) 
     if (response.code() == Http::Status::OK) {
         return parseMediaEntries(response.body());
     } else {
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 }
 
@@ -487,7 +478,7 @@ LocationInfo InstagramClient::getLocationById(const std::string& location_id) co
     if (response.code() == Http::Status::OK) {
         return parseLocation(response.body());
     } else {
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 }
 
@@ -502,7 +493,7 @@ MediaEntries InstagramClient::getMediaForLocation(const std::string& location_id
     if (response.code() == Http::Status::OK) {
         return parseMediaEntries(response.body());
     } else {
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 }
 
@@ -521,7 +512,7 @@ LocationsInfo InstagramClient::searchLocations(double lat, double lng, int dista
     if (response.code() == Http::Status::OK) {
         return parseLocations(response.body());
     } else {
-        return getResult(response);
+        return getErrorMessage(response.body());
     }
 }
 

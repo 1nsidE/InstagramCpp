@@ -8,7 +8,7 @@ if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
 endif()
 
 if(DEFINED RAPIDJSON_INCLUDE)
-    message("Include rapidjson headers from: " ${RAPIDJSON_INCLUDE})
+    message(STATUS "Include rapidjson headers from: " ${RAPIDJSON_INCLUDE})
     include_directories(${RAPIDJSON_INCLUDE})
 endif()
 
@@ -26,7 +26,7 @@ elseif(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(SSL_LIB_NAME "ssl")
 endif()
 
-message("Searching for openssl in: " ${OPENSSL_LIB})
+message(STATUS "Searching for openssl in: " ${OPENSSL_LIB})
 
 find_library(SSL_LIB NAMES ${SSL_LIB_NAME} HINTS ${OPENSSL_LIB})
 find_library(CRYPTO_LIB NAMES ${CRYPTO_LIB_NAME} HINTS ${OPENSSL_LIB})
@@ -53,5 +53,5 @@ elseif(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	target_link_libraries(instagramcpp ${SSL_LIB} ${CRYPTO_LIB})
 endif()
 
-message("SSL library path is:  " ${SSL_LIB})
-message("Crypto library path is: " ${CRYPTO_LIB})
+message(STATUS "SSL library path is:  " ${SSL_LIB})
+message(STATUS "Crypto library path is: " ${CRYPTO_LIB})

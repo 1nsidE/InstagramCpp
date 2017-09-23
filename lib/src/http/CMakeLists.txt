@@ -21,6 +21,4 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
     add_definitions(-DHTTP_LIB_EXPORT)
 endif()
 
-message("Searching for openssl in: " ${OPENSSL_LIB})
-
 add_library(http OBJECT ${HTTP_SOURCES})

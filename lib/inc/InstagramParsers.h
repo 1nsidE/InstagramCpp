@@ -22,6 +22,5 @@ namespace Instagram{
     LocationInfo parseLocation(const std::string& json);
     LocationsInfo parseLocations(const std::string& json);
 
-    std::string getError(const std::string& json);
-
+    std::string getErrorMessage(const std::string& json);
 }
