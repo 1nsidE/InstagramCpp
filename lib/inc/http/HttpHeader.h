@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <memory>
+#include <stddef.h>
 #include "Http.h"
 
 namespace Http {
@@ -28,11 +29,11 @@ public:
     void setBody(const std::string& body);
     void appendBody(const std::string& _body);
     void appendBody(const char* _body);
-    void appendBody(const char *_body, const size_t len);
-    size_t bodySize() const noexcept;
+    void appendBody(const char *_body, const std::size_t len);
+    std::size_t bodySize() const noexcept;
 
     bool isContainsHeader(Header header) const noexcept;
-    size_t contentLen() const;
+    std::size_t contentLen() const;
 
     void setHost(const std::string& host);
     const std::string& host() const noexcept;
@@ -45,8 +46,6 @@ protected:
 
     HttpHeader& operator=(const HttpHeader& httpHeader);
     HttpHeader& operator=(HttpHeader&& httpHeader);
-
-    void addHeader(const std::string& header);
 private:
     HeadersMap m_headersMap {};
 

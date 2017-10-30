@@ -178,7 +178,7 @@ MediaEntry getMediaEntry(ValueWrapper media) {
     {
         ValueWrapper images{media["images"]};
 
-        ValueWrapper low_resolution = images["low_resolution"];
+        ValueWrapper low_resolution{images["low_resolution"]};
         entry.setLowResolution(low_resolution.getString("url"));
 
         ValueWrapper thumbnail{images["thumbnail"]};

@@ -148,6 +148,8 @@ MediaEntries InstagramClient::getMedia(const Http::HttpUrl& url) const {
 
     if (response.code() == Http::Status::OK) {
         return parseMediaEntries(response.body());
+    } else if(response.code() == -1){
+        return response.status();
     } else {
         return getErrorMessage(response.body());
     }

@@ -158,14 +158,6 @@ std::string HttpHeader::getString() const {
     return result;
 }
 
-void HttpHeader::addHeader(const std::string& header){
-    std::vector<std::string> tokens = split(header, ':', true);
-    if (tokens.size() != 2) {
-        throw std::runtime_error("invalid header : " + header);
-    }
-    addHeader(tokens[0], tokens[1]);
-}
-
 void swap(HttpHeader& first, HttpHeader& second){
     using std::swap;
     swap(first.m_headersMap, second.m_headersMap);

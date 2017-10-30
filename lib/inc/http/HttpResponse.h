@@ -13,7 +13,7 @@ public:
     HttpResponse(const HttpResponse& response);
     HttpResponse(HttpResponse&& response);
 
-    virtual ~HttpResponse();
+    virtual ~HttpResponse() override;
 
     HttpResponse& operator=(HttpResponse&& httpResponse);
     HttpResponse& operator=(const HttpResponse& httpResponse);

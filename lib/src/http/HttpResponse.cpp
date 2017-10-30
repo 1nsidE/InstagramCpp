@@ -84,11 +84,15 @@ void HttpResponse::parseResponse(const std::string& response){
         if (!line.compare("\r")) {
             break;
         }
-        addHeader(line);
+        const std::vector<std::string> headerPair = split(line, ':', true);
+        if(headerPair.size() != 2){
+            throw std::runtime_error("invalid header: " + line);
+        }
+        addHeader(headerPair[0], headerPair[1]);
     }
  
-    size_t pos;
-    if ((pos = static_cast<size_t>(stringStream.tellg())) < response.length()) {
+    std::streampos pos{stringStream.tellg()};
+    if (pos >= 0 && static_cast<std::size_t>(pos) < response.length()) {
         setBody(response.substr(pos, response.length() - pos));
     }
 }

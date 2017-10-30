@@ -83,28 +83,31 @@ void HttpRequest::parse(const std::string& request){
         return;
     }
 
-    std::istringstream string_stream{request};
+    std::istringstream stringStream{request};
     std::string line {};
 
-    std::getline(string_stream, line);
+    std::getline(stringStream, line);
     std::vector<std::string> tokens = split(line, ' ');
     if (tokens.size() != 3) {
         throw std::runtime_error("invalid request header: " + line);
     }
     
     setMethod(fromStr(tokens[0]));
+    setUrl(getHeader(Header::HOST) + tokens[1]);
 
-    while (std::getline(string_stream, line)) {
+    while (std::getline(stringStream, line)) {
         if (!line.compare("\r")) {
             break;
         }
-        addHeader(line);
+        const std::vector<std::string> headerPair = split(line, ':', true);
+        if(headerPair.size() != 2){
+            throw std::runtime_error("invalid header: " + line);
+        }
+        addHeader(tokens[0], tokens[1]);
     }
 
-    setUrl(getHeader(Header::HOST) + tokens[1]);
-    
-    size_t pos{0};
-    if ((pos = static_cast<size_t>(string_stream.tellg())) < request.length()) {
+    std::streampos pos{stringStream.tellg()};
+    if (pos >= 0 && static_cast<std::size_t>(pos) < request.length()) {
         setBody(request.substr(pos, request.length() - pos));
     }
 }

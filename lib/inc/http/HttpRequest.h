@@ -18,7 +18,7 @@ public:
     HttpRequest(const HttpRequest& request);
     HttpRequest(HttpRequest&& request);
 
-    virtual ~HttpRequest();
+    virtual ~HttpRequest() override;
     
     HttpRequest& operator=(const HttpRequest& httpRequest);
     HttpRequest& operator=(HttpRequest&& httpRequest);
